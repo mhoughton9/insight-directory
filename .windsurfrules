@@ -1,0 +1,60 @@
+{
+  "project_summary": "The Awakening Resources Directory is a custom website that serves as a comprehensive directory for spiritual awakening, non-duality, and self-inquiry resources. It organizes resources by type (books, videos, podcasts, etc.), and connects them to teachers and traditions. Features include user accounts, comments/reviews, and favorites, all within a clean, minimalist, mobile-friendly design.",
+
+  "tech_stack": {
+    "frontend": "Next.js with React and Tailwind CSS",
+    "backend": "Node.js with Express and MongoDB using Mongoose",
+    "authentication": "Clerk (or Auth0)",
+    "image_handling": "Cloudinary for optimized image storage",
+    "deployment": "Vercel for frontend and backend, MongoDB Atlas for database"
+  },
+
+  "code_style": {
+    "indentation": "2 spaces",
+    "naming_conventions": {
+      "files": "kebab-case",
+      "components": "PascalCase for React components",
+      "variables": "camelCase",
+      "functions": "camelCase"
+    },
+    "comments": {
+      "style": "JSDoc for functions and complex logic",
+      "frequency": "When code is not self-explanatory"
+    },
+    "folder_structure": {
+      "frontend/components": "React UI components",
+      "frontend/pages": "Next.js route files",
+      "frontend/styles": "Custom Tailwind or global styles",
+      "backend/models": "Mongoose schemas",
+      "backend/routes": "Express API routes",
+      "backend/controllers": "Business logic for API routes"
+    }
+  },
+
+  "ui_style": {
+    "theme": "Minimalist, clean, non-dual aesthetic",
+    "colors": "Neutral palette (white, gray, soft blue/purple accent)",
+    "fonts": "Inter or Open Sans",
+    "icons": "Lucide icons for simplicity and consistency"
+  },
+
+  "functionality_guidelines": {
+    "search": "Full-text search with filters for tradition, teacher, and resource type. Must be scalable to handle multiple simultaneous filters (3-4 at once).",
+    "user_auth": "Users can register/login to leave comments and save favorites",
+    "database_relations": "Many-to-many between Resources, Teachers, and Traditions"
+  },
+
+  "best_practices": {
+    "simplicity": "Write clear, simple code. Avoid over-complicating.",
+    "reusable_components": "Use small, reusable React components",
+    "api_design": "RESTful API design, prefix backend routes with /api"
+  },
+
+  "ai_prompt_examples": [
+    "Create a Mongoose schema for Resources with fields for title, description, teacherIds, traditionIds, and tags.",
+    "Build a Next.js page that lists all Teachers, with filtering by Tradition.",
+    "Create an Express.js route to handle posting and fetching comments linked to a resource."
+  ],
+
+  "additional_context": "Refer to docs/project-overview.md for project structure and docs/ui-guidelines.md for design guidelines."
+}
