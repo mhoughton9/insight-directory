@@ -11,34 +11,55 @@ import { normalizeResourceType, formatResourceType } from '../../utils/resource-
  */
 const ResourceCategoriesSection = ({ resourceTypes, brandColors }) => {
   return (
-    <section className="py-16 bg-gradient-to-b from-white to-neutral-50 dark:from-neutral-900 dark:to-neutral-950">
+    <section className="py-12 bg-white dark:bg-neutral-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl md:text-3xl font-semibold mb-8 text-center" style={{ fontFamily: 'Lora, serif' }}>
-          Browse by Category
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-normal text-neutral-800 dark:text-neutral-100 mb-4" style={{ fontFamily: 'Lora, serif' }}>
+            Resource Categories
+          </h2>
+          <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto" style={{ fontFamily: 'Inter, sans-serif' }}>
+            Explore our collection of awakening resources by category
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {resourceTypes.map((type, index) => {
+            const normalizedType = normalizeResourceType(type.type);
             // Assign colors from brand palette based on index
             const color = brandColors[index % brandColors.length];
             
             return (
               <Link 
-                href={`/resources?type=${encodeURIComponent(normalizeResourceType(type.type))}`} 
-                key={type.type}
-                className="bg-white dark:bg-neutral-800 rounded-lg p-5 text-center shadow-sm hover:shadow-md transition-all duration-300 border border-neutral-100 dark:border-neutral-700 transform hover:-translate-y-1"
+                key={index} 
+                href={`/resources/type/${normalizedType}`} 
+                className="group bg-neutral-50 dark:bg-neutral-800 rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:bg-white dark:hover:bg-neutral-700 flex flex-col items-center text-center h-full border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 overflow-hidden relative"
+                style={{
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+                }}
               >
-                <div className="flex justify-center items-center mb-3">
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-300" 
+                  style={{ 
+                    background: `linear-gradient(135deg, ${color}22, transparent 70%)`,
+                    borderRadius: 'inherit'
+                  }}
+                ></div>
+                <div className="w-16 h-16 mb-4 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 relative z-10">
                   <div style={{ color }}>
                     {React.cloneElement(type.icon, { 
-                      width: 36, 
-                      height: 36, 
+                      width: 48, 
+                      height: 48, 
                       stroke: color,
                       className: "transition-all duration-300"
                     })}
                   </div>
                 </div>
-                <h3 className="font-medium mb-2 text-neutral-800 dark:text-neutral-200" style={{ fontFamily: 'Inter, sans-serif' }}>{formatResourceType(type.type)}</h3>
-                <p className="text-sm text-neutral-600 dark:text-neutral-400" style={{ fontFamily: 'Inter, sans-serif' }}>{type.description}</p>
+                <h3 className="text-xl font-medium text-neutral-800 dark:text-neutral-200 mb-2 relative z-10" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  {formatResourceType(type.type)}
+                </h3>
+                <p className="text-neutral-600 dark:text-neutral-400 text-sm flex-grow relative z-10" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  {type.description}
+                </p>
               </Link>
             );
           })}

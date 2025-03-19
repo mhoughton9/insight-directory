@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { MenuIcon, SearchIcon, UserIcon } from '../ui/Icons';
+import { MenuIcon } from '../ui/Icons';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,30 +23,21 @@ export default function Header() {
         
         {/* Right Side Navigation and Controls */}
         <div className="flex items-center">
-          {/* Desktop Navigation - Moved to right side */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 mr-6">
-            <Link href="/resources" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]">
-              Resources
-            </Link>
-            <Link href="/teachers" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]">
+            <Link href="/teachers" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               Teachers
             </Link>
-            <Link href="/traditions" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]">
+            <Link href="/traditions" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               Traditions
             </Link>
-            <Link href="/about" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]">
+            <Link href="/about" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               About
             </Link>
           </nav>
           
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-4">
-            <button aria-label="Search" className="p-2 text-neutral-700 dark:text-neutral-300 hover:text-accent">
-              <SearchIcon size={20} />
-            </button>
-            <button aria-label="Account" className="p-2 text-neutral-700 dark:text-neutral-300 hover:text-accent">
-              <UserIcon size={20} />
-            </button>
+          {/* Mobile Menu Button */}
+          <div className="flex items-center">
             <button 
               aria-label="Menu" 
               className="p-2 md:hidden text-neutral-700 dark:text-neutral-300"
@@ -62,16 +53,13 @@ export default function Header() {
       {isMenuOpen && (
         <div className="md:hidden bg-background border-t border-neutral-200 dark:border-neutral-800">
           <nav className="container mx-auto px-4 py-4 flex flex-col space-y-4">
-            <Link href="/resources" className="text-neutral-700 dark:text-neutral-300">
-              Resources
-            </Link>
-            <Link href="/teachers" className="text-neutral-700 dark:text-neutral-300">
+            <Link href="/teachers" className="text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
               Teachers
             </Link>
-            <Link href="/traditions" className="text-neutral-700 dark:text-neutral-300">
+            <Link href="/traditions" className="text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
               Traditions
             </Link>
-            <Link href="/about" className="text-neutral-700 dark:text-neutral-300">
+            <Link href="/about" className="text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
               About
             </Link>
           </nav>

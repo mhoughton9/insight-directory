@@ -26,7 +26,8 @@ export const normalizeResourceType = (type) => {
     case 'videochannel':
     case 'videos':
     case 'video':
-    case 'videochannel':
+    case 'video channel':
+    case 'video channels':
       return 'videoChannel'; 
     case 'podcasts':
       return 'podcast';
@@ -36,7 +37,8 @@ export const normalizeResourceType = (type) => {
     case 'retreatcenter':
     case 'retreat':
     case 'retreats':
-    case 'retreatcenter':
+    case 'retreat center':
+    case 'retreat centers':
       return 'retreatCenter'; 
     case 'websites':
       return 'website';

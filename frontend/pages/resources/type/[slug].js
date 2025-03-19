@@ -1,23 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import resourcesService from '../../../services/api/resources';
-import teachersService from '../../../services/api/teachers';
-import traditionsService from '../../../services/api/traditions';
 import { formatResourceType, normalizeResourceType } from '../../../utils/resource-utils';
 
 // Components
-import SearchBar from '../../../components/filters/SearchBar';
-import FilterBar from '../../../components/filters/FilterBar';
 import ResourceGrid from '../../../components/resources/ResourceGrid';
-import InfiniteScroll from '../../../components/ui/InfiniteScroll';
-
-// Constants
-const ITEMS_PER_PAGE = 12;
 
 /**
  * Resource Type Page
- * Displays resources of a specific type with filtering and search capabilities
+ * Displays resources of a specific type with a simple, clean interface
  */
 export default function ResourceTypePage() {
   const router = useRouter();
@@ -25,235 +17,41 @@ export default function ResourceTypePage() {
   const type = slug ? normalizeResourceType(slug) : ''; // Normalize the type for consistency
   const formattedTypeName = formatResourceType(type);
   
-  // State for resources and metadata
+  // State for resources and basic loading/error states
   const [resources, setResources] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentRequestId, setCurrentRequestId] = useState(0); // Track the latest request
-  const [cacheHit, setCacheHit] = useState(false); // Track if data came from cache
   
-  // State for filter options
-  const [traditions, setTraditions] = useState([]);
-  const [teachers, setTeachers] = useState([]);
-  const [tags, setTags] = useState([]);
-  
-  // State for active filters
-  const [activeFilters, setActiveFilters] = useState({
-    types: [],
-    traditions: [],
-    teachers: [],
-    tags: [],
-    sort: 'newest',
-    search: ''
-  });
-  
-  // Initialize filters from URL query parameters
+  // Fetch resources of this type
   useEffect(() => {
     if (!router.isReady || !type) return;
     
-    const { tradition, teacher, tag, sort, search } = router.query;
-    
-    // Only update filters if URL parameters exist
-    if (tradition || teacher || tag || sort || search) {
-      const initialFilters = {
-        types: [type], // Always include the current type
-        traditions: tradition ? tradition.split(',') : [],
-        teachers: teacher ? teacher.split(',') : [],
-        tags: tag ? tag.split(',') : [],
-        sort: sort || 'newest',
-        search: search || ''
-      };
-      
-      setActiveFilters(initialFilters);
-    }
-  }, [router.isReady, router.query, type]);
-  
-  // Fetch filter options (traditions, teachers, tags)
-  useEffect(() => {
-    const fetchFilterOptions = async () => {
+    const fetchResources = async () => {
       try {
-        // Fetch traditions
-        const traditionsResponse = await traditionsService.getAll();
-        const traditionNames = (traditionsResponse.traditions || []).map(t => t.name);
-        setTraditions(traditionNames);
+        setIsLoading(true);
+        setError(null);
         
-        // Fetch teachers
-        const teachersResponse = await teachersService.getAll();
-        const teacherNames = (teachersResponse.teachers || []).map(t => t.name);
-        setTeachers(teacherNames);
+        console.log('Fetching resources for type:', type); // Debug log
         
-        // Fetch tags
-        const tagsResponse = await resourcesService.getTags();
-        setTags(tagsResponse.tags || []);
-      } catch (err) {
-        console.error('Error fetching filter options:', err);
-        setError('Failed to load filter options. Please try again later.');
-      }
-    };
-    
-    fetchFilterOptions();
-  }, []);
-  
-  // Fetch resources based on active filters
-  const fetchResources = useCallback(async (pageNum = 1, append = false) => {
-    if (!type) return;
-    
-    // Generate a unique request ID for this call
-    const requestId = currentRequestId + 1;
-    setCurrentRequestId(requestId);
-    
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Prepare query parameters
-      const queryParams = {
-        page: pageNum,
-        limit: ITEMS_PER_PAGE,
-        sort: activeFilters.sort,
-        type: type // Always filter by the current type
-      };
-      
-      // Add filter parameters if they exist
-      if (activeFilters.traditions.length > 0) {
-        queryParams.tradition = activeFilters.traditions.join(',');
-      }
-      
-      if (activeFilters.teachers.length > 0) {
-        queryParams.teacher = activeFilters.teachers.join(',');
-      }
-      
-      if (activeFilters.tags.length > 0) {
-        queryParams.tag = activeFilters.tags.join(',');
-      }
-      
-      if (activeFilters.search) {
-        queryParams.search = activeFilters.search;
-      }
-      
-      // Fetch resources with filters
-      const response = await resourcesService.getAll(queryParams);
-      
-      // Only update state if this is still the most recent request
-      if (requestId === currentRequestId) {
+        // Simple query to get resources by type
+        const response = await resourcesService.getAll({ type });
         const fetchedResources = response.resources || [];
-        setCacheHit(response.cached || false);
         
-        // Update state based on append flag
-        if (append) {
-          setResources(prev => [...prev, ...fetchedResources]);
-        } else {
-          setResources(fetchedResources);
-        }
+        console.log('Fetched resources:', fetchedResources.length); // Debug log
         
-        // Check if there are more resources to load
-        setHasMore(fetchedResources.length === ITEMS_PER_PAGE);
-        setPage(pageNum);
-      }
-    } catch (err) {
-      // Only show error if this is still the most recent request
-      if (requestId === currentRequestId) {
+        setResources(fetchedResources);
+      } catch (err) {
         console.error('Error fetching resources:', err);
         setError('Failed to load resources. Please try again later.');
-      }
-    } finally {
-      if (requestId === currentRequestId) {
+      } finally {
         setIsLoading(false);
       }
-    }
-  }, [activeFilters, type, currentRequestId]);
-  
-  // Initial fetch of resources
-  useEffect(() => {
-    if (router.isReady && type) {
-      fetchResources(1, false);
-    }
-  }, [fetchResources, router.isReady, type]);
-  
-  // Load more resources when scrolling
-  const loadMoreResources = async () => {
-    if (!hasMore || isLoading) return;
-    await fetchResources(page + 1, true);
-  };
-  
-  // Handle filter changes
-  const handleFilterChange = (filters) => {
-    // Keep the type filter fixed
-    const updatedFilters = {
-      ...filters,
-      types: [type] // Always keep the current type
     };
     
-    setActiveFilters(prev => ({
-      ...prev,
-      ...updatedFilters
-    }));
-    
-    // Update URL query parameters
-    const queryParams = {};
-    
-    if (filters.traditions && filters.traditions.length > 0) {
-      queryParams.tradition = filters.traditions.join(',');
-    }
-    
-    if (filters.teachers && filters.teachers.length > 0) {
-      queryParams.teacher = filters.teachers.join(',');
-    }
-    
-    if (filters.tags && filters.tags.length > 0) {
-      queryParams.tag = filters.tags.join(',');
-    }
-    
-    if (filters.sort && filters.sort !== 'newest') {
-      queryParams.sort = filters.sort;
-    }
-    
-    if (activeFilters.search) {
-      queryParams.search = activeFilters.search;
-    }
-    
-    // Update URL without full page reload
-    router.push({
-      pathname: router.pathname,
-      query: queryParams
-    }, undefined, { shallow: true });
-  };
+    fetchResources();
+  }, [router.isReady, type]);
   
-  // Handle search input
-  const handleSearch = (searchQuery) => {
-    setActiveFilters(prev => ({
-      ...prev,
-      search: searchQuery
-    }));
-    
-    // Update URL query parameters
-    const queryParams = { ...router.query };
-    
-    if (searchQuery) {
-      queryParams.search = searchQuery;
-    } else {
-      delete queryParams.search;
-    }
-    
-    // Update URL without reloading the page
-    router.push({
-      pathname: `/resources/type/${slug}`,
-      query: queryParams
-    }, undefined, { shallow: true });
-    
-    // Reset to first page and fetch resources
-    setPage(1);
-    fetchResources(1, false);
-  };
-  
-  // Handle retry after error
-  const handleRetry = useCallback(() => {
-    fetchResources(page, false);
-  }, [fetchResources, page]);
-  
-  // If the page is not ready or type is not available, show loading
+  // Handle loading state
   if (!router.isReady || !type) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -281,73 +79,19 @@ export default function ResourceTypePage() {
             </h1>
             <p className="text-neutral-600 dark:text-neutral-400 max-w-3xl">
               Browse our curated collection of {formattedTypeName.toLowerCase()} resources for spiritual awakening, non-duality, and self-inquiry.
-              Use the filters and search to find exactly what you're looking for.
             </p>
           </div>
           
-          {/* Search Bar */}
-          <div className="mb-6">
-            <SearchBar 
-              onSearch={handleSearch} 
-              initialQuery={activeFilters.search}
-              placeholder={`Search ${formattedTypeName} resources...`}
-            />
-          </div>
-          
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Sidebar with Filters */}
-            <div className="lg:w-1/4">
-              <FilterBar 
-                resourceTypes={[]} // No need to show resource types since we're on a specific type page
-                traditions={traditions}
-                teachers={teachers}
-                tags={tags}
-                onFilterChange={handleFilterChange}
-                initialFilters={{
-                  types: activeFilters.types,
-                  traditions: activeFilters.traditions,
-                  teachers: activeFilters.teachers,
-                  tags: activeFilters.tags,
-                  sort: activeFilters.sort
-                }}
-                hideResourceTypeFilter={true} // Hide the resource type filter on type-specific pages
-              />
-            </div>
-            
-            {/* Main Content */}
-            <div className="lg:w-3/4">
-              {error && (
-                <div className="p-4 my-4 bg-red-50 text-red-700 rounded-md">
-                  <p>{error}</p>
-                  <button 
-                    onClick={handleRetry}
-                    className="mt-2 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-md transition-colors"
-                  >
-                    Try Again
-                  </button>
-                </div>
-              )}
-              {error ? null : (
-                <InfiniteScroll
-                  loadMore={loadMoreResources}
-                  hasMore={hasMore}
-                  isLoading={isLoading}
-                  loadingComponent={
-                    <div className="flex items-center justify-center">
-                      <div className="w-8 h-8 border-4 border-brand-purple border-t-transparent rounded-full animate-spin"></div>
-                      <span className="ml-2 text-neutral-600 dark:text-neutral-400">Loading more resources...</span>
-                    </div>
-                  }
-                  endMessage={
-                    <p className="text-neutral-600 dark:text-neutral-400 text-center">
-                      You've reached the end of the list
-                    </p>
-                  }
-                >
-                  <ResourceGrid resources={resources} isLoading={isLoading && page === 1} />
-                </InfiniteScroll>
-              )}
-            </div>
+          {/* Main Content */}
+          <div className="lg:w-3/4">
+            {error && (
+              <div className="p-4 my-4 bg-red-50 text-red-700 rounded-md">
+                <p>{error}</p>
+              </div>
+            )}
+            {error ? null : (
+              <ResourceGrid resources={resources} isLoading={isLoading} />
+            )}
           </div>
         </div>
       </main>
