@@ -17,7 +17,10 @@ const resourceController = {
       
       // Build filter object based on query parameters
       const filter = {};
-      if (type) filter.type = type.toLowerCase();
+      if (type) {
+        // Don't convert to lowercase, as some types use camelCase in the database
+        filter.type = type;
+      }
       if (tradition) filter.traditions = tradition;
       if (teacher) filter.teachers = teacher;
       if (tag) filter.tags = { $in: [tag.toLowerCase()] };
@@ -247,7 +250,10 @@ const resourceController = {
       
       // Build search query with text search and optional filters
       const searchQuery = { $text: { $search: q } };
-      if (type) searchQuery.type = type.toLowerCase();
+      if (type) {
+        // Don't convert to lowercase, as some types use camelCase in the database
+        searchQuery.type = type;
+      }
       if (tradition) searchQuery.traditions = tradition;
       if (teacher) searchQuery.teachers = teacher;
       
@@ -319,7 +325,7 @@ const resourceController = {
       };
       
       // Find resources by type with optimization
-      const resources = await Resource.find({ type: type.toLowerCase() }, projection)
+      const resources = await Resource.find({ type: type }, projection)
         .populate('teachers', 'name slug imageUrl')
         .populate('traditions', 'name slug')
         .sort({ createdAt: -1 })
@@ -328,7 +334,7 @@ const resourceController = {
         .lean(); // Use lean for better performance
       
       // Get total count for pagination
-      const total = await Resource.countDocuments({ type: type.toLowerCase() });
+      const total = await Resource.countDocuments({ type: type });
       
       res.status(200).json({
         success: true,
