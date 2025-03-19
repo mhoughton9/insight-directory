@@ -31,6 +31,7 @@
 - Typography hierarchy:
   - Hero headings: Lora, larger size (3xl-5xl), lighter weight.
   - Section headings: Lora, medium size (2xl-3xl), with accent color for emphasis words.
+  - Resource Categories heading: Lora, non-bold for a cleaner look.
   - Body text: Inter, comfortable reading size, regular weight.
   - Small details: Subtle and clear.
 - Generous line height (leading-relaxed) and letter spacing for readability.
@@ -38,9 +39,10 @@
 ## Buttons & Inputs
 - Rounded corners (medium radius, not pills).
 - Primary buttons: 
-  - Background color using brand gradient or accent color.
+  - Background color using brand gradient (purple to pink).
   - White text for contrast.
   - Subtle hover state with slight darkening.
+  - Consistent messaging (e.g., "Sign up for free" in Hero section, "Learn more about us" in About section).
 - Secondary buttons:
   - Transparent background with accent color border.
   - Accent color text.
@@ -55,6 +57,7 @@
 ## Animation & Interactions
 - Subtle, purposeful animations that enhance usability:
   - Header navigation: Slight upward movement (-2px) on hover with color change.
+  - Resource category cards: Soft gradient hover effect matching the category's icon color.
   - List items: Slight rightward movement (1px) on hover with color change.
   - Transition duration: 300ms for smooth, natural-feeling animations.
   - Use transform properties for performance optimization.
@@ -72,15 +75,23 @@
 ## Component Guidelines
 - Reusable UI components: Cards, resource lists, filters, buttons.
 - Components should be designed to allow future scaling (e.g., filters with multiple selections).
-- Filtering components should support:
-  - Multi-select filters (checkboxes, tags).
-  - Dropdowns for filtering by tradition, teacher, resource type, etc.
-  - Capability to filter by multiple fields simultaneously.
+- Resource Categories section:
+  - More pronounced rounded corners (rounded-xl)
+  - Subtle shadow effect
+  - Soft color gradient on hover that matches each category's icon color
+  - Improved hover transitions with a slight border effect
+  - Proper z-indexing to ensure text remains readable
 - Card components:
   - Consistent padding (p-6 to p-8).
   - Subtle shadows (shadow-sm).
   - Rounded corners (rounded-lg).
   - Clear headings with accent colors for emphasis.
+
+## Navigation Structure
+- Simplified header with essential links: Resources, Teachers, Traditions, About
+- No redundant "Home" link (logo serves this purpose)
+- Path-based routing for resource types (/resources/type/book)
+- Consistent styling across all navigation items
 
 ## Section Patterns
 - Hero sections: Centered content with large typography and gradient background.

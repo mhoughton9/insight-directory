@@ -12,15 +12,27 @@ A custom-coded website that serves as a comprehensive directory for spiritual aw
 - Mobile-friendly, minimalist design reflecting non-dual themes.
 
 ## Primary Pages
-- **Home**: Intro and resource-type navigation tiles.
-- **Resources**: Lists resources, searchable and filterable.
+- **Home**: Intro and resource-type navigation tiles with enhanced visual styling.
+- **Resource Types**: Dedicated pages for each resource type (e.g., /resources/type/book).
+- **Resource Detail**: Individual resource pages with teacher and tradition connections.
 - **Teachers**: Directory of teacher profiles with linked resources.
 - **Traditions**: Descriptions of spiritual approaches and lineages.
-- **My Account**: User profile, favorites, comment history.
-- **About**: Mission and contact info.
+- **About**: Mission and contact information.
+- **My Account**: User profile, favorites, comment history (planned).
+
+## Resource Types
+The application supports the following resource types:
+- Book
+- Video Channel
+- Podcast
+- Website
+- Blog
+- Practice
+- App
+- Retreat Center
 
 ## Database Structure (Simplified)
-- **Resources**: Title, description, format, tags, teacherIds, traditionIds.
+- **Resources**: Title, description, type, tags, teacherIds, traditionIds.
 - **Teachers**: Name, bio, photo, teaching style, traditionIds.
 - **Traditions**: Name, description, historical context.
 - **Users**: Username, favorites, comments.
@@ -34,14 +46,24 @@ A custom-coded website that serves as a comprehensive directory for spiritual aw
 - **Deployment**: Vercel + MongoDB Atlas
 - **Image Handling**: Cloudinary (optional)
 
+## Navigation Structure
+- **Path-based routing**: Resources are accessed via clean URLs (e.g., /resources/type/book)
+- **Simplified header**: Navigation includes Resources, Teachers, Traditions, and About
+- **Resource categories**: Visual tiles on the homepage for quick access to resource types
+
 ## Example User Flow
-1. Visitor lands on Home page → clicks "Books."
-2. Browses books → filters by Tradition "Zen."
-3. Clicks on a book → sees its teacher and tradition.
-4. Registers an account → adds the book to Favorites.
-5. Leaves a review/comment.
+1. Visitor lands on Home page → clicks a resource type (e.g., "Books").
+2. Browses resources of that type → views details of an interesting resource.
+3. Explores related teachers and traditions from the resource detail page.
+4. Creates an account → adds resources to Favorites (planned feature).
+5. Leaves reviews/comments on resources (planned feature).
 
 ## Goals
-- Create a simple, structured codebase AI can work with.
+- Create a simple, structured codebase with minimal complexity.
 - Keep the UI minimalist, clean, and distraction-free.
-- Make discovery of resources and connections easy.
+- Make discovery of resources and connections intuitive.
+- Prioritize performance and maintainability.
+
+## Documentation
+- **UI Guidelines**: See `docs/ui-guidelines.md` for design principles and styling.
+- **Changelog**: See `docs/changelog.md` for a history of project updates.
