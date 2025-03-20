@@ -12,6 +12,7 @@ export default function TeacherCard({ teacher }) {
   const {
     _id,
     name,
+    slug,
     biography,
     imageUrl,
     traditions = []
@@ -20,8 +21,11 @@ export default function TeacherCard({ teacher }) {
   // Use biography as description, or fallback to a placeholder
   const description = biography ? biography.substring(0, 120) + (biography.length > 120 ? '...' : '') : '';
   
+  // Create a URL-friendly slug from the name if no slug exists
+  const teacherSlug = slug || (name ? name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '') : _id);
+  
   return (
-    <Link href={`/teachers/${_id}`} className="block h-full">
+    <Link href={`/teachers/${teacherSlug}`} className="block h-full">
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
         {/* Card Header with Image */}
         <div className="relative h-48 bg-neutral-100 dark:bg-neutral-800">

@@ -6,6 +6,7 @@
   --foreground: #171717;
   --font-primary: 'Inter', sans-serif;
   --font-secondary: 'Open Sans', sans-serif;
+  --font-lora: 'Lora', serif;
   
   /* Brand colors from logo */
   --brand-purple: #7c3aed;
@@ -71,4 +72,13 @@ p {
 
 .tracking-wide {
   letter-spacing: 0.025em;
+}
+
+/* Custom font classes */
+.font-lora {
+  font-family: var(--font-lora);
+}
+
+.font-inter {
+  font-family: var(--font-primary); /* Inter is the primary font */
 }

@@ -1,16 +1,12 @@
 import React from 'react';
-import {
-  ResourceMetadata,
-  ResourceTags,
-  ResourceTraditions,
-  ResourceLinks,
-  ResourceTeachers,
-  ResourceActions
-} from './sidebar';
+import ResourceDetailSidebarDetails from './sidebar/ResourceDetailSidebarDetails';
+import ResourceDetailSidebarLinks from './sidebar/ResourceDetailSidebarLinks';
+import ResourceDetailSidebarTags from './sidebar/ResourceDetailSidebarTags';
+import ResourceDetailSidebarActions from './sidebar/ResourceDetailSidebarActions';
 
 /**
  * ResourceDetailSidebar component
- * Displays additional information about the resource including tags, traditions, and metadata
+ * Displays additional information about the resource in a sidebar
  * @param {Object} props - Component props
  * @param {Object} props.resource - Resource data object
  */
@@ -18,25 +14,23 @@ const ResourceDetailSidebar = ({ resource }) => {
   if (!resource) return null;
   
   return (
-    <div className="space-y-6">
-      {/* Tags section */}
-      <ResourceTags tags={resource.tags} />
-      
-      {/* Traditions section */}
-      <ResourceTraditions traditions={resource.traditions} />
-      
-      {/* Links section */}
-      <ResourceLinks resource={resource} />
-      
-      {/* Teachers or Notable Guests section */}
-      <ResourceTeachers teachers={resource.teachers} resourceType={resource.type} />
-      
-      {/* Metadata section - Resource Info */}
-      <ResourceMetadata resource={resource} />
-      
-      {/* Sharing and Favorite section */}
-      <ResourceActions resource={resource} />
-    </div>
+    <aside className="w-full">
+      <div className="sticky top-4 space-y-6">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800 p-6">
+          {/* Resource Details Section */}
+          <ResourceDetailSidebarDetails resource={resource} />
+          
+          {/* Resource Links Section */}
+          <ResourceDetailSidebarLinks resource={resource} />
+          
+          {/* Resource Actions Section */}
+          <ResourceDetailSidebarActions resource={resource} />
+          
+          {/* Resource Tags Section */}
+          <ResourceDetailSidebarTags resource={resource} />
+        </div>
+      </div>
+    </aside>
   );
 };
 

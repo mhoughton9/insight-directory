@@ -40,6 +40,8 @@ module.exports = {
       fontFamily: {
         sans: ["var(--font-geist-sans)", "Inter", "Open Sans", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
+        lora: ["'Lora'", "serif"],
+        inter: ["'Inter'", "sans-serif"],
       },
       borderRadius: {
         DEFAULT: "0.375rem", // Medium radius, not pills
