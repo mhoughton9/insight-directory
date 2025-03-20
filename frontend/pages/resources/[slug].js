@@ -96,10 +96,10 @@ export default function ResourceDetail() {
   return (
     <>
       <Head>
-        <title>{resource?.title} | Awakening Resources Directory</title>
-        <meta name="description" content={resource?.description?.substring(0, 160)} />
-        <meta property="og:title" content={`${resource?.title} | Awakening Resources Directory`} />
-        <meta property="og:description" content={resource?.description?.substring(0, 160)} />
+        <title>{resource?.title} | Insight Directory</title>
+        <meta name="description" content={resource?.description || `View details about ${resource?.title}`} />
+        <meta property="og:title" content={`${resource?.title} | Insight Directory`} />
+        <meta property="og:description" content={resource?.description || `View details about ${resource?.title}`} />
         {resource?.imageUrl && <meta property="og:image" content={resource.imageUrl} />}
       </Head>
       

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 /**
  * About Section component for the home page
- * Displays information about the Awakening Directory
+ * Displays information about the Insight Directory
  */
 const AboutSection = () => {
   return (
@@ -19,7 +19,7 @@ const AboutSection = () => {
         <div className="flex justify-center">
           <Link 
             href="/about" 
-            className="px-5 py-2 text-sm bg-gradient-to-r from-brand-purple via-brand-magenta to-brand-orange text-white rounded-md hover:shadow-lg transition-all duration-300 shadow-sm font-medium inline-block"
+            className="px-6 py-3 text-base bg-gradient-to-r from-brand-purple via-brand-magenta to-brand-orange text-white rounded-md hover:shadow-lg transition-all duration-300 shadow-sm font-bold inline-block"
             style={{ background: 'var(--gradient-brand)', fontFamily: 'Inter, sans-serif' }}
           >
             Learn more about us

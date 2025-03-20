@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
             <p className="text-sm text-neutral-500">
-              {new Date().getFullYear()} Awakening Resources Directory
+              {new Date().getFullYear()} Insight Directory
             </p>
           </div>
           <nav className="flex space-x-6">

@@ -87,6 +87,41 @@ export const formatResourceType = (type) => {
 };
 
 /**
+ * Gets the plural form of a resource type for display
+ * @param {string} type - The resource type to format in plural
+ * @returns {string} Plural formatted resource type for display
+ */
+export const getPluralResourceType = (type) => {
+  if (!type) return '';
+  
+  // First get the singular formatted type
+  const formattedType = formatResourceType(type);
+  
+  // Convert to plural form
+  switch (formattedType) {
+    case 'Book':
+      return 'Books';
+    case 'Blog':
+      return 'Blogs';
+    case 'Video Channel':
+      return 'Video Channels';
+    case 'Podcast':
+      return 'Podcasts';
+    case 'Practice':
+      return 'Practices';
+    case 'Retreat Center':
+      return 'Retreat Centers';
+    case 'Website':
+      return 'Websites';
+    case 'App':
+      return 'Apps';
+    default:
+      // Simple pluralization for unknown types (add 's')
+      return `${formattedType}s`;
+  }
+};
+
+/**
  * Gets the appropriate subtitle for a resource based on its type
  * @param {Object} resource - The resource object
  * @returns {string} Formatted subtitle
@@ -99,37 +134,50 @@ export const getResourceSubtitle = (resource) => {
   
   switch (normalizedType) {
     case 'book':
-      return resource.bookDetails?.author ? 
-        `by ${Array.isArray(resource.bookDetails.author) ? resource.bookDetails.author.join(', ') : resource.bookDetails.author}${resource.bookDetails.yearPublished ? ` (${resource.bookDetails.yearPublished})` : ''}` : '';
+      // For Books: Author and Year published
+      if (resource.bookDetails?.author) {
+        const author = Array.isArray(resource.bookDetails.author) ? 
+          resource.bookDetails.author.join(', ') : 
+          resource.bookDetails.author;
+        
+        return resource.bookDetails.yearPublished ? 
+          `${author}, ${resource.bookDetails.yearPublished}` : 
+          author;
+      }
+      return '';
     
     case 'podcast':
-      return resource.podcastDetails?.hosts ? 
-        `hosted by ${Array.isArray(resource.podcastDetails.hosts) ? resource.podcastDetails.hosts.join(', ') : resource.podcastDetails.hosts}` : '';
+      // For Podcast: Hosts
+      if (resource.podcastDetails?.hosts) {
+        return Array.isArray(resource.podcastDetails.hosts) ? 
+          resource.podcastDetails.hosts.join(', ') : 
+          resource.podcastDetails.hosts;
+      }
+      return '';
     
     case 'videoChannel':
-      return resource.videoChannelDetails?.creator ? 
-        `by ${resource.videoChannelDetails.creator}` : '';
+      // For Video Channel: Creator
+      return resource.videoChannelDetails?.creator || '';
     
     case 'website':
-      return resource.websiteDetails?.creator ? 
-        `by ${resource.websiteDetails.creator}` : '';
+      // For Website: Leave as is (minimal info)
+      return '';
     
     case 'blog':
-      return resource.blogDetails?.author ? 
-        `by ${resource.blogDetails.author}` : '';
+      // For Blog: Author
+      return resource.blogDetails?.author || '';
     
     case 'practice':
-      return resource.practiceDetails?.source ? 
-        `Source: ${resource.practiceDetails.source}` : '';
+      // For Practice: Leave as is (minimal info)
+      return '';
     
     case 'retreatCenter':
-      return resource.retreatCenterDetails?.location ? 
-        `Location: ${resource.retreatCenterDetails.location}` : '';
+      // For Retreat Center: Location
+      return resource.retreatCenterDetails?.location || '';
     
     case 'app':
-      return resource.appDetails?.creator ? 
-        `by ${resource.appDetails.creator}${resource.appDetails.price ? ` • ${resource.appDetails.price}` : ''}` : 
-        (resource.appDetails?.price ? `${resource.appDetails.price}` : '');
+      // For App: Creator
+      return resource.appDetails?.creator || '';
     
     default:
       return '';

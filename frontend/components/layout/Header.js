@@ -13,12 +13,12 @@ export default function Header() {
         <Link href="/" className="flex items-center space-x-3">
           <Image 
             src="/images/logo.png" 
-            alt="Awakening Directory Logo" 
+            alt="Insight Directory Logo" 
             width={52} 
             height={52} 
             className="rounded-sm"
           />
-          <span className="font-medium text-2xl" style={{ fontFamily: 'Lora, serif' }}>Awakening Directory</span>
+          <span className="font-medium text-2xl" style={{ fontFamily: 'Lora, serif' }}>Insight Directory</span>
         </Link>
         
         {/* Right Side Navigation and Controls */}
@@ -30,6 +30,13 @@ export default function Header() {
             </Link>
             <Link href="/traditions" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               Traditions
+            </Link>
+            <Link 
+              href="/suggest" 
+              className="px-4 py-2 bg-neutral-800 dark:bg-neutral-700 text-white rounded-md hover:bg-neutral-700 dark:hover:bg-neutral-600 transition-colors"
+              style={{ fontFamily: 'Inter, sans-serif' }}
+            >
+              Suggest a Resource
             </Link>
             <Link href="/about" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               About
@@ -58,6 +65,13 @@ export default function Header() {
             </Link>
             <Link href="/traditions" className="text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
               Traditions
+            </Link>
+            <Link 
+              href="/suggest" 
+              className="inline-block px-4 py-2 bg-neutral-800 dark:bg-neutral-700 text-white rounded-md hover:bg-neutral-700 dark:hover:bg-neutral-600 transition-colors w-fit"
+              style={{ fontFamily: 'Inter, sans-serif' }}
+            >
+              Suggest a Resource
             </Link>
             <Link href="/about" className="text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
               About

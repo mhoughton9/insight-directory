@@ -28,7 +28,7 @@ const ResourceActions = ({ resource }) => {
             if (typeof navigator !== 'undefined' && navigator.share) {
               navigator.share({
                 title: resource.title,
-                text: `Check out ${resource.title} on Awakening Resources Directory`,
+                text: `Check out ${resource.title} on Insight Directory`,
                 url: window.location.href
               });
             } else {

@@ -39,7 +39,16 @@ const resourceController = {
         featured: 1,
         viewCount: 1,
         averageRating: 1,
-        createdAt: 1
+        createdAt: 1,
+        // Include type-specific details
+        bookDetails: 1,
+        podcastDetails: 1,
+        videoChannelDetails: 1,
+        websiteDetails: 1,
+        blogDetails: 1,
+        practiceDetails: 1,
+        retreatCenterDetails: 1,
+        appDetails: 1
       };
       
       // Execute query with pagination and optimization
