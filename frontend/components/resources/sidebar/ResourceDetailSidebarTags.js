@@ -17,11 +17,7 @@ const ResourceDetailSidebarTags = ({ resource }) => {
   if (!hasTags && !hasTraditions && !hasTeachers) return null;
   
   return (
-    <>
-      <h3 className="text-lg font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora border-b border-neutral-100 dark:border-neutral-800 pb-2">
-        Tags
-      </h3>
-      
+    <div>
       {/* Tags */}
       {hasTags && (
         <div className="mb-4">
@@ -75,7 +71,7 @@ const ResourceDetailSidebarTags = ({ resource }) => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

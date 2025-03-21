@@ -8,20 +8,15 @@ const router = express.Router();
  * Base path: /api/users
  */
 
+// Sync user from Clerk
+router.post('/sync', userController.syncUser);
+
 // Profile routes
 router.get('/profile', userController.getUserProfile);
 router.post('/profile', userController.createOrUpdateUser);
 
-// Favorite resources routes
-router.post('/favorites/resources/:resourceId', userController.addResourceToFavorites);
-router.delete('/favorites/resources/:resourceId', userController.removeResourceFromFavorites);
-
-// Favorite teachers routes
-router.post('/favorites/teachers/:teacherId', userController.addTeacherToFavorites);
-router.delete('/favorites/teachers/:teacherId', userController.removeTeacherFromFavorites);
-
-// Favorite traditions routes
-router.post('/favorites/traditions/:traditionId', userController.addTraditionToFavorites);
-router.delete('/favorites/traditions/:traditionId', userController.removeTraditionFromFavorites);
+// Favorites routes - using unified endpoint
+router.get('/favorites', userController.getUserFavorites);
+router.post('/favorites', userController.toggleFavorite);
 
 module.exports = router;

@@ -5,9 +5,11 @@ import Link from 'next/link';
 import ResourceDetailHeader from '../../components/resources/ResourceDetailHeader';
 import ResourceDetailContent from '../../components/resources/ResourceDetailContent';
 import ResourceDetailSidebar from '../../components/resources/ResourceDetailSidebar';
-import ResourceDetailSkeleton from '../../components/resources/ResourceDetailSkeleton';
 import resourcesService from '../../services/api/resources';
 import { normalizeResourceType } from '../../utils/resource-utils';
+import ErrorMessage from '../../components/common/ErrorMessage';
+import LoadingSkeleton from '../../components/common/LoadingSkeleton';
+import * as Typography from '../../components/common/TypographyStyles';
 
 /**
  * ResourceDetailPage component
@@ -21,59 +23,56 @@ const ResourceDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
+  const fetchResource = async () => {
+    try {
+      setLoading(true);
+      const response = await resourcesService.getById(slug);
+      
+      // Extract resource data from the response
+      // API might return { resource: {...} } or the resource directly
+      const resourceData = response.resource || response;
+      
+      if (resourceData) {
+        console.log('Resource loaded:', resourceData.title);
+        setResource(resourceData);
+        setError(null);
+      } else {
+        setError('Resource not found');
+      }
+    } catch (err) {
+      console.error('Error fetching resource:', err);
+      setError(err.message || 'Failed to load resource');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   useEffect(() => {
     // Only fetch the resource when the slug is available
     if (!slug) return;
-    
-    const fetchResource = async () => {
-      try {
-        setLoading(true);
-        const response = await resourcesService.getById(slug);
-        
-        // Extract resource data from the response
-        // API might return { resource: {...} } or the resource directly
-        const resourceData = response.resource || response;
-        
-        if (resourceData) {
-          console.log('Resource loaded:', resourceData.title);
-          setResource(resourceData);
-          setError(null);
-        } else {
-          setError('Resource not found');
-        }
-      } catch (err) {
-        console.error('Error fetching resource:', err);
-        setError(err.message || 'Failed to load resource');
-      } finally {
-        setLoading(false);
-      }
-    };
     
     fetchResource();
   }, [slug]);
   
   // Handle loading state
   if (loading) {
-    return <ResourceDetailSkeleton />;
+    return <LoadingSkeleton type="resource" />;
   }
   
   // Handle error state
   if (error || !resource) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <h1 className="text-3xl font-medium text-neutral-800 dark:text-neutral-200 mb-4 font-lora">
-          Resource Not Found
-        </h1>
-        <p className="text-neutral-600 dark:text-neutral-400 mb-8 font-inter">
-          {error || 'The resource you are looking for does not exist or has been removed.'}
-        </p>
-        <Link 
-          href="/resources"
-          className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-brand-purple hover:bg-brand-purple-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-purple transition-colors font-inter"
-        >
-          Browse Resources
-        </Link>
-      </div>
+      <ErrorMessage
+        title="Resource Not Found"
+        message={error || 'The resource you are looking for does not exist or has been removed.'}
+        linkHref="/resources"
+        linkText="Browse Resources"
+        onRetry={() => {
+          setError(null);
+          setLoading(true);
+          fetchResource();
+        }}
+      />
     );
   }
   
@@ -91,16 +90,16 @@ const ResourceDetailPage = () => {
       <ResourceDetailHeader resource={resource} />
       
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Left Column - Main Content */}
           <div className="w-full lg:w-2/3">
             <ResourceDetailContent resource={resource} />
             
             {/* Comments Section (Placeholder) */}
-            <div className="mt-12 p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
-              <h3 className="text-xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">Comments</h3>
-              <p className="text-neutral-500 dark:text-neutral-400 italic font-inter">Comments feature coming soon...</p>
+            <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
+              <h2 className="text-2xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">Comments</h2>
+              <p className="text-neutral-600 dark:text-neutral-400 italic font-inter">Comments feature coming soon...</p>
             </div>
           </div>
           

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import { MenuIcon } from '../ui/Icons';
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,10 +42,65 @@ export default function Header() {
             <Link href="/about" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               About
             </Link>
+            
+            {/* Authentication UI */}
+            <SignedIn>
+              {/* User is signed in */}
+              <div className="flex items-center space-x-4">
+                <Link 
+                  href="/profile" 
+                  className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  Profile
+                </Link>
+                <UserButton 
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: 'w-10 h-10',
+                    }
+                  }}
+                />
+              </div>
+            </SignedIn>
+            
+            <SignedOut>
+              {/* User is signed out */}
+              <div className="flex items-center space-x-4">
+                <Link 
+                  href="/sign-in" 
+                  className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  Sign in
+                </Link>
+                <Link 
+                  href="/sign-up" 
+                  className="px-4 py-2 bg-neutral-800 dark:bg-neutral-700 text-white rounded-md hover:bg-neutral-700 dark:hover:bg-neutral-600 transition-colors"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  Sign up
+                </Link>
+              </div>
+            </SignedOut>
           </nav>
           
           {/* Mobile Menu Button */}
           <div className="flex items-center">
+            <SignedIn>
+              <div className="md:hidden mr-4">
+                <UserButton 
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: 'w-8 h-8',
+                    }
+                  }}
+                />
+              </div>
+            </SignedIn>
+            
             <button 
               aria-label="Menu" 
               className="p-2 md:hidden text-neutral-700 dark:text-neutral-300"
@@ -76,6 +132,31 @@ export default function Header() {
             <Link href="/about" className="text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
               About
             </Link>
+            
+            <SignedIn>
+              <Link href="/profile" className="text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
+                Profile
+              </Link>
+            </SignedIn>
+            
+            <SignedOut>
+              <div className="flex flex-col space-y-3 pt-2 border-t border-neutral-200 dark:border-neutral-800">
+                <Link 
+                  href="/sign-in" 
+                  className="text-neutral-700 dark:text-neutral-300"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  Sign in
+                </Link>
+                <Link 
+                  href="/sign-up" 
+                  className="inline-block px-4 py-2 bg-neutral-800 dark:bg-neutral-700 text-white rounded-md hover:bg-neutral-700 dark:hover:bg-neutral-600 transition-colors w-fit"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  Sign up
+                </Link>
+              </div>
+            </SignedOut>
           </nav>
         </div>
       )}

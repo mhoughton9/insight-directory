@@ -29,39 +29,19 @@ const ResourceDetailSidebarLinks = ({ resource }) => {
   };
   
   return (
-    <>
-      <h3 className="text-lg font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora border-b border-neutral-100 dark:border-neutral-800 pb-2">
-        Links
-      </h3>
-      <div className="space-y-2">
-        {/* Handle array of link objects */}
-        {hasLinks && resource.links.map((link, index) => {
-          // Skip invalid links
-          if (!link || (!link.url && !link.href)) return null;
-          
-          const url = link.url || link.href;
-          const label = link.label || link.title || formatUrlForDisplay(url);
-          
-          return (
-            <a
-              key={index}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center text-brand-purple hover:text-brand-purple-dark transition-colors group"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2 flex-shrink-0 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-              <span className="font-inter">{label}</span>
-            </a>
-          );
-        })}
+    <div className="space-y-2">
+      {/* Handle array of link objects */}
+      {hasLinks && resource.links.map((link, index) => {
+        // Skip invalid links
+        if (!link || (!link.url && !link.href)) return null;
         
-        {/* Handle single URL string */}
-        {hasUrl && (
+        const url = link.url || link.href;
+        const label = link.label || link.title || formatUrlForDisplay(url);
+        
+        return (
           <a
-            href={resource.url}
+            key={index}
+            href={url}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center text-brand-purple hover:text-brand-purple-dark transition-colors group"
@@ -69,30 +49,45 @@ const ResourceDetailSidebarLinks = ({ resource }) => {
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2 flex-shrink-0 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
-            <span className="font-inter">
-              {formatUrlForDisplay(resource.url)}
-            </span>
+            <span className="font-inter">{label}</span>
           </a>
-        )}
-        
-        {/* Handle websiteUrl property */}
-        {hasWebsiteUrl && (
-          <a
-            href={resource.websiteUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center text-brand-purple hover:text-brand-purple-dark transition-colors group"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2 flex-shrink-0 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-            <span className="font-inter">
-              {formatUrlForDisplay(resource.websiteUrl)}
-            </span>
-          </a>
-        )}
-      </div>
-    </>
+        );
+      })}
+      
+      {/* Handle direct URL property */}
+      {hasUrl && !hasLinks && (
+        <a
+          href={resource.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center text-brand-purple hover:text-brand-purple-dark transition-colors group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2 flex-shrink-0 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          <span className="font-inter">
+            {formatUrlForDisplay(resource.url)}
+          </span>
+        </a>
+      )}
+      
+      {/* Handle website URL property */}
+      {hasWebsiteUrl && !hasLinks && !hasUrl && (
+        <a
+          href={resource.websiteUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center text-brand-purple hover:text-brand-purple-dark transition-colors group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2 flex-shrink-0 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          <span className="font-inter">
+            {formatUrlForDisplay(resource.websiteUrl)}
+          </span>
+        </a>
+      )}
+    </div>
   );
 };
 

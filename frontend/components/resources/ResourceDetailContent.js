@@ -1,4 +1,5 @@
 import React from 'react';
+import * as Typography from '../common/TypographyStyles';
 import { normalizeResourceType } from '../../utils/resource-utils';
 
 /**
@@ -10,38 +11,37 @@ import { normalizeResourceType } from '../../utils/resource-utils';
 const ResourceDetailContent = ({ resource }) => {
   if (!resource) return null;
   
-  // Format the description with proper paragraphs
-  const formatDescription = (text) => {
-    if (!text) return null;
-    
-    return text.split('\n').map((paragraph, index) => (
-      <p key={index} className="mb-4 last:mb-0 font-inter text-neutral-700 dark:text-neutral-300">
-        {paragraph}
-      </p>
-    ));
-  };
-  
   return (
-    <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800 p-6">
-      <div className="prose prose-neutral dark:prose-invert max-w-none">
-        {/* Description section */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">About this {normalizeResourceType(resource.type)}</h2>
-          <div>
-            {formatDescription(resource.description)}
+    <div className={Typography.cardContainer}>
+      <div className="mb-6 md:mb-8">
+        <h2 className={Typography.sectionHeading}>
+          About this {normalizeResourceType(resource.type)}
+        </h2>
+        
+        <div className="prose prose-neutral dark:prose-invert max-w-none">
+          {resource.description ? (
+            resource.description.split('\n').map((paragraph, index) => (
+              <p key={index} className={`${Typography.bodyText} mb-4 last:mb-0`}>{paragraph}</p>
+            ))
+          ) : (
+            <p className={Typography.emptyStateText}>
+              No detailed description available for this resource.
+            </p>
+          )}
+        </div>
+      </div>
+      
+      {/* Additional content section - if present */}
+      {resource.content && (
+        <div className="mt-6 md:mt-8">
+          <h2 className={Typography.sectionHeading}>Content</h2>
+          <div className="prose prose-neutral dark:prose-invert max-w-none">
+            {resource.content.split('\n').map((paragraph, index) => (
+              <p key={index} className={`${Typography.bodyText} mb-4 last:mb-0`}>{paragraph}</p>
+            ))}
           </div>
         </div>
-        
-        {/* Additional content section - if present */}
-        {resource.content && (
-          <div className="mt-8">
-            <h2 className="text-2xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">Content</h2>
-            <div>
-              {formatDescription(resource.content)}
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 };
