@@ -15,6 +15,10 @@ const traditionSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Tradition description is required']
     },
+    descriptionFull: {
+      type: String,
+      trim: true
+    },
     origin: {
       type: String,
       trim: true

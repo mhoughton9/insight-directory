@@ -15,20 +15,30 @@ const ResourceDetailSidebar = ({ resource }) => {
   
   return (
     <aside className="w-full">
-      <div className="sticky top-4 space-y-6">
+      <div className="sticky top-4 space-y-4">
+        {/* Resource Details Section */}
         <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800 p-6">
-          {/* Resource Details Section */}
           <ResourceDetailSidebarDetails resource={resource} />
-          
-          {/* Resource Links Section */}
-          <ResourceDetailSidebarLinks resource={resource} />
-          
-          {/* Resource Actions Section */}
-          <ResourceDetailSidebarActions resource={resource} />
-          
-          {/* Resource Tags Section */}
-          <ResourceDetailSidebarTags resource={resource} />
         </div>
+        
+        {/* Resource Links Section */}
+        {(resource.links?.length > 0 || resource.url || resource.websiteUrl) && (
+          <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800 p-6">
+            <ResourceDetailSidebarLinks resource={resource} />
+          </div>
+        )}
+        
+        {/* Resource Actions Section */}
+        <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800 p-6">
+          <ResourceDetailSidebarActions resource={resource} />
+        </div>
+        
+        {/* Resource Tags Section */}
+        {(resource.tags?.length > 0 || resource.traditions?.length > 0 || resource.teachers?.length > 0) && (
+          <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800 p-6">
+            <ResourceDetailSidebarTags resource={resource} />
+          </div>
+        )}
       </div>
     </aside>
   );

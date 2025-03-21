@@ -15,17 +15,33 @@ const teacherSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Teacher biography is required']
     },
+    biographyFull: {
+      type: String,
+      default: function() {
+        return this.biography; // Default to the short bio if full bio isn't provided
+      }
+    },
     birthDate: {
       type: Date
     },
     deathDate: {
       type: Date
     },
+    birthYear: {
+      type: Number
+    },
+    deathYear: {
+      type: Number
+    },
     country: {
       type: String,
       trim: true
     },
     keyTeachings: [{
+      type: String,
+      trim: true
+    }],
+    notableTeachings: [{
       type: String,
       trim: true
     }],
@@ -44,6 +60,10 @@ const teacherSchema = new mongoose.Schema(
       type: String,
       trim: true
     },
+    links: [{
+      url: String,
+      label: String
+    }],
     traditions: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Tradition'

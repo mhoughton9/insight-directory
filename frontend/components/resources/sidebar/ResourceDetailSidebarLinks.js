@@ -29,11 +29,11 @@ const ResourceDetailSidebarLinks = ({ resource }) => {
   };
   
   return (
-    <div className="font-inter mb-6">
+    <>
       <h3 className="text-lg font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora border-b border-neutral-100 dark:border-neutral-800 pb-2">
         Links
       </h3>
-      <div className="space-y-2 mt-3">
+      <div className="space-y-2">
         {/* Handle array of link objects */}
         {hasLinks && resource.links.map((link, index) => {
           // Skip invalid links
@@ -92,7 +92,7 @@ const ResourceDetailSidebarLinks = ({ resource }) => {
           </a>
         )}
       </div>
-    </div>
+    </>
   );
 };
 

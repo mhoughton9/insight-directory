@@ -10,11 +10,11 @@ const ResourceDetailSidebarActions = ({ resource }) => {
   if (!resource) return null;
   
   return (
-    <div className="font-inter mb-6">
+    <>
       <h3 className="text-lg font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora border-b border-neutral-100 dark:border-neutral-800 pb-2">
         Actions
       </h3>
-      <div className="space-y-2 mt-3">
+      <div className="space-y-2">
         <button 
           className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors font-inter"
           aria-label="Add to favorites"
@@ -35,7 +35,7 @@ const ResourceDetailSidebarActions = ({ resource }) => {
           <span className="font-inter">Share</span>
         </button>
       </div>
-    </div>
+    </>
   );
 };
 
