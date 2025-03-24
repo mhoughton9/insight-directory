@@ -1,4 +1,6 @@
 const { User, Resource, Teacher, Tradition } = require('../models');
+const apiResponse = require('../utils/api-response');
+const favoritesService = require('../services/favorites-service');
 
 /**
  * User controller for handling user-related operations
@@ -14,10 +16,12 @@ const userController = {
       const { clerkId } = req;
       
       if (!clerkId) {
-        return res.status(400).json({
-          success: false,
-          message: 'Clerk ID is required'
-        });
+        return res.status(400).json(
+          apiResponse.error({
+            statusCode: 400,
+            message: 'Clerk ID is required'
+          })
+        );
       }
       
       // Find user by Clerk ID
@@ -27,23 +31,28 @@ const userController = {
         .populate('favoriteTraditions', 'name slug');
       
       if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: 'User not found'
-        });
+        return res.status(404).json(
+          apiResponse.error({
+            statusCode: 404,
+            message: 'User not found'
+          })
+        );
       }
       
-      res.status(200).json({
-        success: true,
-        user
-      });
+      res.status(200).json(
+        apiResponse.success({
+          message: 'User profile retrieved successfully',
+          data: { user }
+        })
+      );
     } catch (error) {
       console.error('Error getting user profile:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Error retrieving user profile',
-        error: error.message
-      });
+      res.status(500).json(
+        apiResponse.error({
+          message: 'Error retrieving user profile',
+          error: error.message
+        })
+      );
     }
   },
   
@@ -56,10 +65,12 @@ const userController = {
       const userData = req.body;
       
       if (!userData.clerkId) {
-        return res.status(400).json({
-          success: false,
-          message: 'Clerk ID is required'
-        });
+        return res.status(400).json(
+          apiResponse.error({
+            statusCode: 400,
+            message: 'Clerk ID is required'
+          })
+        );
       }
       
       // Check if user exists
@@ -73,28 +84,33 @@ const userController = {
           { new: true, runValidators: true }
         );
         
-        return res.status(200).json({
-          success: true,
-          message: 'User profile updated successfully',
-          user
-        });
+        return res.status(200).json(
+          apiResponse.success({
+            message: 'User profile updated successfully',
+            data: { user }
+          })
+        );
       } else {
         // Create new user
         user = await User.create(userData);
         
-        return res.status(201).json({
-          success: true,
-          message: 'User profile created successfully',
-          user
-        });
+        return res.status(201).json(
+          apiResponse.success({
+            statusCode: 201,
+            message: 'User profile created successfully',
+            data: { user }
+          })
+        );
       }
     } catch (error) {
       console.error('Error creating/updating user profile:', error);
-      res.status(400).json({
-        success: false,
-        message: 'Error creating/updating user profile',
-        error: error.message
-      });
+      res.status(400).json(
+        apiResponse.error({
+          statusCode: 400,
+          message: 'Error creating/updating user profile',
+          error: error.message
+        })
+      );
     }
   },
 
@@ -106,46 +122,53 @@ const userController = {
     try {
       const userData = req.body;
       
-      if (!userData.clerkId || !userData.email) {
-        return res.status(400).json({
-          success: false,
-          message: 'Clerk ID and email are required'
-        });
+      if (!userData.clerkId) {
+        return res.status(400).json(
+          apiResponse.error({
+            statusCode: 400,
+            message: 'Clerk ID is required'
+          })
+        );
       }
       
       // Check if user exists
       let user = await User.findOne({ clerkId: userData.clerkId });
       
       if (user) {
-        // Update existing user
+        // Update existing user with any new data
         user = await User.findOneAndUpdate(
           { clerkId: userData.clerkId },
           userData,
           { new: true, runValidators: true }
         );
         
-        return res.status(200).json({
-          success: true,
-          message: 'User synced successfully',
-          user
-        });
+        return res.status(200).json(
+          apiResponse.success({
+            message: 'User synced successfully',
+            data: { user }
+          })
+        );
       } else {
         // Create new user
         user = await User.create(userData);
         
-        return res.status(201).json({
-          success: true,
-          message: 'User created successfully',
-          user
-        });
+        return res.status(201).json(
+          apiResponse.success({
+            statusCode: 201,
+            message: 'User created successfully',
+            data: { user }
+          })
+        );
       }
     } catch (error) {
       console.error('Error syncing user:', error);
-      res.status(400).json({
-        success: false,
-        message: 'Error syncing user',
-        error: error.message
-      });
+      res.status(400).json(
+        apiResponse.error({
+          statusCode: 400,
+          message: 'Error syncing user',
+          error: error.message
+        })
+      );
     }
   },
   
@@ -154,42 +177,22 @@ const userController = {
    * @route GET /api/users/favorites
    */
   getUserFavorites: async (req, res) => {
-    try {
-      const { clerkId } = req;
-      
-      if (!clerkId) {
-        return res.status(400).json({
-          success: false,
-          message: 'User ID is required'
-        });
-      }
-
-      // Find user by clerkId
-      const user = await User.findOne({ clerkId });
-
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: 'User not found'
-        });
-      }
-
-      // Return user favorites
-      return res.status(200).json({
-        success: true,
-        favorites: {
-          resources: user.favoriteResources || [],
-          teachers: user.favoriteTeachers || [],
-          traditions: user.favoriteTraditions || []
-        }
-      });
-    } catch (error) {
-      console.error('Error getting user favorites:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Failed to get user favorites'
-      });
-    }
+    const { clerkId } = req;
+    const result = await favoritesService.getUserFavorites(clerkId);
+    
+    return res.status(result.statusCode || (result.success ? 200 : 500)).json(
+      result.success 
+        ? {
+            success: true,
+            message: 'Favorites retrieved successfully',
+            favorites: result.favorites
+          }
+        : apiResponse.error({
+            statusCode: result.statusCode,
+            message: result.message,
+            error: result.error
+          })
+    );
   },
   
   /**
@@ -197,114 +200,25 @@ const userController = {
    * @route POST /api/users/favorites
    */
   toggleFavorite: async (req, res) => {
-    try {
-      const { clerkId, type, id } = req.body;
-      let { action } = req.body;
-
-      console.log('Toggle favorite request:', { clerkId, type, id, action });
-
-      // Validate required fields
-      if (!clerkId) {
-        return res.status(400).json({
-          success: false,
-          message: 'User ID is required'
-        });
-      }
-
-      if (!type || !id) {
-        return res.status(400).json({
-          success: false,
-          message: 'Type and ID are required'
-        });
-      }
-
-      // Validate type
-      const validTypes = ['resource', 'teacher', 'tradition'];
-      if (!validTypes.includes(type)) {
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid type'
-        });
-      }
-
-      // Find user by clerkId
-      let user = await User.findOne({ clerkId });
-
-      // If user doesn't exist, create a new one
-      if (!user) {
-        user = new User({
-          clerkId,
-          favoriteResources: [],
-          favoriteTeachers: [],
-          favoriteTraditions: []
-        });
-      }
-
-      // Determine which array to update based on type
-      let arrayField;
-      switch (type) {
-        case 'resource':
-          arrayField = 'favoriteResources';
-          break;
-        case 'teacher':
-          arrayField = 'favoriteTeachers';
-          break;
-        case 'tradition':
-          arrayField = 'favoriteTraditions';
-          break;
-      }
-
-      // If action is not specified, determine it based on current state
-      if (!action) {
-        action = user[arrayField].includes(id) ? 'remove' : 'add';
-      }
-
-      // Validate action
-      if (action !== 'add' && action !== 'remove') {
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid action'
-        });
-      }
-
-      // Update the array based on action
-      if (action === 'add') {
-        // Add to favorites if not already there
-        if (!user[arrayField].includes(id)) {
-          user[arrayField].push(id);
-        }
-      } else {
-        // Remove from favorites
-        user[arrayField] = user[arrayField].filter(itemId => String(itemId) !== String(id));
-      }
-
-      // Save the updated user
-      await user.save();
-
-      console.log('Updated user favorites:', {
-        resources: user.favoriteResources,
-        teachers: user.favoriteTeachers,
-        traditions: user.favoriteTraditions
-      });
-
-      // Return updated favorites
-      return res.status(200).json({
-        success: true,
-        message: `Favorite ${action === 'add' ? 'added' : 'removed'} successfully`,
-        favorites: {
-          resources: user.favoriteResources || [],
-          teachers: user.favoriteTeachers || [],
-          traditions: user.favoriteTraditions || []
-        }
-      });
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Failed to update favorite',
-        error: error.message
-      });
-    }
+    const { clerkId, type, id, action } = req.body;
+    
+    console.log('Toggle favorite request:', { clerkId, type, id, action });
+    
+    const result = await favoritesService.toggleFavorite({ clerkId, type, id, action });
+    
+    return res.status(result.statusCode || (result.success ? 200 : 500)).json(
+      result.success 
+        ? {
+            success: true,
+            message: result.message,
+            favorites: result.favorites
+          }
+        : apiResponse.error({
+            statusCode: result.statusCode,
+            message: result.message,
+            error: result.error
+          })
+    );
   }
 };
 

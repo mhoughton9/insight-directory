@@ -296,7 +296,7 @@ const TeacherDetailPage = () => {
                         {/* Icon based on link type */}
                         {link.type === 'website' && (
                           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                           </svg>
                         )}
                         {link.type === 'youtube' && (
@@ -322,12 +322,15 @@ const TeacherDetailPage = () => {
                 Actions
               </h2>
               <div className="space-y-3">
-                <FavoriteButton 
-                  type="teacher" 
-                  id={teacher._id} 
-                  className="w-full"
-                  showText={true}
-                />
+                <button className="w-full py-2 px-4 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors flex items-center justify-center font-inter">
+                  <FavoriteButton 
+                    type="teacher" 
+                    id={teacher._id} 
+                    size="default"
+                    showText={true}
+                    className="flex items-center justify-center w-full"
+                  />
+                </button>
               </div>
             </div>
             
