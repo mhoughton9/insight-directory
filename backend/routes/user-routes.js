@@ -1,5 +1,6 @@
 const express = require('express');
 const userController = require('../controllers/user-controller');
+const authMiddleware = require('../middleware/auth-middleware');
 
 const router = express.Router();
 
@@ -8,15 +9,15 @@ const router = express.Router();
  * Base path: /api/users
  */
 
-// Sync user from Clerk
-router.post('/sync', userController.syncUser);
+// Sync user from Clerk - requires authentication
+router.post('/sync', authMiddleware, userController.syncUser);
 
 // Profile routes
 router.get('/profile', userController.getUserProfile);
 router.post('/profile', userController.createOrUpdateUser);
 
-// Favorites routes - using unified endpoint
-router.get('/favorites', userController.getUserFavorites);
-router.post('/favorites', userController.toggleFavorite);
+// Favorites routes - using unified endpoint with authentication
+router.get('/favorites', authMiddleware, userController.getUserFavorites);
+router.post('/favorites', authMiddleware, userController.toggleFavorite);
 
 module.exports = router;

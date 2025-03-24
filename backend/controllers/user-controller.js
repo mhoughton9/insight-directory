@@ -11,7 +11,7 @@ const userController = {
   getUserProfile: async (req, res) => {
     try {
       // The user ID would come from the authenticated user via Clerk
-      const { clerkId } = req.query;
+      const { clerkId } = req;
       
       if (!clerkId) {
         return res.status(400).json({
@@ -155,27 +155,27 @@ const userController = {
    */
   getUserFavorites: async (req, res) => {
     try {
-      const { clerkId } = req.query;
+      const { clerkId } = req;
       
       if (!clerkId) {
         return res.status(400).json({
           success: false,
-          message: 'Clerk ID is required'
+          message: 'User ID is required'
         });
       }
-      
-      // Find user by Clerk ID
+
+      // Find user by clerkId
       const user = await User.findOne({ clerkId });
-      
+
       if (!user) {
         return res.status(404).json({
           success: false,
           message: 'User not found'
         });
       }
-      
-      // Return favorites
-      res.status(200).json({
+
+      // Return user favorites
+      return res.status(200).json({
         success: true,
         favorites: {
           resources: user.favoriteResources || [],
@@ -185,10 +185,9 @@ const userController = {
       });
     } catch (error) {
       console.error('Error getting user favorites:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
-        message: 'Error retrieving user favorites',
-        error: error.message
+        message: 'Failed to get user favorites'
       });
     }
   },
@@ -199,83 +198,99 @@ const userController = {
    */
   toggleFavorite: async (req, res) => {
     try {
-      const { clerkId, type, id, action } = req.body;
-      
-      if (!clerkId || !type || !id || !action) {
+      const { clerkId, type, id } = req.body;
+      let { action } = req.body;
+
+      console.log('Toggle favorite request:', { clerkId, type, id, action });
+
+      // Validate required fields
+      if (!clerkId) {
         return res.status(400).json({
           success: false,
-          message: 'Missing required fields: clerkId, type, id, or action'
+          message: 'User ID is required'
         });
       }
-      
-      if (!['add', 'remove'].includes(action)) {
+
+      if (!type || !id) {
         return res.status(400).json({
           success: false,
-          message: 'Action must be either "add" or "remove"'
+          message: 'Type and ID are required'
         });
       }
-      
+
       // Validate type
-      if (!['resource', 'teacher', 'tradition'].includes(type)) {
+      const validTypes = ['resource', 'teacher', 'tradition'];
+      if (!validTypes.includes(type)) {
         return res.status(400).json({
           success: false,
-          message: 'Type must be one of: resource, teacher, tradition'
+          message: 'Invalid type'
         });
       }
-      
-      // Determine which field to update based on type
-      let fieldToUpdate;
-      let modelToCheck;
-      
+
+      // Find user by clerkId
+      let user = await User.findOne({ clerkId });
+
+      // If user doesn't exist, create a new one
+      if (!user) {
+        user = new User({
+          clerkId,
+          favoriteResources: [],
+          favoriteTeachers: [],
+          favoriteTraditions: []
+        });
+      }
+
+      // Determine which array to update based on type
+      let arrayField;
       switch (type) {
         case 'resource':
-          fieldToUpdate = 'favoriteResources';
-          modelToCheck = Resource;
+          arrayField = 'favoriteResources';
           break;
         case 'teacher':
-          fieldToUpdate = 'favoriteTeachers';
-          modelToCheck = Teacher;
+          arrayField = 'favoriteTeachers';
           break;
         case 'tradition':
-          fieldToUpdate = 'favoriteTraditions';
-          modelToCheck = Tradition;
+          arrayField = 'favoriteTraditions';
           break;
       }
-      
-      // Check if the item exists
-      const itemExists = await modelToCheck.exists({ _id: id });
-      
-      if (!itemExists) {
-        return res.status(404).json({
+
+      // If action is not specified, determine it based on current state
+      if (!action) {
+        action = user[arrayField].includes(id) ? 'remove' : 'add';
+      }
+
+      // Validate action
+      if (action !== 'add' && action !== 'remove') {
+        return res.status(400).json({
           success: false,
-          message: `${type.charAt(0).toUpperCase() + type.slice(1)} not found`
+          message: 'Invalid action'
         });
       }
-      
-      // Find user by Clerk ID
-      let user = await User.findOne({ clerkId });
-      
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: 'User not found'
-        });
+
+      // Update the array based on action
+      if (action === 'add') {
+        // Add to favorites if not already there
+        if (!user[arrayField].includes(id)) {
+          user[arrayField].push(id);
+        }
+      } else {
+        // Remove from favorites
+        user[arrayField] = user[arrayField].filter(itemId => String(itemId) !== String(id));
       }
-      
-      // Update operation based on action
-      const updateOperation = action === 'add' ? { $addToSet: { [fieldToUpdate]: id } } : { $pull: { [fieldToUpdate]: id } };
-      
-      // Update user favorites
-      user = await User.findOneAndUpdate(
-        { clerkId },
-        updateOperation,
-        { new: true }
-      );
-      
+
+      // Save the updated user
+      await user.save();
+
+      console.log('Updated user favorites:', {
+        resources: user.favoriteResources,
+        teachers: user.favoriteTeachers,
+        traditions: user.favoriteTraditions
+      });
+
       // Return updated favorites
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
-        message: `${type} ${action === 'add' ? 'added to' : 'removed from'} favorites`,
+        message: `Favorite ${action === 'add' ? 'added' : 'removed'} successfully`,
         favorites: {
           resources: user.favoriteResources || [],
           teachers: user.favoriteTeachers || [],
@@ -284,9 +299,9 @@ const userController = {
       });
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
-        message: 'Error toggling favorite',
+        message: 'Failed to update favorite',
         error: error.message
       });
     }

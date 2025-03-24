@@ -5,22 +5,59 @@ const { Tradition, Teacher, Resource } = require('../models');
  */
 const traditionController = {
   /**
-   * Get all traditions
+   * Get all traditions with optional filtering and pagination
    * @route GET /api/traditions
+   * @access Public
    */
   getAllTraditions: async (req, res) => {
     try {
-      const { limit = 20, page = 1 } = req.query;
+      const { page = 1, limit = 20, featured, ids } = req.query;
       const skip = (page - 1) * limit;
       
-      // Execute query with pagination
-      const traditions = await Tradition.find()
-        .sort({ name: 1 })
-        .skip(skip)
-        .limit(parseInt(limit));
+      // Build filter object based on query parameters
+      const filter = {};
+      
+      // Handle multiple IDs for fetching favorites
+      if (ids) {
+        try {
+          const idArray = ids.split(',').map(id => id.trim());
+          console.log('Fetching traditions with IDs:', idArray);
+          filter._id = { $in: idArray };
+          // When fetching by IDs, ignore pagination limits
+        } catch (error) {
+          console.error('Error processing IDs parameter:', error);
+        }
+      }
+      
+      if (featured === 'true') filter.featured = true;
+      
+      // Define projection to select only needed fields
+      const projection = {
+        name: 1,
+        description: 1,
+        imageUrl: 1,
+        slug: 1,
+        featured: 1,
+        createdAt: 1
+      };
+      
+      // If we're fetching by IDs, use a different query flow without pagination
+      let traditions;
+      if (ids) {
+        traditions = await Tradition.find(filter, projection)
+          .sort({ name: 1 })
+          .lean(); // Use lean for better performance
+      } else {
+        // Execute query with pagination and optimization
+        traditions = await Tradition.find(filter, projection)
+          .sort({ name: 1 })
+          .skip(skip)
+          .limit(parseInt(limit))
+          .lean(); // Use lean for better performance
+      }
       
       // Get total count for pagination
-      const total = await Tradition.countDocuments();
+      const total = await Tradition.countDocuments(filter);
       
       res.status(200).json({
         success: true,

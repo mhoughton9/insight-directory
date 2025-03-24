@@ -75,8 +75,15 @@ export const UserProvider = ({ children }) => {
     if (!isSignedIn || !user) return;
 
     try {
+      // Get the Clerk JWT token
+      const token = await getToken();
+      
       console.log('Fetching favorites for user:', user.id);
-      const response = await fetch(`/api/users/favorites?clerkId=${user.id}`);
+      const response = await fetch(`/api/users/favorites?clerkId=${user.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       
       if (response.ok) {
         const data = await response.json();
@@ -107,34 +114,27 @@ export const UserProvider = ({ children }) => {
   // Create a unique key for each toggle operation
   const getToggleKey = (type, id) => `${type}-${id}`;
 
-  // Debounced toggle favorite implementation
-  const toggleFavorite = useCallback(async (type, id, action) => {
-    if (!isSignedIn || !user) return false;
-
-    // Create a unique key for this toggle operation
-    const toggleKey = getToggleKey(type, id);
-    
-    // Determine action if not provided
-    if (!action) {
-      const typeKey = `${type}s`; // Convert 'resource' to 'resources', etc.
-      const isFavorited = favorites[typeKey]?.includes(id) || false;
-      action = isFavorited ? 'remove' : 'add';
-    }
-
-    // If there's already a pending operation for this item, cancel it
-    if (pendingToggles.current[toggleKey]) {
-      console.log('Cancelling pending toggle operation for:', toggleKey);
-      pendingToggles.current[toggleKey] = null;
-      
-      // Update UI to show we're processing the new request
-      setPendingRequests(prev => ({
-        ...prev,
-        [toggleKey]: true
-      }));
-      
+  /**
+   * Toggle favorite status for a resource, teacher, or tradition
+   * @param {string} type - Type of item (resource, teacher, tradition)
+   * @param {string} id - ID of the item
+   * @returns {Promise<boolean>} - Success status
+   */
+  const toggleFavorite = useCallback(async (type, id) => {
+    if (!isSignedIn || !user) {
+      console.error('User not signed in');
       return false;
     }
-
+    
+    // Create a unique key for this toggle operation
+    const toggleKey = `${type}-${id}`;
+    
+    // Check if this toggle is already in progress
+    if (pendingToggles.current[toggleKey]) {
+      console.log('Toggle already in progress for:', toggleKey);
+      return false;
+    }
+    
     try {
       // Mark this toggle as pending
       pendingToggles.current[toggleKey] = true;
@@ -143,16 +143,24 @@ export const UserProvider = ({ children }) => {
         [toggleKey]: true
       }));
 
+      // Store the original favorites state before optimistic update
+      const originalFavorites = JSON.parse(JSON.stringify(favorites));
+      
+      // Determine if we're adding or removing based on current state
+      const typeKey = `${type}s`; // Convert 'resource' to 'resources', etc.
+      // Convert both to strings when checking inclusion
+      const isFavorited = favorites[typeKey] && favorites[typeKey].some(itemId => String(itemId) === String(id));
+      const action = isFavorited ? 'remove' : 'add';
+      
       // Optimistically update UI
       const currentFavorites = {...favorites};
-      const typeKey = `${type}s`; // Convert 'resource' to 'resources', etc.
       
       if (action === 'remove') {
-        // Remove from favorites
-        currentFavorites[typeKey] = currentFavorites[typeKey].filter(itemId => itemId !== id);
+        // Remove from favorites using string comparison
+        currentFavorites[typeKey] = currentFavorites[typeKey].filter(itemId => String(itemId) !== String(id));
       } else {
         // Add to favorites
-        if (!currentFavorites[typeKey].includes(id)) {
+        if (!currentFavorites[typeKey].some(itemId => String(itemId) === String(id))) {
           currentFavorites[typeKey] = [...currentFavorites[typeKey], id];
         }
       }
@@ -161,11 +169,15 @@ export const UserProvider = ({ children }) => {
 
       console.log('Toggling favorite:', { type, id, action, clerkId: user.id });
       
+      // Get the Clerk JWT token
+      const token = await getToken();
+      
       // Send to API
       const response = await fetch('/api/users/favorites', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
         },
         body: JSON.stringify({
           clerkId: user.id,
@@ -176,27 +188,36 @@ export const UserProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        console.error('Error response from API:', await response.text());
-        // Revert on error
-        setFavorites({...favorites});
-        return false;
+        // Get error details from response
+        const errorData = await response.json();
+        console.error('Error response from API:', errorData);
+        
+        // Revert to original state on error
+        setFavorites(originalFavorites);
+        
+        throw new Error(errorData.message || 'Failed to update favorite status');
       }
       
       const data = await response.json();
       console.log('Toggle favorite response:', data);
       
       // Update favorites from the server response to ensure consistency
-      setFavorites(data.favorites || {
-        resources: [],
-        teachers: [],
-        traditions: []
-      });
-
-      return true;
+      if (data.success && data.favorites) {
+        setFavorites(data.favorites);
+        
+        // Dispatch a custom event to notify all components that favorites have changed
+        const event = new CustomEvent('favorites-changed', { detail: data.favorites });
+        window.dispatchEvent(event);
+        
+        return true;
+      } else {
+        // If the response doesn't include favorites or indicates failure
+        setFavorites(originalFavorites);
+        throw new Error(data.message || 'Failed to update favorite status');
+      }
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      // Revert on error
-      setFavorites({...favorites});
+      // Return false but don't throw so the component can handle it gracefully
       return false;
     } finally {
       // Clean up pending state
@@ -206,12 +227,12 @@ export const UserProvider = ({ children }) => {
         [toggleKey]: false
       }));
     }
-  }, [isSignedIn, user, favorites]);
+  }, [isSignedIn, user, favorites, getToken]);
 
   // Check if an item is favorited
   const isItemFavorited = useCallback((type, id) => {
     const typeKey = `${type}s`; // Convert 'resource' to 'resources', etc.
-    return favorites[typeKey]?.includes(id) || false;
+    return favorites[typeKey]?.some(itemId => String(itemId) === String(id)) || false;
   }, [favorites]);
   
   // Check if there's a pending request for an item

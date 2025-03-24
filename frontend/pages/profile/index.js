@@ -17,14 +17,23 @@ const ProfilePage = () => {
     const fetchFavoriteItems = async () => {
       if (!favorites) return;
 
+      console.log('Fetching favorite items with:', {
+        resources: favorites.resources,
+        teachers: favorites.teachers,
+        traditions: favorites.traditions
+      });
+
       try {
         // Fetch favorite resources
         if (favorites.resources?.length > 0) {
           const resourcesResponse = await fetch(`/api/resources?ids=${favorites.resources.join(',')}`);
           if (resourcesResponse.ok) {
             const data = await resourcesResponse.json();
+            console.log('Received resources data:', data);
             setFavoriteResources(data.resources || []);
           }
+        } else {
+          setFavoriteResources([]);
         }
 
         // Fetch favorite teachers
@@ -32,8 +41,11 @@ const ProfilePage = () => {
           const teachersResponse = await fetch(`/api/teachers?ids=${favorites.teachers.join(',')}`);
           if (teachersResponse.ok) {
             const data = await teachersResponse.json();
+            console.log('Received teachers data:', data);
             setFavoriteTeachers(data.teachers || []);
           }
+        } else {
+          setFavoriteTeachers([]);
         }
 
         // Fetch favorite traditions
@@ -41,16 +53,33 @@ const ProfilePage = () => {
           const traditionsResponse = await fetch(`/api/traditions?ids=${favorites.traditions.join(',')}`);
           if (traditionsResponse.ok) {
             const data = await traditionsResponse.json();
+            console.log('Received traditions data:', data);
             setFavoriteTraditions(data.traditions || []);
           }
+        } else {
+          setFavoriteTraditions([]);
         }
       } catch (error) {
         console.error('Error fetching favorite items:', error);
       }
     };
 
+    // Initial fetch when component mounts or favorites change
     fetchFavoriteItems();
-  }, [favorites]);
+    
+    // Set up listener for the custom favorites-changed event
+    const handleFavoritesChanged = (event) => {
+      console.log('Favorites changed event received in profile:', event.detail);
+      fetchFavoriteItems();
+    };
+    
+    window.addEventListener('favorites-changed', handleFavoritesChanged);
+    
+    // Clean up event listener on component unmount
+    return () => {
+      window.removeEventListener('favorites-changed', handleFavoritesChanged);
+    };
+  }, [favorites]); // React to changes in favorites
 
   return (
     <ProtectedRoute>

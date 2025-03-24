@@ -5,25 +5,62 @@ const { Teacher, Resource } = require('../models');
  */
 const teacherController = {
   /**
-   * Get all teachers with optional filtering
+   * Get all teachers with optional filtering and pagination
    * @route GET /api/teachers
+   * @access Public
    */
   getAllTeachers: async (req, res) => {
     try {
-      const { tradition, limit = 20, page = 1 } = req.query;
+      const { page = 1, limit = 10, tradition, featured, ids } = req.query;
       const skip = (page - 1) * limit;
       
       // Build filter object based on query parameters
       const filter = {};
       
-      if (tradition) filter.traditions = tradition;
+      // Handle multiple IDs for fetching favorites
+      if (ids) {
+        try {
+          const idArray = ids.split(',').map(id => id.trim());
+          console.log('Fetching teachers with IDs:', idArray);
+          filter._id = { $in: idArray };
+          // When fetching by IDs, ignore pagination limits
+        } catch (error) {
+          console.error('Error processing IDs parameter:', error);
+        }
+      }
       
-      // Execute query with pagination
-      const teachers = await Teacher.find(filter)
-        .populate('traditions', 'name slug')
-        .sort({ name: 1 })
-        .skip(skip)
-        .limit(parseInt(limit));
+      if (tradition) filter.traditions = tradition;
+      if (featured === 'true') filter.featured = true;
+      
+      // Define projection to select only needed fields
+      const projection = {
+        name: 1,
+        bio: 1,
+        imageUrl: 1,
+        slug: 1,
+        traditions: 1,
+        featured: 1,
+        websites: 1,
+        quotes: 1,
+        createdAt: 1
+      };
+      
+      // If we're fetching by IDs, use a different query flow without pagination
+      let teachers;
+      if (ids) {
+        teachers = await Teacher.find(filter, projection)
+          .populate('traditions', 'name slug')
+          .sort({ name: 1 })
+          .lean(); // Use lean for better performance
+      } else {
+        // Execute query with pagination and optimization
+        teachers = await Teacher.find(filter, projection)
+          .populate('traditions', 'name slug')
+          .sort({ name: 1 })
+          .skip(skip)
+          .limit(parseInt(limit))
+          .lean(); // Use lean for better performance
+      }
       
       // Get total count for pagination
       const total = await Teacher.countDocuments(filter);

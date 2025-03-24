@@ -12,11 +12,24 @@ const resourceController = {
    */
   getAllResources: async (req, res) => {
     try {
-      const { page = 1, limit = 10, type, tradition, teacher, tag, featured } = req.query;
+      const { page = 1, limit = 10, type, tradition, teacher, tag, featured, ids } = req.query;
       const skip = (page - 1) * limit;
       
       // Build filter object based on query parameters
       const filter = {};
+      
+      // Handle multiple IDs for fetching favorites
+      if (ids) {
+        try {
+          const idArray = ids.split(',').map(id => id.trim());
+          console.log('Fetching resources with IDs:', idArray);
+          filter._id = { $in: idArray };
+          // When fetching by IDs, ignore pagination limits
+        } catch (error) {
+          console.error('Error processing IDs parameter:', error);
+        }
+      }
+      
       if (type) {
         // Don't convert to lowercase, as some types use camelCase in the database
         filter.type = type;
@@ -51,14 +64,24 @@ const resourceController = {
         appDetails: 1
       };
       
-      // Execute query with pagination and optimization
-      const resources = await Resource.find(filter, projection)
-        .populate('teachers', 'name slug imageUrl')
-        .populate('traditions', 'name slug')
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(parseInt(limit))
-        .lean(); // Use lean for better performance
+      // If we're fetching by IDs, use a different query flow without pagination
+      let resources;
+      if (ids) {
+        resources = await Resource.find(filter, projection)
+          .populate('teachers', 'name slug imageUrl')
+          .populate('traditions', 'name slug')
+          .sort({ createdAt: -1 })
+          .lean(); // Use lean for better performance
+      } else {
+        // Execute query with pagination and optimization
+        resources = await Resource.find(filter, projection)
+          .populate('teachers', 'name slug imageUrl')
+          .populate('traditions', 'name slug')
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(parseInt(limit))
+          .lean(); // Use lean for better performance
+      }
       
       // Get total count for pagination - use countDocuments instead of count
       const total = await Resource.countDocuments(filter);
@@ -67,7 +90,7 @@ const resourceController = {
         success: true,
         count: resources.length,
         total,
-        totalPages: Math.ceil(total / limit),
+        totalPages: ids ? 1 : Math.ceil(total / limit),
         currentPage: parseInt(page),
         resources
       });

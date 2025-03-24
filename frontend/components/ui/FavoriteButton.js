@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useUserContext } from '../../contexts/UserContext';
 import { HeartIcon } from 'lucide-react';
 
@@ -10,75 +10,119 @@ import { HeartIcon } from 'lucide-react';
  * @param {string} [props.size='default'] - Size of the button (small, default, large)
  * @param {boolean} [props.showText=false] - Whether to show text next to the icon
  * @param {string} [props.className=''] - Additional CSS classes
+ * @param {Function} [props.onError] - Optional callback for error handling
  */
-const FavoriteButton = ({ type, id, size = 'default', showText = false, className = '' }) => {
-  const { isSignedIn, isItemFavorited, toggleFavorite, isItemPending } = useUserContext();
+const FavoriteButton = ({ 
+  type, 
+  id, 
+  size = 'default', 
+  showText = false, 
+  className = '',
+  onError
+ }) => {
+  const { isSignedIn, isItemFavorited, toggleFavorite, isItemPending, favorites } = useUserContext();
   
-  // Get the current favorite state
+  // Get the current favorite state - include the favorites dependency to ensure re-renders
   const isFavorited = isItemFavorited(type, id);
   
   // Get the pending state
   const isPending = isItemPending(type, id);
+  
+  // Local error state
+  const [error, setError] = useState(null);
 
-  // Handle favorite toggle
+  // For debugging
+  useEffect(() => {
+    console.log(`FavoriteButton (${type}:${id}) rendered with isFavorited:`, isFavorited);
+  }, [isFavorited, type, id]);
+
+  // Clear error after 5 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
+  /**
+   * Handle the toggle favorite action
+   */
   const handleToggleFavorite = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+    e?.preventDefault();
+    e?.stopPropagation();
+    
     if (!isSignedIn) {
-      // If not signed in, we could add a callback to redirect to sign-in page
-      // or trigger a sign-in modal
-      console.log('User needs to sign in to favorite items');
+      const errorMessage = 'Please sign in to favorite items';
+      setError(errorMessage);
+      if (onError) onError(errorMessage);
       return;
     }
 
     if (isPending) return; // Prevent multiple clicks during pending state
     
-    // Call API through UserContext - action is determined automatically by the context
-    await toggleFavorite(type, id);
-  };
-
-  // Size classes - adjusted for better mobile responsiveness
-  const sizeClasses = {
-    small: 'h-5 w-5 sm:h-6 sm:w-6',
-    default: 'h-6 w-6 sm:h-8 sm:w-8',
-    large: 'h-8 w-8 sm:h-10 sm:w-10'
+    try {
+      // Call API through UserContext
+      const success = await toggleFavorite(type, id);
+      
+      if (!success) {
+        setError('Failed to update favorite status');
+        if (onError) onError('Failed to update favorite status');
+      }
+    } catch (err) {
+      console.error('Error toggling favorite:', err);
+      const errorMessage = err.message || 'Failed to update favorite status';
+      setError(errorMessage);
+      if (onError) onError(errorMessage);
+    }
   };
 
   // Determine button styles
   const buttonClasses = `
-    inline-flex items-center justify-center rounded-full 
-    ${isFavorited ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-gray-500'} 
+    w-full flex items-center justify-center gap-2 px-4 py-2 
+    ${isFavorited ? 'text-red-500' : 'text-neutral-800 dark:text-neutral-200'} 
+    border border-neutral-200 dark:border-neutral-700 rounded-md 
+    hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors font-inter
     ${isPending ? 'opacity-70 cursor-wait' : 'cursor-pointer'}
-    transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+    ${error ? 'ring-1 ring-red-300' : ''}
+    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
     ${className}
   `;
 
   return (
-    <button
-      onClick={handleToggleFavorite}
-      className={buttonClasses}
-      disabled={isPending || !isSignedIn}
-      aria-label={isFavorited ? `Remove from favorites` : `Add to favorites`}
-      title={!isSignedIn ? 'Sign in to add to favorites' : (isFavorited ? 'Remove from favorites' : 'Add to favorites')}
-    >
-      {isPending ? (
-        <div className="animate-pulse">
+    <div className="relative">
+      <button
+        onClick={handleToggleFavorite}
+        className={buttonClasses}
+        disabled={isPending || !isSignedIn}
+        aria-label={isFavorited ? `Remove from favorites` : `Add to favorites`}
+        title={!isSignedIn ? 'Sign in to add to favorites' : (isFavorited ? 'Remove from favorites' : 'Add to favorites')}
+      >
+        {isPending ? (
+          <div className="animate-pulse">
+            <HeartIcon 
+              className={`h-4 w-4 ${isFavorited ? 'fill-current' : ''}`}
+            />
+          </div>
+        ) : (
           <HeartIcon 
-            className={`${sizeClasses[size] || sizeClasses.default} ${isFavorited ? 'fill-current' : ''}`}
+            className={`h-4 w-4 ${isFavorited ? 'fill-current' : ''}`}
           />
+        )}
+        {showText && (
+          <span>
+            {isFavorited ? 'Favorited' : 'Favorite'}
+          </span>
+        )}
+      </button>
+      
+      {error && (
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1 bg-red-100 text-red-800 text-xs rounded-md whitespace-nowrap z-10">
+          {error}
         </div>
-      ) : (
-        <HeartIcon 
-          className={`${sizeClasses[size] || sizeClasses.default} ${isFavorited ? 'fill-current' : ''}`}
-        />
       )}
-      {showText && (
-        <span className="ml-2 text-sm sm:text-base">
-          {isFavorited ? 'Favorited' : 'Favorite'}
-        </span>
-      )}
-    </button>
+    </div>
   );
 };
 

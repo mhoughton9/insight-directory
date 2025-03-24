@@ -8,9 +8,30 @@ export default async function handler(req, res) {
   try {
     // Handle GET request - fetch traditions
     if (req.method === 'GET') {
-      // Forward any query parameters to the backend
-      const queryString = new URLSearchParams(req.query).toString();
-      const response = await fetch(`${API_URL}/traditions${queryString ? `?${queryString}` : ''}`);
+      let url = `${API_URL}/traditions`;
+      const queryParams = new URLSearchParams();
+      
+      // Handle special case for IDs parameter
+      if (req.query.ids) {
+        // Make sure ids parameter is properly formatted for the backend
+        queryParams.append('ids', req.query.ids);
+      }
+      
+      // Add all other query parameters
+      Object.entries(req.query).forEach(([key, value]) => {
+        if (key !== 'ids') { // Skip ids as we already handled it
+          queryParams.append(key, value);
+        }
+      });
+      
+      // Append query string if we have parameters
+      const queryString = queryParams.toString();
+      if (queryString) {
+        url += `?${queryString}`;
+      }
+      
+      console.log('Fetching traditions from:', url);
+      const response = await fetch(url);
       const data = await response.json();
       
       return res.status(response.status).json(data);
