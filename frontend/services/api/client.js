@@ -3,6 +3,9 @@
  * Uses the fetch API with consistent error handling and caching
  */
 
+import { processResponse, handleApiError, logApiError, LogLevels, ErrorCodes } from './utils/errorHandler';
+import retryRequest, { DEFAULT_RETRY_CONFIG } from './utils/retry';
+
 // Base URL for API requests with trailing slash handling
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 const getFullUrl = (endpoint) => {
@@ -15,24 +18,15 @@ const getFullUrl = (endpoint) => {
 const cache = new Map();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
-/**
- * Handles API responses and errors consistently
- * @param {Response} response - The fetch Response object
- * @returns {Promise<any>} - Parsed response data
- * @throws {Error} - Throws error with message from API or status text
- */
-const handleResponse = async (response) => {
-  const isJson = response.headers.get('content-type')?.includes('application/json');
-  const data = isJson ? await response.json() : await response.text();
-
-  if (!response.ok) {
-    const error = new Error((data && data.message) || response.statusText);
-    error.status = response.status;
-    error.data = data;
-    throw error;
+// Default client configuration
+const DEFAULT_CLIENT_CONFIG = {
+  timeout: 30000, // 30 seconds default timeout
+  cache: true,    // Enable caching by default
+  retry: DEFAULT_RETRY_CONFIG,
+  credentials: 'same-origin',
+  headers: {
+    'Content-Type': 'application/json'
   }
-
-  return data;
 };
 
 /**
@@ -71,6 +65,21 @@ const generateCacheKey = (endpoint, options) => {
 };
 
 /**
+ * Process API response with consistent error handling
+ * @param {Response} response - Fetch response
+ * @param {string} endpoint - API endpoint
+ * @param {string} method - HTTP method
+ * @returns {Promise<any>} - Processed response data
+ */
+const processApiResponse = async (response, endpoint, method) => {
+  try {
+    return await processResponse(response, endpoint);
+  } catch (error) {
+    return Promise.reject(handleApiError(error, `${method} ${endpoint}`));
+  }
+};
+
+/**
  * Creates a fetch request with common configuration
  * @param {string} url - Full URL to request
  * @param {string} method - HTTP method
@@ -80,17 +89,26 @@ const generateCacheKey = (endpoint, options) => {
  */
 const createRequest = async (url, method, options = {}, data = null) => {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), options.timeout || 30000);
+  const timeoutId = setTimeout(() => controller.abort(), options.timeout || DEFAULT_CLIENT_CONFIG.timeout);
   
   try {
+    // Log request in development mode
+    if (process.env.NODE_ENV !== 'production') {
+      logApiError(
+        { message: `${method} ${url}`, data: data ? JSON.stringify(data).substring(0, 500) : null },
+        'Request',
+        LogLevels.DEBUG
+      );
+    }
+    
     const requestOptions = {
       method,
       headers: {
-        'Content-Type': 'application/json',
+        ...DEFAULT_CLIENT_CONFIG.headers,
         ...options.headers,
       },
       signal: controller.signal,
-      credentials: 'same-origin',
+      credentials: options.credentials || DEFAULT_CLIENT_CONFIG.credentials,
       ...options,
     };
     
@@ -105,6 +123,30 @@ const createRequest = async (url, method, options = {}, data = null) => {
   } catch (error) {
     clearTimeout(timeoutId);
     throw error;
+  }
+};
+
+/**
+ * Execute a request with retry logic
+ * @param {Function} requestFn - Function that executes the request
+ * @param {string} endpoint - API endpoint for context
+ * @param {string} method - HTTP method for context
+ * @param {Object} options - Request options including retry configuration
+ * @returns {Promise<any>} - Response data
+ */
+const executeWithRetry = async (requestFn, endpoint, method, options = {}) => {
+  // Determine if we should use retry logic
+  if (options.retry !== false) {
+    const retryOptions = {
+      ...DEFAULT_RETRY_CONFIG,
+      ...(options.retry || {}),
+      context: `${method} ${endpoint}`
+    };
+    
+    return retryRequest(requestFn, retryOptions);
+  } else {
+    // Execute without retry
+    return requestFn();
   }
 };
 
@@ -132,19 +174,26 @@ const apiClient = {
   get: async function(endpoint, options = {}) {
     const url = getFullUrl(endpoint);
     const cacheKey = generateCacheKey(endpoint, options);
+    const useCache = options.cache !== false && DEFAULT_CLIENT_CONFIG.cache;
     
     // Return cached response if available and valid
-    if (options.cache !== false && isCacheValid(cacheKey)) {
+    if (useCache && isCacheValid(cacheKey)) {
       const cachedResponse = cache.get(cacheKey);
       return { ...cachedResponse.data, cached: true };
     }
     
     try {
-      const response = await createRequest(url, 'GET', options);
-      const data = await handleResponse(response);
+      // Define the request function
+      const requestFn = async () => {
+        const response = await createRequest(url, 'GET', options);
+        return await processApiResponse(response, endpoint, 'GET');
+      };
+      
+      // Execute with retry logic
+      const data = await executeWithRetry(requestFn, endpoint, 'GET', options);
       
       // Cache the successful response
-      if (options.cache !== false) {
+      if (useCache) {
         cache.set(cacheKey, {
           data,
           timestamp: Date.now(),
@@ -153,8 +202,7 @@ const apiClient = {
       
       return { ...data, cached: false };
     } catch (error) {
-      console.error(`API Error (GET ${endpoint}):`, error);
-      throw error;
+      return Promise.reject(error);
     }
   },
 
@@ -169,8 +217,14 @@ const apiClient = {
     const url = getFullUrl(endpoint);
     
     try {
-      const response = await createRequest(url, 'POST', options, data);
-      const responseData = await handleResponse(response);
+      // Define the request function
+      const requestFn = async () => {
+        const response = await createRequest(url, 'POST', options, data);
+        return await processApiResponse(response, endpoint, 'POST');
+      };
+      
+      // Execute with retry logic
+      const responseData = await executeWithRetry(requestFn, endpoint, 'POST', options);
       
       // Clear cache for this endpoint if needed
       if (options.invalidateCache) {
@@ -179,8 +233,7 @@ const apiClient = {
       
       return responseData;
     } catch (error) {
-      console.error(`API Error (POST ${endpoint}):`, error);
-      throw error;
+      return Promise.reject(error);
     }
   },
   
@@ -195,8 +248,14 @@ const apiClient = {
     const url = getFullUrl(endpoint);
     
     try {
-      const response = await createRequest(url, 'PUT', options, data);
-      const responseData = await handleResponse(response);
+      // Define the request function
+      const requestFn = async () => {
+        const response = await createRequest(url, 'PUT', options, data);
+        return await processApiResponse(response, endpoint, 'PUT');
+      };
+      
+      // Execute with retry logic
+      const responseData = await executeWithRetry(requestFn, endpoint, 'PUT', options);
       
       // Clear cache for this endpoint if needed
       if (options.invalidateCache) {
@@ -205,8 +264,7 @@ const apiClient = {
       
       return responseData;
     } catch (error) {
-      console.error(`API Error (PUT ${endpoint}):`, error);
-      throw error;
+      return Promise.reject(error);
     }
   },
   
@@ -220,8 +278,14 @@ const apiClient = {
     const url = getFullUrl(endpoint);
     
     try {
-      const response = await createRequest(url, 'DELETE', options);
-      const responseData = await handleResponse(response);
+      // Define the request function
+      const requestFn = async () => {
+        const response = await createRequest(url, 'DELETE', options);
+        return await processApiResponse(response, endpoint, 'DELETE');
+      };
+      
+      // Execute with retry logic
+      const responseData = await executeWithRetry(requestFn, endpoint, 'DELETE', options);
       
       // Clear cache for this endpoint if needed
       if (options.invalidateCache) {
@@ -230,8 +294,7 @@ const apiClient = {
       
       return responseData;
     } catch (error) {
-      console.error(`API Error (DELETE ${endpoint}):`, error);
-      throw error;
+      return Promise.reject(error);
     }
   },
   
@@ -241,21 +304,15 @@ const apiClient = {
    */
   clearCache: function(endpoint) {
     if (endpoint) {
-      // Clear cache for a specific endpoint
-      const endpointPrefix = endpoint.toLowerCase();
-      
-      // Iterate through all cache keys and remove matching ones
+      // Clear specific endpoint(s)
       for (const key of cache.keys()) {
-        if (key.toLowerCase().startsWith(endpointPrefix)) {
+        if (key.startsWith(endpoint)) {
           cache.delete(key);
         }
       }
-      
-      console.log(`Cache cleared for endpoint: ${endpoint}`);
     } else {
-      // Clear the entire cache
+      // Clear entire cache
       cache.clear();
-      console.log('Entire cache cleared');
     }
   }
 };

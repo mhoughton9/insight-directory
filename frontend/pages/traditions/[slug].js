@@ -36,7 +36,6 @@ const TraditionDetailPage = () => {
         try {
           response = await traditionsService.getById(slug);
         } catch (slugError) {
-          console.error('Error fetching tradition by slug, will try to find in all traditions:', slugError);
           
           const allTraditions = await traditionsService.getAll();
           const traditionsArray = Array.isArray(allTraditions) ? allTraditions : 
@@ -59,7 +58,6 @@ const TraditionDetailPage = () => {
         const traditionData = response.tradition || response;
         
         if (traditionData) {
-          console.log('Tradition loaded:', traditionData.name);
           setTradition(traditionData);
           setError(null);
           
@@ -73,7 +71,6 @@ const TraditionDetailPage = () => {
           setError('Tradition not found');
         }
       } catch (err) {
-        console.error('Error fetching tradition:', err);
         setError(err.message || 'Failed to load tradition');
       } finally {
         setLoadingTradition(false);
@@ -90,7 +87,6 @@ const TraditionDetailPage = () => {
         // setResources(resourcesData);
         setResources([]);
       } catch (resourceErr) {
-        console.error('Error fetching tradition resources:', resourceErr);
         setResources([]);
       } finally {
         setLoadingResources(false);
@@ -107,7 +103,6 @@ const TraditionDetailPage = () => {
         // setTeachers(teachersData);
         setTeachers([]);
       } catch (teachersErr) {
-        console.error('Error fetching tradition teachers:', teachersErr);
         setTeachers([]);
       } finally {
         setLoadingTeachers(false);
@@ -289,15 +284,13 @@ const TraditionDetailPage = () => {
                 Actions
               </h2>
               <div className="space-y-2 font-inter">
-                <button className="w-full py-2 px-4 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors flex items-center justify-center font-inter">
-                  <FavoriteButton 
-                    type="tradition" 
-                    id={tradition._id} 
-                    size="default"
-                    showText={true}
-                    className="flex items-center justify-center w-full"
-                  />
-                </button>
+                <FavoriteButton 
+                  type="tradition" 
+                  id={tradition._id} 
+                  size="default"
+                  showText={true}
+                  className="flex items-center justify-center w-full py-2 px-4 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors font-inter"
+                />
               </div>
             </div>
             

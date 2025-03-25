@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useUser } from '@clerk/nextjs';
+import Link from 'next/link';
 
 /**
  * ResourceActions component
@@ -9,13 +12,36 @@ import React, { useState } from 'react';
 const ResourceActions = ({ resource }) => {
   if (!resource) return null;
   
+  const router = useRouter();
+  const { isSignedIn, user } = useUser();
+  
   // State for favorite button
   const [isFavorited, setIsFavorited] = useState(false);
   
-  const handleFavoriteToggle = () => {
+  // Removed debug authentication state logging
+  useEffect(() => {
+  }, [isSignedIn]);
+  
+  const handleFavoriteToggle = (e) => {
+    e.preventDefault();
+    // Removed console.log statements
+    
+    if (!isSignedIn) {
+      // Removed console.log statement
+      // Use window.location for a hard redirect as a fallback
+      window.location.href = '/sign-up';
+      return;
+    }
+    
     setIsFavorited(!isFavorited);
     // Would implement API call to save favorite status
     alert(isFavorited ? 'Removed from favorites!' : 'Added to favorites!');
+  };
+
+  // Debug function for non-authenticated favorite button
+  const handleNonAuthFavoriteClick = (e) => {
+    // Removed console.log statements
+    // Don't prevent default - let the Link behavior work
   };
   
   return (
@@ -49,16 +75,33 @@ const ResourceActions = ({ resource }) => {
         </button>
         
         {/* Favorite button */}
-        <button
-          onClick={handleFavoriteToggle}
-          className={`flex items-center justify-center w-10 h-10 rounded-full ${isFavorited ? 'bg-brand-pink text-white' : 'bg-white text-neutral-400 border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300'} hover:bg-opacity-90 transition-all`}
-          aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-          title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill={isFavorited ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg>
-        </button>
+        {isSignedIn ? (
+          <button
+            onClick={handleFavoriteToggle}
+            className={`flex items-center justify-center w-10 h-10 rounded-full ${isFavorited ? 'bg-brand-pink text-white' : 'bg-white text-neutral-400 border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300'} hover:bg-opacity-90 transition-all`}
+            aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+            title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill={isFavorited ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+        ) : (
+          <>
+            <Link href="/sign-up" passHref legacyBehavior>
+              <a 
+                onClick={handleNonAuthFavoriteClick}
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white text-neutral-400 border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 hover:bg-opacity-90 transition-all"
+                aria-label="Sign up to add to favorites"
+                title="Sign up to add to favorites"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </a>
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );

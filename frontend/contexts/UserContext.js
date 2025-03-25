@@ -39,8 +39,6 @@ export const UserProvider = ({ children }) => {
           imageUrl: user.imageUrl
         };
 
-        console.log('Syncing user with our backend:', userData);
-
         // Sync with our backend
         const response = await fetch('/api/users/sync', {
           method: 'POST',
@@ -58,10 +56,8 @@ export const UserProvider = ({ children }) => {
           // Fetch user favorites
           await fetchFavorites();
         } else {
-          console.error('Error response from sync API:', await response.text());
         }
       } catch (error) {
-        console.error('Error syncing user:', error);
       } finally {
         setLoading(false);
       }
@@ -78,7 +74,6 @@ export const UserProvider = ({ children }) => {
       // Get the Clerk JWT token
       const token = await getToken();
       
-      console.log('Fetching favorites for user:', user.id);
       const response = await fetch(`/api/users/favorites?clerkId=${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -87,17 +82,14 @@ export const UserProvider = ({ children }) => {
       
       if (response.ok) {
         const data = await response.json();
-        console.log('Favorites data received:', data);
         setFavorites(data.favorites || {
           resources: [],
           teachers: [],
           traditions: []
         });
       } else {
-        console.error('Error fetching favorites:', await response.text());
       }
     } catch (error) {
-      console.error('Error fetching favorites:', error);
     }
   };
 
@@ -122,7 +114,6 @@ export const UserProvider = ({ children }) => {
    */
   const toggleFavorite = useCallback(async (type, id) => {
     if (!isSignedIn || !user) {
-      console.error('User not signed in');
       return false;
     }
     
@@ -131,7 +122,6 @@ export const UserProvider = ({ children }) => {
     
     // Check if this toggle is already in progress
     if (pendingToggles.current[toggleKey]) {
-      console.log('Toggle already in progress for:', toggleKey);
       return false;
     }
     
@@ -167,8 +157,6 @@ export const UserProvider = ({ children }) => {
       
       setFavorites(currentFavorites);
 
-      console.log('Toggling favorite:', { type, id, action, clerkId: user.id });
-      
       // Get the Clerk JWT token
       const token = await getToken();
       
@@ -190,7 +178,6 @@ export const UserProvider = ({ children }) => {
       if (!response.ok) {
         // Get error details from response
         const errorData = await response.json();
-        console.error('Error response from API:', errorData);
         
         // Revert to original state on error
         setFavorites(originalFavorites);
@@ -199,7 +186,6 @@ export const UserProvider = ({ children }) => {
       }
       
       const data = await response.json();
-      console.log('Toggle favorite response:', data);
       
       // Update favorites from the server response to ensure consistency
       if (data.success && data.favorites) {
@@ -216,7 +202,6 @@ export const UserProvider = ({ children }) => {
         throw new Error(data.message || 'Failed to update favorite status');
       }
     } catch (error) {
-      console.error('Error toggling favorite:', error);
       // Return false but don't throw so the component can handle it gracefully
       return false;
     } finally {

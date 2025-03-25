@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import { normalizeResourceType, formatResourceType } from '../../utils/resource-utils';
+import { Heading, Text } from '../ui/Typography';
 
 /**
  * Get plural form of resource type for display
@@ -30,15 +31,15 @@ const getPluralResourceType = (type) => {
  */
 const ResourceCategoriesSection = ({ resourceTypes, brandColors }) => {
   return (
-    <section className="py-12 bg-gradient-to-b from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-800">
+    <section className="py-12 my-8 mx-auto max-w-[95%] bg-white dark:bg-neutral-900 rounded-xl shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-normal mb-6 text-center" style={{ fontFamily: 'Lora, serif' }}>
+          <Heading as="h2" size="3xl" className="mb-6 text-center">
             Resource Categories
-          </h2>
-          <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto" style={{ fontFamily: 'Inter, sans-serif' }}>
+          </Heading>
+          <Text size="xl" className="text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto">
             Explore our collection of resources by category
-          </p>
+          </Text>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -53,7 +54,7 @@ const ResourceCategoriesSection = ({ resourceTypes, brandColors }) => {
                 href={`/resources/type/${normalizedType}`} 
                 className="block h-full"
               >
-                <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
+                <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
                   {/* Card Content */}
                   <div className="p-6 flex flex-col items-center text-center">
                     <div className="w-16 h-16 mb-4 flex items-center justify-center relative z-10">
@@ -66,12 +67,12 @@ const ResourceCategoriesSection = ({ resourceTypes, brandColors }) => {
                         })}
                       </div>
                     </div>
-                    <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2" style={{ fontFamily: 'Lora, serif' }}>
+                    <Heading as="h3" size="lg" className="text-neutral-900 dark:text-white mb-2">
                       {getPluralResourceType(type.type)}
-                    </h3>
-                    <p className="text-sm text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    </Heading>
+                    <Text size="sm" className="text-neutral-700 dark:text-neutral-300">
                       {type.description}
-                    </p>
+                    </Text>
                   </div>
                 </div>
               </Link>

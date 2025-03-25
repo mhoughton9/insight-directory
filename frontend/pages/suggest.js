@@ -239,10 +239,18 @@ export default function SuggestResourcePage() {
             </div>
 
             {/* Submit Button */}
-            <div className="mt-2">
+            <div className="mt-2 flex justify-center">
               <button
                 type="submit"
-                className="w-full px-6 py-3 bg-neutral-800 dark:bg-neutral-700 text-white rounded-md hover:bg-neutral-700 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500"
+                className="px-6 py-3 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px]"
+                style={{ 
+                  fontFamily: 'Inter, sans-serif',
+                  background: 'var(--background)',
+                  border: '2px solid transparent',
+                  backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
+                  backgroundOrigin: 'border-box',
+                  backgroundClip: 'padding-box, border-box'
+                }}
               >
                 Submit Suggestion
               </button>

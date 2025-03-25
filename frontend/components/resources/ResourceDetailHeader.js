@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import ResourceTypeIcon from './ResourceTypeIcon';
 import { formatResourceType, normalizeResourceType } from '../../utils/resource-utils';
-import * as Typography from '../common/TypographyStyles';
+import { Heading, Text, Caption } from '../ui/Typography';
 
 /**
  * ResourceDetailHeader component
@@ -28,20 +28,20 @@ const ResourceDetailHeader = ({ resource }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb navigation */}
         <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400 mb-4 font-inter overflow-x-auto pb-1 scrollbar-hide">
-          <Link href="/" className={Typography.breadcrumbItem}>
+          <Link href="/" className="hover:text-brand-purple transition-colors whitespace-nowrap">
             Home
           </Link>
           <span>/</span>
           <Link 
             href={`/resources/type/${normalizeResourceType(resource.type)}`}
-            className={Typography.breadcrumbItem}
+            className="hover:text-brand-purple transition-colors whitespace-nowrap"
           >
             {formatResourceType(resource.type)}s
           </Link>
           <span>/</span>
-          <span className={Typography.breadcrumbText}>
+          <Caption as="span" className="text-neutral-500 dark:text-neutral-500 truncate max-w-[120px] sm:max-w-[150px] md:max-w-xs">
             {resource.title}
-          </span>
+          </Caption>
         </div>
         
         <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
@@ -60,9 +60,9 @@ const ResourceDetailHeader = ({ resource }) => {
           
           {/* Resource title and metadata */}
           <div className="flex-1">
-            <h1 className={Typography.pageTitle}>
+            <Heading as="h1" size="3xl">
               {resource.title}
-            </h1>
+            </Heading>
             
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-purple bg-opacity-10 text-brand-purple dark:bg-opacity-20">
@@ -70,16 +70,16 @@ const ResourceDetailHeader = ({ resource }) => {
                 {formatResourceType(resource.type)}
               </span>
               {formattedDate && (
-                <span className={Typography.metadataText}>
+                <Caption className="text-neutral-500 dark:text-neutral-400">
                   {formattedDate}
-                </span>
+                </Caption>
               )}
             </div>
             
             {resource.description && (
-              <p className="mt-2 text-neutral-600 dark:text-neutral-400 line-clamp-2 font-inter">
+              <Text className="mt-2 line-clamp-2">
                 {resource.description}
-              </p>
+              </Text>
             )}
           </div>
         </div>

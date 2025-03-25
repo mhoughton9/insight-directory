@@ -32,15 +32,22 @@ export default function Header() {
             <Link href="/traditions" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               Traditions
             </Link>
-            <Link 
-              href="/suggest" 
-              className="px-4 py-2 bg-neutral-800 dark:bg-neutral-700 text-white rounded-md hover:bg-neutral-700 dark:hover:bg-neutral-600 transition-colors"
-              style={{ fontFamily: 'Inter, sans-serif' }}
-            >
-              Suggest a Resource
-            </Link>
             <Link href="/about" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               About
+            </Link>
+            <Link 
+              href="/suggest" 
+              className="px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px]"
+              style={{ 
+                fontFamily: 'Inter, sans-serif',
+                background: 'var(--background)',
+                border: '2px solid transparent',
+                backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
+                backgroundOrigin: 'border-box',
+                backgroundClip: 'padding-box, border-box'
+              }}
+            >
+              Suggest a Resource
             </Link>
             
             {/* Authentication UI */}
@@ -49,7 +56,7 @@ export default function Header() {
               <div className="flex items-center space-x-4">
                 <Link 
                   href="/profile" 
-                  className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300"
+                  className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]"
                   style={{ fontFamily: 'Inter, sans-serif' }}
                 >
                   Profile
@@ -70,15 +77,22 @@ export default function Header() {
               <div className="flex items-center space-x-4">
                 <Link 
                   href="/sign-in" 
-                  className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300"
+                  className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]"
                   style={{ fontFamily: 'Inter, sans-serif' }}
                 >
                   Sign in
                 </Link>
                 <Link 
                   href="/sign-up" 
-                  className="px-4 py-2 bg-neutral-800 dark:bg-neutral-700 text-white rounded-md hover:bg-neutral-700 dark:hover:bg-neutral-600 transition-colors"
-                  style={{ fontFamily: 'Inter, sans-serif' }}
+                  className="px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px]"
+                  style={{ 
+                    fontFamily: 'Inter, sans-serif',
+                    background: 'var(--background)',
+                    border: '2px solid transparent',
+                    backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
+                    backgroundOrigin: 'border-box',
+                    backgroundClip: 'padding-box, border-box'
+                  }}
                 >
                   Sign up
                 </Link>
@@ -103,7 +117,7 @@ export default function Header() {
             
             <button 
               aria-label="Menu" 
-              className="p-2 md:hidden text-neutral-700 dark:text-neutral-300"
+              className="p-2 md:hidden text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               <MenuIcon size={20} />
@@ -116,25 +130,32 @@ export default function Header() {
       {isMenuOpen && (
         <div className="md:hidden bg-background border-t border-neutral-200 dark:border-neutral-800">
           <nav className="container mx-auto px-4 py-4 flex flex-col space-y-4">
-            <Link href="/teachers" className="text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
+            <Link href="/teachers" className="text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               Teachers
             </Link>
-            <Link href="/traditions" className="text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
+            <Link href="/traditions" className="text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               Traditions
+            </Link>
+            <Link href="/about" className="text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
+              About
             </Link>
             <Link 
               href="/suggest" 
-              className="inline-block px-4 py-2 bg-neutral-800 dark:bg-neutral-700 text-white rounded-md hover:bg-neutral-700 dark:hover:bg-neutral-600 transition-colors w-fit"
-              style={{ fontFamily: 'Inter, sans-serif' }}
+              className="inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white w-fit transition-all duration-300 transform hover:translate-y-[-2px]"
+              style={{ 
+                fontFamily: 'Inter, sans-serif',
+                background: 'var(--background)',
+                border: '2px solid transparent',
+                backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
+                backgroundOrigin: 'border-box',
+                backgroundClip: 'padding-box, border-box'
+              }}
             >
               Suggest a Resource
             </Link>
-            <Link href="/about" className="text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
-              About
-            </Link>
             
             <SignedIn>
-              <Link href="/profile" className="text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
+              <Link href="/profile" className="text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
                 Profile
               </Link>
             </SignedIn>
@@ -143,15 +164,22 @@ export default function Header() {
               <div className="flex flex-col space-y-3 pt-2 border-t border-neutral-200 dark:border-neutral-800">
                 <Link 
                   href="/sign-in" 
-                  className="text-neutral-700 dark:text-neutral-300"
+                  className="text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]"
                   style={{ fontFamily: 'Inter, sans-serif' }}
                 >
                   Sign in
                 </Link>
                 <Link 
                   href="/sign-up" 
-                  className="inline-block px-4 py-2 bg-neutral-800 dark:bg-neutral-700 text-white rounded-md hover:bg-neutral-700 dark:hover:bg-neutral-600 transition-colors w-fit"
-                  style={{ fontFamily: 'Inter, sans-serif' }}
+                  className="inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white w-fit transition-all duration-300 transform hover:translate-y-[-2px]"
+                  style={{ 
+                    fontFamily: 'Inter, sans-serif',
+                    background: 'var(--background)',
+                    border: '2px solid transparent',
+                    backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
+                    backgroundOrigin: 'border-box',
+                    backgroundClip: 'padding-box, border-box'
+                  }}
                 >
                   Sign up
                 </Link>

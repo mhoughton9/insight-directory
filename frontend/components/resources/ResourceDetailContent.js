@@ -1,5 +1,5 @@
 import React from 'react';
-import * as Typography from '../common/TypographyStyles';
+import { Heading, Text } from '../ui/Typography';
 import { normalizeResourceType } from '../../utils/resource-utils';
 
 /**
@@ -12,21 +12,21 @@ const ResourceDetailContent = ({ resource }) => {
   if (!resource) return null;
   
   return (
-    <div className={Typography.cardContainer}>
+    <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800 p-4 sm:p-6 mb-6 md:mb-8">
       <div className="mb-6 md:mb-8">
-        <h2 className={Typography.sectionHeading}>
+        <Heading as="h2" size="xl" className="mb-3 md:mb-4">
           About this {normalizeResourceType(resource.type)}
-        </h2>
+        </Heading>
         
         <div className="prose prose-neutral dark:prose-invert max-w-none">
           {resource.description ? (
             resource.description.split('\n').map((paragraph, index) => (
-              <p key={index} className={`${Typography.bodyText} mb-4 last:mb-0`}>{paragraph}</p>
+              <Text key={index} className="mb-4 last:mb-0">{paragraph}</Text>
             ))
           ) : (
-            <p className={Typography.emptyStateText}>
+            <Text className="text-neutral-600 dark:text-neutral-400 italic">
               No detailed description available for this resource.
-            </p>
+            </Text>
           )}
         </div>
       </div>
@@ -34,10 +34,12 @@ const ResourceDetailContent = ({ resource }) => {
       {/* Additional content section - if present */}
       {resource.content && (
         <div className="mt-6 md:mt-8">
-          <h2 className={Typography.sectionHeading}>Content</h2>
+          <Heading as="h2" size="xl" className="mb-3 md:mb-4">
+            Content
+          </Heading>
           <div className="prose prose-neutral dark:prose-invert max-w-none">
             {resource.content.split('\n').map((paragraph, index) => (
-              <p key={index} className={`${Typography.bodyText} mb-4 last:mb-0`}>{paragraph}</p>
+              <Text key={index} className="mb-4 last:mb-0">{paragraph}</Text>
             ))}
           </div>
         </div>

@@ -7,8 +7,7 @@ import ResourceCard from './ResourceCard';
  * Enhanced with search term highlighting and memoization to prevent excessive renders
  */
 const ResourceGrid = React.memo(function ResourceGrid({ resources = [], isLoading = false, searchTerm = '' }) {
-  // Only log once per render cycle, not repeatedly
-  console.log('ResourceGrid render with:', resources.length, 'resources');
+  // Removed console.log statement
   
   if (isLoading && resources.length === 0) {
     return (

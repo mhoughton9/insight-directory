@@ -33,14 +33,12 @@ const ResourceDetailPage = () => {
       const resourceData = response.resource || response;
       
       if (resourceData) {
-        console.log('Resource loaded:', resourceData.title);
         setResource(resourceData);
         setError(null);
       } else {
         setError('Resource not found');
       }
     } catch (err) {
-      console.error('Error fetching resource:', err);
       setError(err.message || 'Failed to load resource');
     } finally {
       setLoading(false);
@@ -95,12 +93,6 @@ const ResourceDetailPage = () => {
           {/* Left Column - Main Content */}
           <div className="w-full lg:w-2/3">
             <ResourceDetailContent resource={resource} />
-            
-            {/* Comments Section (Placeholder) */}
-            <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
-              <h2 className="text-2xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">Comments</h2>
-              <p className="text-neutral-600 dark:text-neutral-400 italic font-inter">Comments feature coming soon...</p>
-            </div>
           </div>
           
           {/* Right Column - Sidebar */}

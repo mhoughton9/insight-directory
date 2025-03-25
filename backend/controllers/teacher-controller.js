@@ -35,7 +35,7 @@ const teacherController = {
       // Define projection to select only needed fields
       const projection = {
         name: 1,
-        bio: 1,
+        biography: 1,
         imageUrl: 1,
         slug: 1,
         traditions: 1,

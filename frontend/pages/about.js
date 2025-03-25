@@ -36,19 +36,29 @@ export default function AboutPage() {
             Each individual resonates with different teaching styles and approaches. What speaks deeply to one person might not connect with another. This directory aims to help you explore various approaches to find what works best for you, whether you're new to these concepts or have been exploring them for years.
           </p>
 
-          <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg mt-8 mb-6">
-            <h2 className="text-2xl font-normal text-neutral-800 dark:text-neutral-100 mb-4" style={{ fontFamily: 'Lora, serif' }}>
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-sm p-6 mt-8 mb-6 transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
+            <h2 className="text-2xl font-normal text-neutral-800 dark:text-neutral-100 mb-4 text-center" style={{ fontFamily: 'Lora, serif' }}>
               Have a Resource to Suggest?
             </h2>
-            <p className="text-neutral-700 dark:text-neutral-300 mb-4">
+            <p className="text-neutral-700 dark:text-neutral-300 mb-4 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
               Know of a valuable resource that should be included in this directory? I welcome suggestions for books, teachers, podcasts, and other materials that align with the focus of this site.
             </p>
-            <Link 
-              href="/suggest" 
-              className="inline-block px-6 py-3 bg-neutral-800 dark:bg-neutral-700 text-white rounded-md hover:bg-neutral-700 dark:hover:bg-neutral-600 transition-colors"
-            >
-              Suggest a Resource
-            </Link>
+            <div className="flex justify-center">
+              <Link 
+                href="/suggest" 
+                className="inline-block px-6 py-3 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px]"
+                style={{ 
+                  fontFamily: 'Inter, sans-serif',
+                  background: 'var(--background)',
+                  border: '2px solid transparent',
+                  backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
+                  backgroundOrigin: 'border-box',
+                  backgroundClip: 'padding-box, border-box'
+                }}
+              >
+                Suggest a Resource
+              </Link>
+            </div>
           </div>
         </div>
       </div>

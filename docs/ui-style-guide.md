@@ -1,4 +1,4 @@
-# Awakening Resources Directory UI Style Guide
+# Insight Directory UI Style Guide
 
 ## Detail Pages Consistency Guidelines
 

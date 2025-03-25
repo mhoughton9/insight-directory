@@ -34,8 +34,6 @@ const TeacherDetailPage = () => {
         try {
           response = await teachersService.getById(slug);
         } catch (slugError) {
-          console.error('Error fetching teacher by slug, will try to find in all teachers:', slugError);
-          
           const allTeachers = await teachersService.getAll();
           const teachersArray = Array.isArray(allTeachers) ? allTeachers : 
                               (allTeachers.teachers && Array.isArray(allTeachers.teachers)) ? 
@@ -57,37 +55,27 @@ const TeacherDetailPage = () => {
         const teacherData = response.teacher || response;
         
         if (teacherData) {
-          console.log('Teacher loaded:', teacherData.name);
           setTeacher(teacherData);
           setError(null);
           
-          // Resources API endpoint is not implemented yet
-          // Uncomment this when the API is ready
-          // if (teacherData._id) {
-          //   fetchTeacherResources(teacherData._id);
-          // }
+          // Future implementation: fetch teacher resources when API is ready
         } else {
           setError('Teacher not found');
         }
       } catch (err) {
-        console.error('Error fetching teacher:', err);
         setError(err.message || 'Failed to load teacher');
       } finally {
         setLoadingTeacher(false);
       }
     };
     
-    // This function is disabled until the API endpoint is implemented
+    // Function placeholder for future API implementation
     const fetchTeacherResources = async (teacherId) => {
       try {
         setLoadingResources(true);
-        // Temporarily disabled until API endpoint is implemented
-        // const resourcesResponse = await teachersService.getResources(teacherId);
-        // const resourcesData = resourcesResponse.resources || resourcesResponse || [];
-        // setResources(resourcesData);
+        // Future implementation: fetch teacher resources when API is ready
         setResources([]);
-      } catch (resourceErr) {
-        console.error('Error fetching teacher resources:', resourceErr);
+      } catch (error) {
         setResources([]);
       } finally {
         setLoadingResources(false);
@@ -221,15 +209,6 @@ const TeacherDetailPage = () => {
                 Resources for this teacher will be available soon.
               </p>
             </div>
-            
-            <div className={Typography.cardContainer}>
-              <h2 className={Typography.sectionHeading}>
-                Comments
-              </h2>
-              <p className={Typography.emptyStateText}>
-                Comments feature coming soon...
-              </p>
-            </div>
           </div>
           
           <div className="w-full lg:w-1/3">
@@ -296,7 +275,7 @@ const TeacherDetailPage = () => {
                         {/* Icon based on link type */}
                         {link.type === 'website' && (
                           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                           </svg>
                         )}
                         {link.type === 'youtube' && (

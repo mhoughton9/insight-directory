@@ -1,4 +1,4 @@
-# UI Guidelines for Awakening Resources Directory
+# UI Guidelines for Insight Directory
 
 ## Design Philosophy
 - Minimalist, clean, and elegant design inspired by non-duality and clarity.
@@ -99,11 +99,10 @@
 - About sections: Clean typography with subtle decorative elements and centered call-to-action.
 - Resource listings: Card-based layout with consistent information hierarchy.
 
-## Websites for Style Inspiration
-1. [Typewolf](https://www.typewolf.com/): Elegant typography, clean structure, whitespace usage.
+## Design Inspiration
+1. [Stripe](https://stripe.com): Clean, modern interface with subtle animations.
 2. [Duuce](https://duuce.com/): Minimalist aesthetic, great use of layout and color balance.
 
 ## General Tone
 - Clean, confident, and welcoming.
 - The design should evoke a sense of calm and focus, aligning with themes of awakening and clarity.
-- Content presentation should always prioritize ease of discovery and intuitive understanding.

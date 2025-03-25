@@ -32,31 +32,12 @@ export default function ResourceTypePage() {
         setIsLoading(true);
         setError(null);
         
-        // Debug logging
-        console.log('Fetching resources for type:', type);
-        
         // Simple query to get resources by type
         const response = await resourcesService.getAll({ type });
         const fetchedResources = response.resources || [];
         
-        // More detailed debug logging
-        console.log(`Fetched ${fetchedResources.length} resources`);
-        if (fetchedResources.length > 0) {
-          console.log('First resource full data:', JSON.stringify(fetchedResources[0], null, 2));
-          console.log('Resource type:', fetchedResources[0].type);
-          console.log('Checking for nested details:', {
-            bookDetails: fetchedResources[0].bookDetails,
-            podcastDetails: fetchedResources[0].podcastDetails,
-            videoChannelDetails: fetchedResources[0].videoChannelDetails,
-            retreatCenterDetails: fetchedResources[0].retreatCenterDetails,
-            blogDetails: fetchedResources[0].blogDetails,
-            appDetails: fetchedResources[0].appDetails
-          });
-        }
-        
         setResources(fetchedResources);
       } catch (err) {
-        console.error('Error fetching resources:', err);
         setError('Failed to load resources. Please try again later.');
       } finally {
         setIsLoading(false);

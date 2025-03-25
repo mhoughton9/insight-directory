@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useUserContext } from '../../contexts/UserContext';
 import { HeartIcon } from 'lucide-react';
+import { useRouter } from 'next/router';
 
 /**
  * FavoriteButton component for toggling favorite status of resources, teachers, and traditions
@@ -21,6 +22,7 @@ const FavoriteButton = ({
   onError
  }) => {
   const { isSignedIn, isItemFavorited, toggleFavorite, isItemPending, favorites } = useUserContext();
+  const router = useRouter();
   
   // Get the current favorite state - include the favorites dependency to ensure re-renders
   const isFavorited = isItemFavorited(type, id);
@@ -30,11 +32,6 @@ const FavoriteButton = ({
   
   // Local error state
   const [error, setError] = useState(null);
-
-  // For debugging
-  useEffect(() => {
-    console.log(`FavoriteButton (${type}:${id}) rendered with isFavorited:`, isFavorited);
-  }, [isFavorited, type, id]);
 
   // Clear error after 5 seconds
   useEffect(() => {
@@ -54,9 +51,8 @@ const FavoriteButton = ({
     e?.stopPropagation();
     
     if (!isSignedIn) {
-      const errorMessage = 'Please sign in to favorite items';
-      setError(errorMessage);
-      if (onError) onError(errorMessage);
+      // Redirect to sign-up page instead of just showing an error
+      router.push('/sign-up');
       return;
     }
 
@@ -71,7 +67,6 @@ const FavoriteButton = ({
         if (onError) onError('Failed to update favorite status');
       }
     } catch (err) {
-      console.error('Error toggling favorite:', err);
       const errorMessage = err.message || 'Failed to update favorite status';
       setError(errorMessage);
       if (onError) onError(errorMessage);
@@ -102,7 +97,7 @@ const FavoriteButton = ({
       <button
         onClick={handleToggleFavorite}
         className={buttonClasses}
-        disabled={isPending || !isSignedIn}
+        disabled={isPending}
         aria-label={isFavorited ? `Remove from favorites` : `Add to favorites`}
         title={!isSignedIn ? 'Sign in to add to favorites' : (isFavorited ? 'Remove from favorites' : 'Add to favorites')}
       >

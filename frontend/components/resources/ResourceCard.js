@@ -3,6 +3,7 @@ import Image from 'next/image';
 import ResourceTypeIcon from './ResourceTypeIcon';
 import { highlightSearchTerms, truncateText } from '../../utils/text-utils';
 import { formatResourceType, getResourceSubtitle } from '../../utils/resource-utils';
+import { Heading, Text } from '../ui/Typography';
 
 /**
  * ResourceCard component
@@ -28,13 +29,6 @@ export default function ResourceCard({ resource, searchTerm = '' }) {
   // Get truncated description
   const truncatedDescription = truncateText(description, 120);
   
-  // Debug: Log the resource to see what fields are available
-  console.log(`Resource Card: ${title}`, {
-    resource: resource,
-    type: type,
-    subtitle: subtitle
-  });
-  
   return (
     <Link href={`/resources/${slug}`} className="block h-full">
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
@@ -56,20 +50,29 @@ export default function ResourceCard({ resource, searchTerm = '' }) {
         
         {/* Card Content */}
         <div className="p-4">
-          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1" style={{ fontFamily: 'Lora, serif' }}>
+          <Heading 
+            as="h3" 
+            size="lg" 
+            className="mb-1"
+          >
             {searchTerm ? highlightSearchTerms(title, searchTerm) : title}
-          </h3>
+          </Heading>
           
           {subtitle && subtitle.length > 0 && (
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-2" style={{ fontFamily: 'Inter, sans-serif' }}>
+            <Text 
+              size="sm" 
+              className="text-neutral-600 dark:text-neutral-400 mb-2"
+            >
               {subtitle}
-            </p>
+            </Text>
           )}
           
           {description && (
-            <p className="text-sm text-neutral-700 dark:text-neutral-300" style={{ fontFamily: 'Inter, sans-serif' }}>
+            <Text 
+              size="sm"
+            >
               {searchTerm ? highlightSearchTerms(truncatedDescription, searchTerm) : truncatedDescription}
-            </p>
+            </Text>
           )}
         </div>
       </div>
