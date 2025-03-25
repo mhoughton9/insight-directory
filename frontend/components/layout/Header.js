@@ -8,7 +8,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="bg-background border-b border-neutral-200 dark:border-neutral-800">
+    <header className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo and Site Name */}
         <Link href="/" className="flex items-center space-x-3">
@@ -37,7 +37,7 @@ export default function Header() {
             </Link>
             <Link 
               href="/suggest" 
-              className="px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px]"
+              className="px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
               style={{ 
                 fontFamily: 'Inter, sans-serif',
                 background: 'var(--background)',
@@ -84,7 +84,7 @@ export default function Header() {
                 </Link>
                 <Link 
                   href="/sign-up" 
-                  className="px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px]"
+                  className="px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
                   style={{ 
                     fontFamily: 'Inter, sans-serif',
                     background: 'var(--background)',
@@ -128,7 +128,7 @@ export default function Header() {
       
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden bg-background border-t border-neutral-200 dark:border-neutral-800">
+        <div className="md:hidden bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800">
           <nav className="container mx-auto px-4 py-4 flex flex-col space-y-4">
             <Link href="/teachers" className="text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               Teachers
@@ -141,7 +141,7 @@ export default function Header() {
             </Link>
             <Link 
               href="/suggest" 
-              className="inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white w-fit transition-all duration-300 transform hover:translate-y-[-2px]"
+              className="inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white w-fit transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
               style={{ 
                 fontFamily: 'Inter, sans-serif',
                 background: 'var(--background)',
@@ -171,7 +171,7 @@ export default function Header() {
                 </Link>
                 <Link 
                   href="/sign-up" 
-                  className="inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white w-fit transition-all duration-300 transform hover:translate-y-[-2px]"
+                  className="inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white w-fit transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
                   style={{ 
                     fontFamily: 'Inter, sans-serif',
                     background: 'var(--background)',

@@ -27,11 +27,10 @@ const TraditionsTeachersSection = ({ traditions, teachers, brandColors }) => {
                 return (
                   <div key={tradition._id} className="flex items-center">
                     <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: color }}></div>
-                    <Link 
-                      href={`/traditions/${tradition._id}`}
-                      className="text-neutral-800 dark:text-neutral-200 hover:text-accent transition-all duration-300"
-                    >
-                      {tradition.name}
+                    <Link href={`/traditions/${tradition._id}`} className="transition-all duration-300 transform hover:translate-y-[-2px] inline-block">
+                      <Text as="span" size="md" className="hover:text-accent">
+                        {tradition.name}
+                      </Text>
                     </Link>
                   </div>
                 );
@@ -40,7 +39,15 @@ const TraditionsTeachersSection = ({ traditions, teachers, brandColors }) => {
             <div className="text-center mt-6">
               <Link 
                 href="/traditions" 
-                className="inline-block px-4 py-2 bg-neutral-100 dark:bg-neutral-700 rounded-md text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-300"
+                className="inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
+                style={{ 
+                  fontFamily: 'Inter, sans-serif',
+                  background: 'var(--background)',
+                  border: '2px solid transparent',
+                  backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
+                  backgroundOrigin: 'border-box',
+                  backgroundClip: 'padding-box, border-box'
+                }}
               >
                 View All Traditions
               </Link>
@@ -60,11 +67,10 @@ const TraditionsTeachersSection = ({ traditions, teachers, brandColors }) => {
                 return (
                   <div key={teacher._id} className="flex items-center">
                     <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: color }}></div>
-                    <Link 
-                      href={`/teachers/${teacher._id}`}
-                      className="text-neutral-800 dark:text-neutral-200 hover:text-accent transition-all duration-300"
-                    >
-                      {teacher.name}
+                    <Link href={`/teachers/${teacher._id}`} className="transition-all duration-300 transform hover:translate-y-[-2px] inline-block">
+                      <Text as="span" size="md" className="hover:text-accent">
+                        {teacher.name}
+                      </Text>
                     </Link>
                   </div>
                 );
@@ -73,7 +79,15 @@ const TraditionsTeachersSection = ({ traditions, teachers, brandColors }) => {
             <div className="text-center mt-6">
               <Link 
                 href="/teachers" 
-                className="inline-block px-4 py-2 bg-neutral-100 dark:bg-neutral-700 rounded-md text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-300"
+                className="inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
+                style={{ 
+                  fontFamily: 'Inter, sans-serif',
+                  background: 'var(--background)',
+                  border: '2px solid transparent',
+                  backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
+                  backgroundOrigin: 'border-box',
+                  backgroundClip: 'padding-box, border-box'
+                }}
               >
                 View All Teachers
               </Link>

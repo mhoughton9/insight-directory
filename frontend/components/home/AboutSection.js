@@ -20,7 +20,7 @@ const AboutSection = () => {
         <div className="flex justify-center">
           <Link 
             href="/about" 
-            className="px-6 py-3 text-base bg-gradient-to-r from-brand-purple via-brand-magenta to-brand-orange text-white rounded-md hover:shadow-lg transition-all duration-300 shadow-sm font-bold inline-block"
+            className="px-6 py-3 text-base bg-gradient-to-r from-brand-purple via-brand-magenta to-brand-orange text-white rounded-md hover:shadow-lg transition-all duration-300 shadow-sm font-bold inline-block hover:translate-y-[-2px]"
             style={{ background: 'var(--gradient-brand)' }}
           >
             Learn more about us
