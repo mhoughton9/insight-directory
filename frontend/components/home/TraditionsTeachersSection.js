@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Heading, Text } from '../ui/Typography';
+import { getTypographyClasses } from '../../utils/fontUtils';
 
 /**
  * Traditions and Teachers Section component for the home page
@@ -10,8 +11,17 @@ import { Heading, Text } from '../ui/Typography';
  * @param {Array} props.brandColors - Array of brand colors for styling
  */
 const TraditionsTeachersSection = ({ traditions, teachers, brandColors }) => {
+  // Common button classes
+  const buttonClasses = "inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md";
+  
+  // Common button styles
+  const buttonStyle = {
+    background: 'var(--background)',
+    border: '2px solid var(--brand-deep-blue)'
+  };
+
   return (
-    <section className="py-12 my-8 mx-auto max-w-[95%] rounded-xl">
+    <section className="py-12 my-8 mx-auto max-w-7xl bg-white rounded-xl shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-8">
           {/* Traditions Column */}
@@ -39,21 +49,16 @@ const TraditionsTeachersSection = ({ traditions, teachers, brandColors }) => {
             <div className="text-center mt-6">
               <Link 
                 href="/traditions" 
-                className="inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
-                style={{ 
-                  fontFamily: 'Inter, sans-serif',
-                  background: 'var(--background)',
-                  border: '2px solid transparent',
-                  backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
-                  backgroundOrigin: 'border-box',
-                  backgroundClip: 'padding-box, border-box'
-                }}
+                className={buttonClasses}
+                style={buttonStyle}
               >
-                View All Traditions
+                <Text as="span" size="sm" className={getTypographyClasses({ type: 'body', weight: 'SEMIBOLD' })}>
+                  View All Traditions
+                </Text>
               </Link>
             </div>
           </div>
-
+          
           {/* Teachers Column */}
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 p-6 rounded-xl shadow-sm">
             <Heading as="h3" size="xl" className="mb-6 text-neutral-800 dark:text-neutral-200 text-center">
@@ -79,17 +84,12 @@ const TraditionsTeachersSection = ({ traditions, teachers, brandColors }) => {
             <div className="text-center mt-6">
               <Link 
                 href="/teachers" 
-                className="inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
-                style={{ 
-                  fontFamily: 'Inter, sans-serif',
-                  background: 'var(--background)',
-                  border: '2px solid transparent',
-                  backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
-                  backgroundOrigin: 'border-box',
-                  backgroundClip: 'padding-box, border-box'
-                }}
+                className={buttonClasses}
+                style={buttonStyle}
               >
-                View All Teachers
+                <Text as="span" size="sm" className={getTypographyClasses({ type: 'body', weight: 'SEMIBOLD' })}>
+                  View All Teachers
+                </Text>
               </Link>
             </div>
           </div>

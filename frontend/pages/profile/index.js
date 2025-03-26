@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useUser } from '@clerk/nextjs';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { useUserContext } from '@/contexts/UserContext';
+import { Heading, Text } from '@/components/ui/Typography';
 
 const ProfilePage = () => {
   const { user } = useUser();
@@ -89,12 +90,12 @@ const ProfilePage = () => {
               />
             </div>
             <div>
-              <h1 className="text-2xl font-medium" style={{ fontFamily: 'Lora, serif' }}>
+              <Heading as="h1" size="2xl">
                 {user?.firstName} {user?.lastName}
-              </h1>
-              <p className="text-neutral-500" style={{ fontFamily: 'Inter, sans-serif' }}>
+              </Heading>
+              <Text className="text-neutral-500">
                 {user?.primaryEmailAddress?.emailAddress}
-              </p>
+              </Text>
             </div>
           </div>
 
@@ -104,21 +105,18 @@ const ProfilePage = () => {
               <button
                 onClick={() => setActiveTab('favorites')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'favorites' ? 'border-neutral-800 text-neutral-800' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'}`}
-                style={{ fontFamily: 'Inter, sans-serif' }}
               >
                 Favorites
               </button>
               <button
                 onClick={() => setActiveTab('comments')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'comments' ? 'border-neutral-800 text-neutral-800' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'}`}
-                style={{ fontFamily: 'Inter, sans-serif' }}
               >
                 Comments
               </button>
               <button
                 onClick={() => setActiveTab('settings')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'settings' ? 'border-neutral-800 text-neutral-800' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'}`}
-                style={{ fontFamily: 'Inter, sans-serif' }}
               >
                 Settings
               </button>
@@ -131,56 +129,56 @@ const ProfilePage = () => {
               {loading ? (
                 <div className="text-center py-8">
                   <div className="animate-pulse inline-block h-8 w-8 rounded-full bg-neutral-200"></div>
-                  <p className="mt-2 text-neutral-500" style={{ fontFamily: 'Inter, sans-serif' }}>Loading your favorites...</p>
+                  <Text className="mt-2 text-neutral-500">Loading your favorites...</Text>
                 </div>
               ) : (
                 <div>
                   {/* Resources */}
                   <div className="mb-8">
-                    <h2 className="text-xl font-medium mb-4" style={{ fontFamily: 'Lora, serif' }}>Favorite Resources</h2>
+                    <Heading as="h2" size="xl" className="mb-4">Favorite Resources</Heading>
                     {favoriteResources.length > 0 ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {favoriteResources.map(resource => (
                           <div key={resource._id} className="bg-white p-4 rounded-lg shadow-sm">
-                            <h3 className="font-medium" style={{ fontFamily: 'Lora, serif' }}>{resource.title}</h3>
-                            <p className="text-sm text-neutral-500 mt-1" style={{ fontFamily: 'Inter, sans-serif' }}>{resource.type}</p>
+                            <Heading as="h3" size="md">{resource.title}</Heading>
+                            <Text size="sm" className="text-neutral-500 mt-1">{resource.type}</Text>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-neutral-500" style={{ fontFamily: 'Inter, sans-serif' }}>You haven't favorited any resources yet.</p>
+                      <Text className="text-neutral-500">You haven't favorited any resources yet.</Text>
                     )}
                   </div>
 
                   {/* Teachers */}
                   <div className="mb-8">
-                    <h2 className="text-xl font-medium mb-4" style={{ fontFamily: 'Lora, serif' }}>Favorite Teachers</h2>
+                    <Heading as="h2" size="xl" className="mb-4">Favorite Teachers</Heading>
                     {favoriteTeachers.length > 0 ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {favoriteTeachers.map(teacher => (
                           <div key={teacher._id} className="bg-white p-4 rounded-lg shadow-sm">
-                            <h3 className="font-medium" style={{ fontFamily: 'Lora, serif' }}>{teacher.name}</h3>
+                            <Heading as="h3" size="md">{teacher.name}</Heading>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-neutral-500" style={{ fontFamily: 'Inter, sans-serif' }}>You haven't favorited any teachers yet.</p>
+                      <Text className="text-neutral-500">You haven't favorited any teachers yet.</Text>
                     )}
                   </div>
 
                   {/* Traditions */}
                   <div>
-                    <h2 className="text-xl font-medium mb-4" style={{ fontFamily: 'Lora, serif' }}>Favorite Traditions</h2>
+                    <Heading as="h2" size="xl" className="mb-4">Favorite Traditions</Heading>
                     {favoriteTraditions.length > 0 ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {favoriteTraditions.map(tradition => (
                           <div key={tradition._id} className="bg-white p-4 rounded-lg shadow-sm">
-                            <h3 className="font-medium" style={{ fontFamily: 'Lora, serif' }}>{tradition.name}</h3>
+                            <Heading as="h3" size="md">{tradition.name}</Heading>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-neutral-500" style={{ fontFamily: 'Inter, sans-serif' }}>You haven't favorited any traditions yet.</p>
+                      <Text className="text-neutral-500">You haven't favorited any traditions yet.</Text>
                     )}
                   </div>
                 </div>
@@ -190,13 +188,13 @@ const ProfilePage = () => {
 
           {activeTab === 'comments' && (
             <div className="py-4">
-              <p className="text-neutral-500 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>Comments feature coming soon.</p>
+              <Text className="text-neutral-500 text-center">Comments feature coming soon.</Text>
             </div>
           )}
 
           {activeTab === 'settings' && (
             <div className="py-4">
-              <p className="text-neutral-500 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>Settings feature coming soon.</p>
+              <Text className="text-neutral-500 text-center">Settings feature coming soon.</Text>
             </div>
           )}
         </div>

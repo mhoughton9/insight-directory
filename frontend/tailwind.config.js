@@ -38,10 +38,10 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "Inter", "Open Sans", "sans-serif"],
+        sans: ["var(--font-geist-sans)", "Nunito Sans", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
-        lora: ["'Lora'", "serif"],
-        inter: ["'Inter'", "sans-serif"],
+        poppins: ["'Poppins'", "sans-serif"],
+        nunito: ["'Nunito Sans'", "sans-serif"],
       },
       borderRadius: {
         DEFAULT: "0.375rem", // Medium radius, not pills

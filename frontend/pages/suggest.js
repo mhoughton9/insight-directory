@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
+import { Heading, Text } from '../components/ui/Typography';
 
 /**
  * Resource suggestion form component
@@ -101,18 +102,18 @@ export default function SuggestResourcePage() {
       </Head>
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-normal text-neutral-800 dark:text-neutral-100 mb-8 text-center" style={{ fontFamily: 'Lora, serif' }}>
+        <Heading as="h1" size="4xl" className="mb-8 text-center">
           Suggest a Resource
-        </h1>
+        </Heading>
         
-        <p className="text-lg text-neutral-700 dark:text-neutral-300 mb-8 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <Text size="lg" className="mb-8 text-center">
           Know of a valuable resource for spiritual awakening, non-duality, or self-inquiry? 
           Please share it with us, and we'll consider adding it to the directory.
-        </p>
+        </Text>
 
         {submitStatus.submitted && (
           <div className={`p-4 mb-8 rounded-md ${submitStatus.success ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200' : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200'}`}>
-            <p className="text-center">{submitStatus.message}</p>
+            <Text className="text-center">{submitStatus.message}</Text>
           </div>
         )}
 
@@ -215,9 +216,9 @@ export default function SuggestResourcePage() {
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-500 focus:border-transparent"
               />
-              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+              <Text size="xs" className="mt-1 text-neutral-500 dark:text-neutral-400">
                 Optional. We'll only use this to contact you if we have questions about your suggestion.
-              </p>
+              </Text>
             </div>
 
             {/* Additional Information */}
@@ -233,9 +234,9 @@ export default function SuggestResourcePage() {
                 rows="3"
                 className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-500 focus:border-transparent"
               ></textarea>
-              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+              <Text size="xs" className="mt-1 text-neutral-500 dark:text-neutral-400">
                 Any other details that might help us understand why this resource should be included.
-              </p>
+              </Text>
             </div>
 
             {/* Submit Button */}

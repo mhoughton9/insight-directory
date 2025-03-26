@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 /**
  * Typography components for consistent text styling across the application
- * Uses the project's font system: Lora for headings, Inter for body text
+ * Uses the project's font system: Poppins for headings, Nunito Sans for body text
  */
 
 /**
@@ -37,7 +37,7 @@ export const Heading = ({
 
   return (
     <Component
-      className={`font-lora font-medium text-neutral-900 dark:text-white ${sizeClasses[size] || 'text-xl'} ${className}`}
+      className={`font-poppins font-bold text-neutral-900 dark:text-white ${sizeClasses[size] || 'text-xl'} ${className}`}
       {...rest}
     >
       {children}
@@ -71,7 +71,7 @@ export const Subheading = ({
 
   return (
     <Component
-      className={`font-inter font-medium text-neutral-800 dark:text-neutral-200 ${sizeClasses[size] || 'text-lg'} ${className}`}
+      className={`font-poppins font-semibold text-neutral-800 dark:text-neutral-200 ${sizeClasses[size] || 'text-lg'} ${className}`}
       {...rest}
     >
       {children}
@@ -106,7 +106,7 @@ export const Text = ({
 
   return (
     <Component
-      className={`font-inter text-neutral-700 dark:text-neutral-300 ${sizeClasses[size] || 'text-base'} ${className}`}
+      className={`font-nunito text-neutral-700 dark:text-neutral-300 ${sizeClasses[size] || 'text-base'} ${className}`}
       {...rest}
     >
       {children}
@@ -130,7 +130,7 @@ export const Caption = ({
 }) => {
   return (
     <Component
-      className={`font-inter text-xs text-neutral-500 dark:text-neutral-400 ${className}`}
+      className={`font-nunito text-xs text-neutral-500 dark:text-neutral-400 ${className}`}
       {...rest}
     >
       {children}

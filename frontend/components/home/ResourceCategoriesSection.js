@@ -31,7 +31,7 @@ const getPluralResourceType = (type) => {
  */
 const ResourceCategoriesSection = ({ resourceTypes, brandColors }) => {
   return (
-    <section className="py-12 my-8 mx-auto max-w-[95%] bg-white dark:bg-neutral-900 rounded-xl shadow-sm">
+    <section className="py-12 my-8 mx-auto max-w-7xl bg-white rounded-xl shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <Heading as="h2" size="3xl" className="mb-6 text-center">
@@ -54,7 +54,7 @@ const ResourceCategoriesSection = ({ resourceTypes, brandColors }) => {
                 href={`/resources/type/${normalizedType}`} 
                 className="block h-full"
               >
-                <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
+                <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-lg hover:border-neutral-300 dark:hover:border-neutral-700 hover:translate-y-[-4px]">
                   {/* Card Content */}
                   <div className="p-6 flex flex-col items-center text-center">
                     <div className="w-16 h-16 mb-4 flex items-center justify-center relative z-10">
@@ -63,6 +63,7 @@ const ResourceCategoriesSection = ({ resourceTypes, brandColors }) => {
                           width: 48, 
                           height: 48, 
                           stroke: color,
+                          strokeWidth: 2.5,
                           className: "transition-all duration-300"
                         })}
                       </div>

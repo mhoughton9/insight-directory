@@ -1,5 +1,7 @@
 import React from 'react';
 import ResourceCard from './ResourceCard';
+import { Text, Heading } from '../ui/Typography';
+import { getTypographyClasses } from '../../utils/fontUtils';
 
 /**
  * ResourceGrid component
@@ -22,12 +24,12 @@ const ResourceGrid = React.memo(function ResourceGrid({ resources = [], isLoadin
   if (!resources.length && !isLoading) {
     return (
       <div className="py-12 text-center bg-neutral-50 dark:bg-neutral-800/50 rounded-lg">
-        <h3 className="text-lg font-medium text-neutral-700 dark:text-neutral-300 mb-2" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <Heading as="h3" size="lg" className="mb-2">
           No resources found
-        </h3>
-        <p className="text-neutral-600 dark:text-neutral-400" style={{ fontFamily: 'Inter, sans-serif' }}>
+        </Heading>
+        <Text size="md">
           Try adjusting your filters or search terms
-        </p>
+        </Text>
       </div>
     );
   }

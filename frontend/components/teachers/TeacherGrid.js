@@ -1,5 +1,6 @@
 import React from 'react';
 import TeacherCard from './TeacherCard';
+import { Heading, Text } from '../ui/Typography';
 
 /**
  * TeacherGrid component
@@ -19,12 +20,12 @@ const TeacherGrid = React.memo(function TeacherGrid({ teachers = [], isLoading =
   if (!teachers.length && !isLoading) {
     return (
       <div className="py-12 text-center bg-neutral-50 dark:bg-neutral-800/50 rounded-lg">
-        <h3 className="text-lg font-medium text-neutral-700 dark:text-neutral-300 mb-2" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <Heading as="h3" size="md" className="mb-2">
           No teachers found
-        </h3>
-        <p className="text-neutral-600 dark:text-neutral-400" style={{ fontFamily: 'Inter, sans-serif' }}>
+        </Heading>
+        <Text>
           Check back later for updates
-        </p>
+        </Text>
       </div>
     );
   }

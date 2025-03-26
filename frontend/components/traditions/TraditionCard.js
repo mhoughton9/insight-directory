@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Heading, Text } from '../ui/Typography';
 
 /**
  * TraditionCard component
@@ -47,14 +48,14 @@ export default function TraditionCard({ tradition }) {
         
         {/* Card Content */}
         <div className="p-4">
-          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1" style={{ fontFamily: 'Lora, serif' }}>
+          <Heading as="h3" size="lg" className="mb-1">
             {name}
-          </h3>
+          </Heading>
           
           {shortDescription && (
-            <p className="text-sm text-neutral-700 dark:text-neutral-300 mb-3" style={{ fontFamily: 'Inter, sans-serif' }}>
+            <Text size="sm" className="mb-3">
               {shortDescription}
-            </p>
+            </Text>
           )}
         </div>
       </div>

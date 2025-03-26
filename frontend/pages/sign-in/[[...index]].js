@@ -1,5 +1,6 @@
 import { SignIn } from '@clerk/nextjs';
 import Head from 'next/head';
+import { Heading } from '../../components/ui/Typography';
 
 const SignInPage = () => (
   <>
@@ -9,9 +10,9 @@ const SignInPage = () => (
     </Head>
     <div className="flex justify-center items-center min-h-screen bg-neutral-50 py-12 px-4">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-sm">
-        <h1 className="text-2xl font-medium mb-6 text-center" style={{ fontFamily: 'Lora, serif' }}>
+        <Heading as="h1" size="2xl" className="mb-6 text-center">
           Sign In to Insight Directory
-        </h1>
+        </Heading>
         <SignIn 
           path="/sign-in" 
           routing="path" 

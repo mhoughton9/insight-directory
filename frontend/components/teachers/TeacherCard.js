@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Heading, Text } from '../ui/Typography';
+import { getTypographyClasses } from '../../utils/fontUtils';
 
 /**
  * TeacherCard component
@@ -48,27 +50,28 @@ export default function TeacherCard({ teacher }) {
         
         {/* Card Content */}
         <div className="p-4">
-          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1" style={{ fontFamily: 'Lora, serif' }}>
+          <Heading as="h3" size="lg" className={`${getTypographyClasses('lg', 'font-serif')} mb-1`}>
             {name}
-          </h3>
+          </Heading>
           
           {description && (
-            <p className="text-sm text-neutral-700 dark:text-neutral-300 mb-3" style={{ fontFamily: 'Inter, sans-serif' }}>
+            <Text size="sm" className={`${getTypographyClasses('sm', 'font-sans')} mb-3`}>
               {description}
-            </p>
+            </Text>
           )}
           
           {/* Traditions */}
           {traditions && traditions.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-auto">
               {traditions.map(tradition => (
-                <span 
-                  key={tradition._id || tradition} 
-                  className="inline-block px-2 py-0.5 text-xs bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-md"
-                  style={{ fontFamily: 'Inter, sans-serif' }}
+                <Text 
+                  key={tradition._id || tradition}
+                  as="span" 
+                  size="xs"
+                  className={`${getTypographyClasses('xs', 'font-sans')} inline-block px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-md`}
                 >
                   {tradition.name || tradition}
-                </span>
+                </Text>
               ))}
             </div>
           )}

@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { Heading, Text } from '../components/ui/Typography';
 
 /**
  * About page component
@@ -15,40 +16,39 @@ export default function AboutPage() {
       </Head>
 
       <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-normal text-neutral-800 dark:text-neutral-100 mb-8 text-center" style={{ fontFamily: 'Lora, serif' }}>
+        <Heading as="h1" size="4xl" className="mb-8 text-center">
           About This Directory
-        </h1>
+        </Heading>
 
-        <div className="prose prose-lg dark:prose-invert mx-auto" style={{ fontFamily: 'Inter, sans-serif' }}>
-          <p className="text-lg text-neutral-700 dark:text-neutral-300 mb-6">
+        <div className="prose prose-lg dark:prose-invert mx-auto">
+          <Text size="lg" className="mb-6">
             The Insight Directory is a collection of resources focused on spiritual awakening, non-duality, and self-inquiry. I created this directory because these topics have been the most fascinating and life-changing I've ever come across.
-          </p>
+          </Text>
 
-          <p className="text-lg text-neutral-700 dark:text-neutral-300 mb-6">
+          <Text size="lg" className="mb-6">
             After several years of deep interest in these subjects, I continue to discover valuable resources I wish I'd known about earlier. I've often thought it would be helpful to have a single site that brings together the best materials in one place.
-          </p>
+          </Text>
 
-          <p className="text-lg text-neutral-700 dark:text-neutral-300 mb-6">
+          <Text size="lg" className="mb-6">
             While there are countless spiritual books and resources available, this directory specifically focuses on those related to awakening, non-duality, self-inquiry, and practices that point toward these experiences.
-          </p>
+          </Text>
 
-          <p className="text-lg text-neutral-700 dark:text-neutral-300 mb-6">
+          <Text size="lg" className="mb-6">
             Each individual resonates with different teaching styles and approaches. What speaks deeply to one person might not connect with another. This directory aims to help you explore various approaches to find what works best for you, whether you're new to these concepts or have been exploring them for years.
-          </p>
+          </Text>
 
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-sm p-6 mt-8 mb-6 transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
-            <h2 className="text-2xl font-normal text-neutral-800 dark:text-neutral-100 mb-4 text-center" style={{ fontFamily: 'Lora, serif' }}>
+            <Heading as="h2" size="2xl" className="mb-4 text-center">
               Have a Resource to Suggest?
-            </h2>
-            <p className="text-neutral-700 dark:text-neutral-300 mb-4 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
+            </Heading>
+            <Text className="mb-4 text-center">
               Know of a valuable resource that should be included in this directory? I welcome suggestions for books, teachers, podcasts, and other materials that align with the focus of this site.
-            </p>
+            </Text>
             <div className="flex justify-center">
               <Link 
                 href="/suggest" 
                 className="inline-block px-6 py-3 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px]"
                 style={{ 
-                  fontFamily: 'Inter, sans-serif',
                   background: 'var(--background)',
                   border: '2px solid transparent',
                   backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',

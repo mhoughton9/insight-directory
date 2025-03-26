@@ -1,5 +1,6 @@
 import { SignUp } from '@clerk/nextjs';
 import Head from 'next/head';
+import { Heading, Text } from '../../components/ui/Typography';
 
 const SignUpPage = () => (
   <>
@@ -9,9 +10,9 @@ const SignUpPage = () => (
     </Head>
     <div className="flex justify-center items-center min-h-screen bg-neutral-50 py-12 px-4">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-sm">
-        <h1 className="text-2xl font-medium mb-6 text-center" style={{ fontFamily: 'Lora, serif' }}>
+        <Heading as="h1" size="2xl" className="mb-6 text-center">
           Create an Insight Directory Account
-        </h1>
+        </Heading>
         <SignUp 
           path="/sign-up" 
           routing="path" 
@@ -26,9 +27,9 @@ const SignUpPage = () => (
             }
           }}
         />
-        <p className="text-sm text-neutral-500 mt-6 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <Text size="sm" className="text-neutral-500 mt-6 text-center">
           By signing up, you'll be able to save your favorite resources and leave comments to help others on their spiritual journey.
-        </p>
+        </Text>
       </div>
     </div>
   </>

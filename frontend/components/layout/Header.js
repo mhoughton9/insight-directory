@@ -3,121 +3,115 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { MenuIcon } from '../ui/Icons';
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { Text } from '../ui/Typography';
+import { getTypographyClasses } from '../../utils/fontUtils';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Common navigation link classes
+  const navLinkClasses = "text-neutral-700 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]";
+  
+  // Common button classes
+  const buttonClasses = "px-4 py-2 rounded-md text-neutral-800 transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md";
+  
+  // Common button styles
+  const buttonStyle = {
+    background: 'var(--background)',
+    border: '2px solid var(--brand-deep-blue)'
+  };
+
   return (
-    <header className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        {/* Logo and Site Name */}
-        <Link href="/" className="flex items-center space-x-3">
-          <Image 
-            src="/images/logo.png" 
-            alt="Insight Directory Logo" 
-            width={52} 
-            height={52} 
-            className="rounded-sm"
-          />
-          <span className="font-medium text-2xl" style={{ fontFamily: 'Lora, serif' }}>Insight Directory</span>
+    <header className="bg-white border-b border-neutral-200">
+      <div className="container mx-auto px-4 py-2 flex justify-between items-center">
+        {/* Header-specific cropped logo - updated version */}
+        <Link href="/" className="flex items-center">
+          <div className="relative h-16 w-56">
+            <Image 
+              src="/images/Logo_header.PNG?v=2" 
+              alt="Insight Directory Logo" 
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
         </Link>
         
         {/* Right Side Navigation and Controls */}
         <div className="flex items-center">
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 mr-6">
-            <Link href="/teachers" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
-              Teachers
+            <Link href="/teachers" className={`${navLinkClasses} ${getTypographyClasses({ type: 'body' })}`}>
+              <Text as="span">Teachers</Text>
             </Link>
-            <Link href="/traditions" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
-              Traditions
+            <Link href="/traditions" className={`${navLinkClasses} ${getTypographyClasses({ type: 'body' })}`}>
+              <Text as="span">Traditions</Text>
             </Link>
-            <Link href="/about" className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
-              About
+            <Link href="/about" className={`${navLinkClasses} ${getTypographyClasses({ type: 'body' })}`}>
+              <Text as="span">About</Text>
             </Link>
             <Link 
               href="/suggest" 
-              className="px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
+              className={`${buttonClasses} ${getTypographyClasses({ type: 'body' })}`}
+              style={buttonStyle}
+            >
+              <Text as="span">Suggest a Resource</Text>
+            </Link>
+          </nav>
+          
+          <div className="flex items-center">
+            <SignedIn>
+              <div className="flex items-center space-x-4">
+                <Link 
+                  href="/profile" 
+                  className={`${navLinkClasses} ${getTypographyClasses({ type: 'body' })}`}
+                >
+                  <Text as="span">Profile</Text>
+                </Link>
+                <div className="h-8 w-8">
+                  <UserButton 
+                    afterSignOutUrl="/"
+                    appearance={{
+                      elements: {
+                        userButtonAvatarBox: {
+                          width: '32px',
+                          height: '32px'
+                        }
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </SignedIn>
+            
+            <SignedOut>
+              <div className="flex items-center space-x-4">
+                <Link 
+                  href="/sign-in" 
+                  className={`${navLinkClasses} ${getTypographyClasses({ type: 'body' })}`}
+                >
+                  <Text as="span">Sign in</Text>
+                </Link>
+                <Link 
+                  href="/sign-up" 
+                  className={`${buttonClasses} ${getTypographyClasses({ type: 'body' })}`}
+                  style={buttonStyle}
+                >
+                  <Text as="span">Sign up</Text>
+                </Link>
+              </div>
+            </SignedOut>
+            
+            <button 
+              aria-label="Menu" 
+              className="p-2 md:hidden text-neutral-800 transition-all duration-300 transform hover:translate-y-[-2px]" 
               style={{ 
-                fontFamily: 'Inter, sans-serif',
                 background: 'var(--background)',
                 border: '2px solid transparent',
                 backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
                 backgroundOrigin: 'border-box',
                 backgroundClip: 'padding-box, border-box'
               }}
-            >
-              Suggest a Resource
-            </Link>
-            
-            {/* Authentication UI */}
-            <SignedIn>
-              {/* User is signed in */}
-              <div className="flex items-center space-x-4">
-                <Link 
-                  href="/profile" 
-                  className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]"
-                  style={{ fontFamily: 'Inter, sans-serif' }}
-                >
-                  Profile
-                </Link>
-                <UserButton 
-                  afterSignOutUrl="/"
-                  appearance={{
-                    elements: {
-                      userButtonAvatarBox: 'w-10 h-10',
-                    }
-                  }}
-                />
-              </div>
-            </SignedIn>
-            
-            <SignedOut>
-              {/* User is signed out */}
-              <div className="flex items-center space-x-4">
-                <Link 
-                  href="/sign-in" 
-                  className="text-neutral-700 dark:text-neutral-300 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]"
-                  style={{ fontFamily: 'Inter, sans-serif' }}
-                >
-                  Sign in
-                </Link>
-                <Link 
-                  href="/sign-up" 
-                  className="px-4 py-2 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
-                  style={{ 
-                    fontFamily: 'Inter, sans-serif',
-                    background: 'var(--background)',
-                    border: '2px solid transparent',
-                    backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
-                    backgroundOrigin: 'border-box',
-                    backgroundClip: 'padding-box, border-box'
-                  }}
-                >
-                  Sign up
-                </Link>
-              </div>
-            </SignedOut>
-          </nav>
-          
-          {/* Mobile Menu Button */}
-          <div className="flex items-center">
-            <SignedIn>
-              <div className="md:hidden mr-4">
-                <UserButton 
-                  afterSignOutUrl="/"
-                  appearance={{
-                    elements: {
-                      userButtonAvatarBox: 'w-8 h-8',
-                    }
-                  }}
-                />
-              </div>
-            </SignedIn>
-            
-            <button 
-              aria-label="Menu" 
-              className="p-2 md:hidden text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               <MenuIcon size={20} />
@@ -128,60 +122,45 @@ export default function Header() {
       
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800">
+        <div className="md:hidden bg-white border-t border-neutral-200">
           <nav className="container mx-auto px-4 py-4 flex flex-col space-y-4">
-            <Link href="/teachers" className="text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
-              Teachers
+            <Link href="/teachers" className={`${navLinkClasses} ${getTypographyClasses({ type: 'body' })}`}>
+              <Text as="span">Teachers</Text>
             </Link>
-            <Link href="/traditions" className="text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
-              Traditions
+            <Link href="/traditions" className={`${navLinkClasses} ${getTypographyClasses({ type: 'body' })}`}>
+              <Text as="span">Traditions</Text>
             </Link>
-            <Link href="/about" className="text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
-              About
+            <Link href="/about" className={`${navLinkClasses} ${getTypographyClasses({ type: 'body' })}`}>
+              <Text as="span">About</Text>
             </Link>
             <Link 
               href="/suggest" 
-              className="inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white w-fit transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
-              style={{ 
-                fontFamily: 'Inter, sans-serif',
-                background: 'var(--background)',
-                border: '2px solid transparent',
-                backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
-                backgroundOrigin: 'border-box',
-                backgroundClip: 'padding-box, border-box'
-              }}
+              className={`inline-block ${buttonClasses} w-fit ${getTypographyClasses({ type: 'body' })}`}
+              style={buttonStyle}
             >
-              Suggest a Resource
+              <Text as="span">Suggest a Resource</Text>
             </Link>
             
             <SignedIn>
-              <Link href="/profile" className="text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                Profile
+              <Link href="/profile" className={`${navLinkClasses} ${getTypographyClasses({ type: 'body' })}`}>
+                <Text as="span">Profile</Text>
               </Link>
             </SignedIn>
             
             <SignedOut>
-              <div className="flex flex-col space-y-3 pt-2 border-t border-neutral-200 dark:border-neutral-800">
+              <div className="flex flex-col space-y-3 pt-2 border-t border-neutral-200">
                 <Link 
                   href="/sign-in" 
-                  className="text-neutral-700 dark:text-neutral-300 transition-all duration-300 transform hover:translate-y-[-2px]"
-                  style={{ fontFamily: 'Inter, sans-serif' }}
+                  className={`${navLinkClasses} ${getTypographyClasses({ type: 'body' })}`}
                 >
-                  Sign in
+                  <Text as="span">Sign in</Text>
                 </Link>
                 <Link 
                   href="/sign-up" 
-                  className="inline-block px-4 py-2 rounded-md text-neutral-800 dark:text-white w-fit transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
-                  style={{ 
-                    fontFamily: 'Inter, sans-serif',
-                    background: 'var(--background)',
-                    border: '2px solid transparent',
-                    backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
-                    backgroundOrigin: 'border-box',
-                    backgroundClip: 'padding-box, border-box'
-                  }}
+                  className={`inline-block ${buttonClasses} w-fit ${getTypographyClasses({ type: 'body' })}`}
+                  style={buttonStyle}
                 >
-                  Sign up
+                  <Text as="span">Sign up</Text>
                 </Link>
               </div>
             </SignedOut>

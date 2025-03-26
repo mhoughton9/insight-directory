@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Heading, Text } from '../ui/Typography';
+import { getTypographyClasses } from '../../utils/fontUtils';
 
 /**
  * About Section component for the home page
@@ -7,7 +8,7 @@ import { Heading, Text } from '../ui/Typography';
  */
 const AboutSection = () => {
   return (
-    <section className="py-12 my-8 mx-auto max-w-[95%] bg-white dark:bg-neutral-900 rounded-xl shadow-sm">
+    <section className="py-12 my-8 mx-auto max-w-7xl bg-white rounded-xl shadow-md">
       <div className="max-w-3xl mx-auto text-center px-4">
         <Heading as="h2" size="3xl" className="mb-4 text-neutral-800 dark:text-neutral-200">
           About This Directory
@@ -20,8 +21,10 @@ const AboutSection = () => {
         <div className="flex justify-center">
           <Link 
             href="/about" 
-            className="px-6 py-3 text-base bg-gradient-to-r from-brand-purple via-brand-magenta to-brand-orange text-white rounded-md hover:shadow-lg transition-all duration-300 shadow-sm font-bold inline-block hover:translate-y-[-2px]"
-            style={{ background: 'var(--gradient-brand)' }}
+            className={`px-6 py-3 text-base text-white rounded-md hover:shadow-md transition-all duration-300 shadow-sm font-medium inline-block hover:translate-y-[-2px] hover:bg-brand-blue ${getTypographyClasses({ type: 'body' })}`}
+            style={{ 
+              backgroundColor: 'var(--brand-deep-blue)'
+            }}
           >
             Learn more about us
           </Link>

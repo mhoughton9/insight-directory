@@ -22,7 +22,15 @@ You can start editing the page by modifying `pages/index.js`. The page auto-upda
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Typography System
+
+This project uses a centralized typography system with Poppins for headings and Nunito Sans for body text. The system includes:
+
+- **Typography Components**: Reusable components for consistent text styling (`components/ui/Typography.js`)
+- **Font Utilities**: Helper functions and constants for font management (`utils/fontUtils.js`)
+- **Style Guide**: Comprehensive documentation in `docs/typography-style-guide.md`
+
+When adding new components or pages, please use the Typography components instead of raw HTML elements to maintain consistency.
 
 ## Learn More
 
