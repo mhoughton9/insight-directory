@@ -13,18 +13,6 @@ const HeroSection = () => {
       <div 
         className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 md:gap-12 rounded-xl p-6 relative overflow-hidden"
       >
-        {/* Background with fade effect */}
-        <div 
-          className="absolute inset-0 z-0" 
-          style={{
-            background: 'white',
-            maskImage: 'linear-gradient(to top, white 75%, transparent), linear-gradient(to left, white 70%, transparent), linear-gradient(to right, white 70%, transparent)',
-            maskComposite: 'intersect',
-            WebkitMaskImage: 'linear-gradient(to top, white 75%, transparent), linear-gradient(to left, white 70%, transparent), linear-gradient(to right, white 70%, transparent)',
-            WebkitMaskComposite: 'source-in'
-          }}
-        ></div>
-
         {/* Logo Display - left side */}
         <div className="relative z-10 w-64 h-64 md:w-[28rem] md:h-[28rem] hover:scale-105 transition-transform duration-500 flex-shrink-0">
           <Image 
