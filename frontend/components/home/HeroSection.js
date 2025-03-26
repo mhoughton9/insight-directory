@@ -37,13 +37,13 @@ const HeroSection = () => {
             />
           </div>
           
-          <div className="w-full flex flex-col items-center md:items-start">
+          <div className="w-full flex flex-col items-center md:items-start space-y-6">
             {/* Description Text - larger with improved line spacing */}
-            <div className="w-full">
+            <div className="w-full text-center md:text-left">
               <Heading 
                 as="h2"
                 size="3xl"
-                className={`text-neutral-800 max-w-xl text-center md:text-left mb-8 leading-loose font-semibold scale-125 md:ml-24 ${getTypographyClasses({ type: 'body', weight: 'SEMIBOLD' })}`}
+                className={`text-neutral-800 max-w-xl mb-0 leading-relaxed font-semibold text-[1.2em] ${getTypographyClasses({ type: 'body', weight: 'SEMIBOLD' })}`}
               >
                 A comprehensive collection of resources for those interested in spiritual awakening, non-duality, and self-inquiry.
               </Heading>
@@ -61,12 +61,16 @@ const HeroSection = () => {
                 Sign up for free
               </Link>
             </div>
-            <Text 
-              size="md" 
-              className={`text-neutral-600 mt-4 max-w-xl text-center md:text-left leading-relaxed ${getTypographyClasses({ type: 'body' })}`}
-            >
-              Create an account to save your favorite resources and help others on their spiritual journey.
-            </Text>
+            
+            {/* Subtitle text */}
+            <div className="text-center md:text-left w-full">
+              <Text 
+                size="md" 
+                className={`text-neutral-600 max-w-xl leading-relaxed ${getTypographyClasses({ type: 'body' })}`}
+              >
+                Create an account to save your favorite resources and help others on their spiritual journey.
+              </Text>
+            </div>
           </div>
 
           {/* Subtle color accents */}
