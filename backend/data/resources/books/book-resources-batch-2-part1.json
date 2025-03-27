@@ -1,0 +1,152 @@
+[
+  {
+    "type": "book",
+    "title": "Already Awake",
+    "description": "A clear and gentle guide pointing to the non-dual nature of experience.",
+    "tags": [],
+    "url": "https://www.amazon.com/Already-Awake-Nathan-Gill/dp/0954779217",
+    "bookDetails": {
+      "authors": [
+        "Nathan Gill"
+      ],
+      "publishedDate": "2004-01-01",
+      "pages": 160,
+      "publisher": "Non-Duality Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Clarity",
+    "description": "Dialogues and reflections that explore the illusion of separation.",
+    "tags": [],
+    "url": "https://www.amazon.com/Clarity-Nathan-Gill/dp/0954779209",
+    "bookDetails": {
+      "authors": [
+        "Nathan Gill"
+      ],
+      "publishedDate": "2000-01-01",
+      "pages": 140,
+      "publisher": "Non-Duality Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Emptiness Dancing",
+    "description": "Talks and essays on the spontaneous unfolding of awakening and embodiment.",
+    "tags": [],
+    "url": "https://www.amazon.com/Emptiness-Dancing-Adyashanti/dp/1591797305",
+    "bookDetails": {
+      "authors": [
+        "Adyashanti"
+      ],
+      "publishedDate": "2006-01-01",
+      "pages": 160,
+      "publisher": "Sounds True"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Most Important Thing",
+    "description": "Essential teachings on the nature of reality, awakening, and the end of seeking.",
+    "tags": [],
+    "url": "https://www.amazon.com/Most-Important-Thing-Discovering-Awareness/dp/168364250X",
+    "bookDetails": {
+      "authors": [
+        "Adyashanti"
+      ],
+      "publishedDate": "2019-01-01",
+      "pages": 192,
+      "publisher": "Sounds True"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Way of Liberation",
+    "description": "A concise and powerful guide to spiritual awakening from a nondual perspective.",
+    "tags": [],
+    "url": "https://www.amazon.com/Way-Liberation-Practical-Spiritual-Awakening/dp/1945026042",
+    "bookDetails": {
+      "authors": [
+        "Adyashanti"
+      ],
+      "publishedDate": "2012-01-01",
+      "pages": 104,
+      "publisher": "Open Gate Sangha"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Wonder of Being",
+    "description": "Poetic insights into embracing each moment as it is, without resistance.",
+    "tags": [],
+    "url": "https://www.amazon.com/Wonder-Being-Awakening-Reality-Love/dp/162625173X",
+    "bookDetails": {
+      "authors": [
+        "Jeff Foster"
+      ],
+      "publishedDate": "2014-01-01",
+      "pages": 280,
+      "publisher": "New Harbinger Publications"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Way of Rest",
+    "description": "Healing through radical acceptance, with prose and poetry on awakening.",
+    "tags": [],
+    "url": "https://www.amazon.com/Way-Rest-Spiritual-Surrender-Embrace/dp/1622037949",
+    "bookDetails": {
+      "authors": [
+        "Jeff Foster"
+      ],
+      "publishedDate": "2016-01-01",
+      "pages": 288,
+      "publisher": "Sounds True"
+    }
+  },
+  {
+    "type": "book",
+    "title": "In This Moment",
+    "description": "A direct invitation to explore and rest in the present moment, beyond thought.",
+    "tags": [],
+    "url": "https://www.amazon.com/This-Moment-John-Astin/dp/0955026301",
+    "bookDetails": {
+      "authors": [
+        "John Astin"
+      ],
+      "publishedDate": "2005-01-01",
+      "pages": 160,
+      "publisher": "Non-Duality Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "This Is Always Enough",
+    "description": "Essays that open up a deeper, non-conceptual understanding of reality.",
+    "tags": [],
+    "url": "https://www.amazon.com/This-Always-Enough-John-Astin/dp/0956034406",
+    "bookDetails": {
+      "authors": [
+        "John Astin"
+      ],
+      "publishedDate": "2008-01-01",
+      "pages": 200,
+      "publisher": "Non-Duality Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Nothing to Grasp",
+    "description": "A radically simple look at the nature of awareness, free from metaphysical ideas.",
+    "tags": [],
+    "url": "https://www.amazon.com/Nothing-Grasp-Joan-Tollifson/dp/0957303406",
+    "bookDetails": {
+      "authors": [
+        "Joan Tollifson"
+      ],
+      "publishedDate": "2012-01-01",
+      "pages": 240,
+      "publisher": "Non-Duality Press"
+    }
+  }
+]

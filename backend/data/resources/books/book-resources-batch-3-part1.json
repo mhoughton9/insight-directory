@@ -1,0 +1,152 @@
+[
+  {
+    "type": "book",
+    "title": "When Spirit Leaps",
+    "description": "A guide to navigating spiritual awakening and kundalini energy.",
+    "tags": [],
+    "url": "https://www.amazon.com/When-Spirit-Leaps-Navigating-Awakening/dp/1626259481",
+    "bookDetails": {
+      "authors": [
+        "Bonnie Greenwell"
+      ],
+      "publishedDate": "2018-01-01",
+      "pages": 288,
+      "publisher": "Non-Duality Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "In the Company of Rilke",
+    "description": "Explores the mystical and awakening themes in Rainer Maria Rilke\u2019s poetry.",
+    "tags": [],
+    "url": "https://www.amazon.com/Company-Rilke-Spiritual-Guidance-Master/dp/1585428610",
+    "bookDetails": {
+      "authors": [
+        "Stephanie Dowrick"
+      ],
+      "publishedDate": "2011-01-01",
+      "pages": 352,
+      "publisher": "TarcherPerigee"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Only That",
+    "description": "Dialogues and reflections inspired by Sri Nisargadatta Maharaj\u2019s teachings.",
+    "tags": [],
+    "url": "https://www.amazon.com/Only-That-Kalyani-Lawry/dp/1908664995",
+    "bookDetails": {
+      "authors": [
+        "Kalyani Lawry"
+      ],
+      "publishedDate": "2015-01-01",
+      "pages": 250,
+      "publisher": "Non-Duality Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Diamond in Your Pocket",
+    "description": "A direct and compassionate pointer to the freedom that lies within.",
+    "tags": [],
+    "url": "https://www.amazon.com/Diamond-Your-Pocket-Discovering-Awareness/dp/1591793571",
+    "bookDetails": {
+      "authors": [
+        "Gangaji"
+      ],
+      "publishedDate": "2007-01-01",
+      "pages": 224,
+      "publisher": "Sounds True"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Bare-Bones Meditation",
+    "description": "Down-to-earth reflections on meditation, presence, and the ordinary sacred.",
+    "tags": [],
+    "url": "https://www.amazon.com/Bare-Bones-Meditation-Experience-Essential/dp/0517888212",
+    "bookDetails": {
+      "authors": [
+        "Joan Tollifson"
+      ],
+      "publishedDate": "1996-01-01",
+      "pages": 170,
+      "publisher": "Three Rivers Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Awake in the Heartland",
+    "description": "A candid, grounded look at awakening in everyday life.",
+    "tags": [],
+    "url": "https://www.amazon.com/Awake-Heartland-Ordinary-Enlightenment-Now/dp/0954300706",
+    "bookDetails": {
+      "authors": [
+        "Joan Tollifson"
+      ],
+      "publishedDate": "2003-01-01",
+      "pages": 290,
+      "publisher": "Non-Duality Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Courage to Feel",
+    "description": "Integrates emotional healing with the path of awakening and self-realization.",
+    "tags": [],
+    "url": "https://www.amazon.com/Courage-Feel-Transform-Self-Protective-Patterns/dp/0741449063",
+    "bookDetails": {
+      "authors": [
+        "Andrew Seubert"
+      ],
+      "publishedDate": "2008-01-01",
+      "pages": 240,
+      "publisher": "Infinity Publishing"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Transparent: Seeing Through to Our Essential Nature",
+    "description": "Explores intuitive ways of knowing and the clear presence beneath ego structures.",
+    "tags": [],
+    "url": "https://www.amazon.com/Transparent-Seeing-Through-Essential-Nature/dp/1777057009",
+    "bookDetails": {
+      "authors": [
+        "Carmen Spagnola"
+      ],
+      "publishedDate": "2020-01-01",
+      "pages": 200,
+      "publisher": "Self-published"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Belonging",
+    "description": "A poetic guide to homecoming, integrating shadow, and waking up to soul.",
+    "tags": [],
+    "url": "https://www.amazon.com/Belonging-Remembering-Ourselves-Home/dp/1775111207",
+    "bookDetails": {
+      "authors": [
+        "Toko-pa Turner"
+      ],
+      "publishedDate": "2017-01-01",
+      "pages": 264,
+      "publisher": "Her Own Room Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Letting Go of Nothing",
+    "description": "Simple and profound teachings on releasing resistance to what is.",
+    "tags": [],
+    "url": "https://www.amazon.com/Letting-Go-Nothing-Relaxing-Awareness/dp/1608687570",
+    "bookDetails": {
+      "authors": [
+        "Peter Russell"
+      ],
+      "publishedDate": "2021-01-01",
+      "pages": 128,
+      "publisher": "New World Library"
+    }
+  }
+]

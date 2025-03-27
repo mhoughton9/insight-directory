@@ -1,0 +1,152 @@
+[
+  {
+    "type": "book",
+    "title": "Awake: It\u2019s Your Turn",
+    "description": "A modern, direct guide to awakening and enlightenment, written by a physician who experienced a profound shift in consciousness.",
+    "tags": [],
+    "url": "https://www.awakethenow.com/book",
+    "bookDetails": {
+      "authors": [
+        "Angelo DiLullo"
+      ],
+      "publishedDate": "2021-01-01",
+      "pages": 248,
+      "publisher": "Independently published"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Shift into Freedom",
+    "description": "Blends neuroscience, psychology, and contemplative traditions to introduce effortless mindfulness and awakening.",
+    "tags": [],
+    "url": "https://www.amazon.com/Shift-into-Freedom-Awareness-Meditation/dp/1622033498",
+    "bookDetails": {
+      "authors": [
+        "Loch Kelly"
+      ],
+      "publishedDate": "2015-01-01",
+      "pages": 256,
+      "publisher": "Sounds True"
+    }
+  },
+  {
+    "type": "book",
+    "title": "I Am That",
+    "description": "A collection of dialogues with one of India's great modern sages, centered on the nature of self and reality.",
+    "tags": [],
+    "url": "https://www.amazon.com/I-Am-That-Nisargadatta-Maharaj/dp/0893860468",
+    "bookDetails": {
+      "authors": [
+        "Sri Nisargadatta Maharaj"
+      ],
+      "publishedDate": "1973-01-01",
+      "pages": 550,
+      "publisher": "Chetana"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Untethered Soul",
+    "description": "Explores how to free yourself from habitual thoughts and emotions to uncover inner peace and clarity.",
+    "tags": [],
+    "url": "https://www.amazon.com/Untethered-Soul-Journey-Beyond-Yourself/dp/1572245379",
+    "bookDetails": {
+      "authors": [
+        "Michael A. Singer"
+      ],
+      "publishedDate": "2007-01-01",
+      "pages": 200,
+      "publisher": "New Harbinger Publications"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Waking Up",
+    "description": "A neuroscientist and philosopher explores the scientific and contemplative case for spiritual awakening.",
+    "tags": [],
+    "url": "https://www.amazon.com/Waking-Up-Spirituality-Without-Religion/dp/1451636016",
+    "bookDetails": {
+      "authors": [
+        "Sam Harris"
+      ],
+      "publishedDate": "2014-01-01",
+      "pages": 256,
+      "publisher": "Simon & Schuster"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Direct Path",
+    "description": "Guidance on non-dual awareness, with simple contemplations to directly realize the nature of consciousness.",
+    "tags": [],
+    "url": "https://www.amazon.com/Direct-Path-Rupert-Spira/dp/1908664030",
+    "bookDetails": {
+      "authors": [
+        "Rupert Spira"
+      ],
+      "publishedDate": "2008-01-01",
+      "pages": 170,
+      "publisher": "Non-Duality Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Being Aware of Being Aware",
+    "description": "A meditative exploration into the nature of awareness itself as the foundation of experience.",
+    "tags": [],
+    "url": "https://www.amazon.com/Being-Aware-Rupert-Spira/dp/1684030005",
+    "bookDetails": {
+      "authors": [
+        "Rupert Spira"
+      ],
+      "publishedDate": "2017-01-01",
+      "pages": 120,
+      "publisher": "Sahaja Publications"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Transparency of Things",
+    "description": "Essays that point to the ever-present awareness behind all appearances and thoughts.",
+    "tags": [],
+    "url": "https://www.amazon.com/Transparency-Things-Contemplation-Essence-Phenomena/dp/1908664014",
+    "bookDetails": {
+      "authors": [
+        "Rupert Spira"
+      ],
+      "publishedDate": "2008-01-01",
+      "pages": 200,
+      "publisher": "Non-Duality Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Book: On the Taboo Against Knowing Who You Are",
+    "description": "A classic, playful inquiry into identity and consciousness, urging a re-examination of the self.",
+    "tags": [],
+    "url": "https://www.amazon.com/Book-Taboo-Against-Knowing-Yourself/dp/0679723005",
+    "bookDetails": {
+      "authors": [
+        "Alan Watts"
+      ],
+      "publishedDate": "1966-01-01",
+      "pages": 163,
+      "publisher": "Vintage"
+    }
+  },
+  {
+    "type": "book",
+    "title": "On Having No Head",
+    "description": "A practical and radical invitation to directly notice the absence of a separate self.",
+    "tags": [],
+    "url": "https://www.amazon.com/Having-No-Head-Douglas-Harding/dp/1878019026",
+    "bookDetails": {
+      "authors": [
+        "Douglas Harding"
+      ],
+      "publishedDate": "1961-01-01",
+      "pages": 96,
+      "publisher": "The Shollond Trust"
+    }
+  }
+]
