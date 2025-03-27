@@ -3,7 +3,6 @@ import Link from 'next/link';
 import * as Typography from '../common/TypographyStyles';
 import ResourceDetailSidebarDetails from './sidebar/ResourceDetailSidebarDetails';
 import ResourceDetailSidebarLinks from './sidebar/ResourceDetailSidebarLinks';
-import ResourceDetailSidebarTags from './sidebar/ResourceDetailSidebarTags';
 import ResourceDetailSidebarActions from './sidebar/ResourceDetailSidebarActions';
 import FavoriteButton from '../ui/FavoriteButton';
 
@@ -37,14 +36,6 @@ const ResourceDetailSidebar = ({ resource }) => {
         <h2 className={Typography.sidebarHeading}>Actions</h2>
         <ResourceDetailSidebarActions resource={resource} />
       </div>
-      
-      {/* Resource Tags */}
-      {(resource.tags?.length > 0 || resource.traditions?.length > 0 || resource.teachers?.length > 0) && (
-        <div className={Typography.cardContainer}>
-          <h2 className={Typography.sidebarHeading}>Tags</h2>
-          <ResourceDetailSidebarTags resource={resource} />
-        </div>
-      )}
     </div>
   );
 };

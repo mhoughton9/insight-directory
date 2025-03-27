@@ -1,0 +1,737 @@
+[{
+  "_id": {
+    "$oid": "67d881ccdfe5c5fd5d68e380"
+  },
+  "title": "Be As You Are: The Teachings of Sri Ramana Maharshi",
+  "description": "A comprehensive collection of Ramana Maharshi's teachings on self-inquiry and self-realization.",
+  "type": "book",
+  "url": "https://example.com/be-as-you-are",
+  "publishedDate": {
+    "$date": "1985-01-01T00:00:00.000Z"
+  },
+  "imageUrl": "https://example.com/be-as-you-are.jpg",
+  "tags": [],
+  "slug": "be-as-you-are",
+  "teachers": [
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e37c"
+    }
+  ],
+  "traditions": [
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e378"
+    }
+  ],
+  "courseDetails": {
+    "prerequisites": []
+  },
+  "featured": true,
+  "viewCount": 57,
+  "averageRating": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-17T20:10:52.694Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T17:25:17.846Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67d881ccdfe5c5fd5d68e381"
+  },
+  "title": "The Power of Now",
+  "description": "A guide to spiritual enlightenment through living in the present moment.",
+  "type": "book",
+  "url": "https://example.com/power-of-now",
+  "publishedDate": {
+    "$date": "1997-01-01T00:00:00.000Z"
+  },
+  "imageUrl": "https://example.com/power-of-now.jpg",
+  "tags": [
+    "presence",
+    "mindfulness",
+    "ego",
+    "consciousness",
+    "spirituality"
+  ],
+  "slug": "power-of-now",
+  "teachers": [
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e37d"
+    }
+  ],
+  "traditions": [
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e37a"
+    }
+  ],
+  "courseDetails": {
+    "prerequisites": []
+  },
+  "featured": true,
+  "viewCount": 71,
+  "averageRating": 0,
+  "__v": 1,
+  "createdAt": {
+    "$date": "2025-03-17T20:10:52.694Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T18:03:07.447Z"
+  },
+  "appDetails": {
+    "features": [],
+    "links": [],
+    "platforms": [],
+    "teachers": []
+  },
+  "bookDetails": {
+    "author": [
+      "Eckhart Tolle"
+    ],
+    "yearPublished": 1997,
+    "pages": 236,
+    "publisher": "Namaste Publishing",
+    "links": [
+      "https://www.amazon.com/Power-Now-Guide-Spiritual-Enlightenment/dp/1577314808",
+      "https://eckharttolle.com/books/the-power-of-now/"
+    ]
+  },
+  "podcastDetails": {
+    "hosts": [],
+    "links": [],
+    "notableGuests": []
+  },
+  "practiceDetails": {
+    "benefits": []
+  },
+  "retreatCenterDetails": {
+    "links": [],
+    "retreatTypes": [],
+    "upcomingDates": []
+  },
+  "videoChannelDetails": {
+    "keyTopics": [],
+    "links": []
+  },
+  "websiteDetails": {
+    "primaryContentTypes": []
+  }
+},
+{
+  "_id": {
+    "$oid": "67d881ccdfe5c5fd5d68e382"
+  },
+  "title": "The Transparency of Things",
+  "description": "An exploration of the nature of experience and consciousness.",
+  "type": "book",
+  "url": "https://example.com/transparency-of-things",
+  "publishedDate": {
+    "$date": "2016-01-01T00:00:00.000Z"
+  },
+  "imageUrl": "https://example.com/transparency-of-things.jpg",
+  "tags": [],
+  "slug": "transparency-of-things",
+  "teachers": [
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e37e"
+    }
+  ],
+  "traditions": [
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e378"
+    },
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e37a"
+    }
+  ],
+  "courseDetails": {
+    "prerequisites": []
+  },
+  "featured": false,
+  "viewCount": 176,
+  "averageRating": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-17T20:10:52.695Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-26T18:07:57.176Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67d881ccdfe5c5fd5d68e383"
+  },
+  "title": "Who Am I?",
+  "description": "A video exploration of self-inquiry with guided meditations.",
+  "type": "video",
+  "url": "https://example.com/who-am-i-video",
+  "imageUrl": "https://example.com/who-am-i.jpg",
+  "tags": [],
+  "slug": "who-am-i-video",
+  "teachers": [
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e37c"
+    }
+  ],
+  "traditions": [
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e378"
+    }
+  ],
+  "courseDetails": {
+    "prerequisites": []
+  },
+  "featured": false,
+  "viewCount": 1,
+  "averageRating": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-17T20:10:52.695Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-18T15:28:11.516Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67d881ccdfe5c5fd5d68e384"
+  },
+  "title": "Awareness Podcast",
+  "description": "Weekly discussions on non-duality and awakening.",
+  "type": "podcast",
+  "url": "https://example.com/awareness-podcast",
+  "imageUrl": "https://example.com/awareness-podcast.jpg",
+  "tags": [],
+  "slug": "awareness-podcast",
+  "teachers": [
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e37c"
+    },
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e37d"
+    },
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e37e"
+    }
+  ],
+  "traditions": [
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e378"
+    },
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e379"
+    },
+    {
+      "$oid": "67d881ccdfe5c5fd5d68e37a"
+    }
+  ],
+  "courseDetails": {
+    "prerequisites": []
+  },
+  "featured": true,
+  "viewCount": 27,
+  "averageRating": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-17T20:10:52.696Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T16:44:26.553Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67d988ec6d6910cc1dcec9e8"
+  },
+  "title": "Liberation Unleashed",
+  "description": "A global movement of people helping others to see through the illusion of a separate self. The website offers free guidance through a direct pointing process to see through the illusion of the self.",
+  "type": "website",
+  "url": "https://www.liberationunleashed.com",
+  "imageUrl": "https://example.com/liberation-unleashed.jpg",
+  "tags": [
+    "direct pointing",
+    "no-self",
+    "awakening",
+    "guidance"
+  ],
+  "slug": "liberation-unleashed",
+  "teachers": [],
+  "traditions": [],
+  "bookDetails": {
+    "author": [],
+    "links": []
+  },
+  "videoChannelDetails": {
+    "keyTopics": [],
+    "links": []
+  },
+  "websiteDetails": {
+    "websiteName": "Liberation Unleashed",
+    "creator": "Ilona Ciunaite and Elena Nezhinsky",
+    "primaryContentTypes": [
+      "Forum",
+      "Guides",
+      "Books",
+      "Community"
+    ],
+    "link": "https://www.liberationunleashed.com"
+  },
+  "podcastDetails": {
+    "hosts": [],
+    "notableGuests": [],
+    "links": []
+  },
+  "retreatCenterDetails": {
+    "retreatTypes": [],
+    "links": [],
+    "upcomingDates": []
+  },
+  "practiceDetails": {
+    "benefits": []
+  },
+  "appDetails": {
+    "platforms": [],
+    "teachers": [],
+    "features": [],
+    "links": []
+  },
+  "featured": false,
+  "viewCount": 12,
+  "averageRating": 0,
+  "createdAt": {
+    "$date": "2025-03-18T14:53:32.064Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-24T15:23:13.892Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d988ec6d6910cc1dcec9eb"
+  },
+  "title": "Awake Blog",
+  "description": "A blog exploring non-dual awareness and the direct path to self-realization. Features articles on meditation, self-inquiry, and practical approaches to spiritual awakening.",
+  "type": "blog",
+  "url": "https://example.com/awake-blog",
+  "imageUrl": "https://example.com/awake-blog.jpg",
+  "tags": [
+    "non-duality",
+    "self-inquiry",
+    "direct path",
+    "awareness"
+  ],
+  "slug": "awake-blog",
+  "teachers": [],
+  "traditions": [],
+  "bookDetails": {
+    "author": [],
+    "links": []
+  },
+  "videoChannelDetails": {
+    "keyTopics": [],
+    "links": []
+  },
+  "websiteDetails": {
+    "primaryContentTypes": []
+  },
+  "blogDetails": {
+    "name": "Awake Blog",
+    "author": "John Smith",
+    "frequency": "Weekly",
+    "link": "https://example.com/awake-blog"
+  },
+  "podcastDetails": {
+    "hosts": [],
+    "notableGuests": [],
+    "links": []
+  },
+  "retreatCenterDetails": {
+    "retreatTypes": [],
+    "links": [],
+    "upcomingDates": []
+  },
+  "practiceDetails": {
+    "benefits": []
+  },
+  "appDetails": {
+    "platforms": [],
+    "teachers": [],
+    "features": [],
+    "links": []
+  },
+  "featured": false,
+  "viewCount": 5,
+  "averageRating": 0,
+  "createdAt": {
+    "$date": "2025-03-18T14:53:32.138Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-24T15:21:58.222Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d988ec6d6910cc1dcec9ee"
+  },
+  "title": "Deconstructing Yourself",
+  "description": "A podcast about meditation, consciousness, and awakening in the modern world. Features interviews with meditation teachers, neuroscientists, and philosophers.",
+  "type": "podcast",
+  "url": "https://deconstructingyourself.com",
+  "imageUrl": "https://example.com/deconstructing-yourself.jpg",
+  "tags": [
+    "meditation",
+    "mindfulness",
+    "buddhism",
+    "neuroscience"
+  ],
+  "slug": "deconstructing-yourself",
+  "teachers": [],
+  "traditions": [],
+  "bookDetails": {
+    "author": [],
+    "links": []
+  },
+  "videoChannelDetails": {
+    "keyTopics": [],
+    "links": []
+  },
+  "websiteDetails": {
+    "primaryContentTypes": []
+  },
+  "podcastDetails": {
+    "podcastName": "Deconstructing Yourself",
+    "hosts": [
+      "Michael Taft"
+    ],
+    "datesActive": "2016–Present",
+    "episodeCount": 87,
+    "notableGuests": [
+      "John Yates (Culadasa)",
+      "Daniel Ingram",
+      "Shinzen Young",
+      "Loch Kelly"
+    ],
+    "links": [
+      "https://open.spotify.com/show/2LluIUn8LyYisCJ8ScmJzz",
+      "https://podcasts.apple.com/us/podcast/deconstructing-yourself/id1240056193",
+      "https://deconstructingyourself.com"
+    ]
+  },
+  "retreatCenterDetails": {
+    "retreatTypes": [],
+    "links": [],
+    "upcomingDates": []
+  },
+  "practiceDetails": {
+    "benefits": []
+  },
+  "appDetails": {
+    "platforms": [],
+    "teachers": [],
+    "features": [],
+    "links": []
+  },
+  "featured": false,
+  "viewCount": 19,
+  "averageRating": 0,
+  "createdAt": {
+    "$date": "2025-03-18T14:53:32.224Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T18:07:19.608Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d988ec6d6910cc1dcec9f3"
+  },
+  "title": "Self-Inquiry: Who Am I?",
+  "description": "A fundamental practice of self-inquiry as taught by Ramana Maharshi. This direct approach helps reveal one's true nature beyond identification with thoughts and the body.",
+  "type": "practice",
+  "tags": [
+    "self-inquiry",
+    "advaita",
+    "direct path",
+    "ramana maharshi"
+  ],
+  "slug": "self-inquiry-who-am-i",
+  "teachers": [],
+  "traditions": [],
+  "bookDetails": {
+    "author": [],
+    "links": []
+  },
+  "videoChannelDetails": {
+    "keyTopics": [],
+    "links": []
+  },
+  "websiteDetails": {
+    "primaryContentTypes": []
+  },
+  "podcastDetails": {
+    "hosts": [],
+    "notableGuests": [],
+    "links": []
+  },
+  "retreatCenterDetails": {
+    "retreatTypes": [],
+    "links": [],
+    "upcomingDates": []
+  },
+  "practiceDetails": {
+    "name": "Self-Inquiry: Who Am I?",
+    "instructions": "Sit quietly and ask yourself \"Who am I?\" whenever a thought arises. Don't answer intellectually, but trace each thought back to its source. Ask \"To whom does this thought arise?\" The answer will be \"To me.\" Then ask \"Who am I?\" and remain alert but relaxed, watching for the source of the \"I\" thought. Continue this process, always returning to the question \"Who am I?\" whenever the mind wanders. With practice, thoughts will subside, and the sense of a separate self may dissolve, revealing your true nature.",
+    "source": "Ramana Maharshi",
+    "duration": "20-30 minutes",
+    "difficulty": "Intermediate",
+    "technique": "Self-Inquiry",
+    "benefits": [
+      "Dissolving identification with thoughts",
+      "Recognizing true nature",
+      "Direct realization"
+    ]
+  },
+  "appDetails": {
+    "platforms": [],
+    "teachers": [],
+    "features": [],
+    "links": []
+  },
+  "featured": false,
+  "viewCount": 5,
+  "averageRating": 0,
+  "createdAt": {
+    "$date": "2025-03-18T14:53:32.354Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-20T22:04:31.374Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d988ec6d6910cc1dcec9f6"
+  },
+  "title": "Waking Up",
+  "description": "A meditation app focused on both mindfulness and the nature of consciousness. Includes guided meditations, lessons on theory, and conversations with spiritual teachers and scientists.",
+  "type": "app",
+  "url": "https://www.wakingup.com",
+  "imageUrl": "https://example.com/waking-up.jpg",
+  "tags": [
+    "meditation",
+    "mindfulness",
+    "consciousness",
+    "non-duality"
+  ],
+  "slug": "waking-up",
+  "teachers": [],
+  "traditions": [],
+  "bookDetails": {
+    "author": [],
+    "links": []
+  },
+  "videoChannelDetails": {
+    "keyTopics": [],
+    "links": []
+  },
+  "websiteDetails": {
+    "primaryContentTypes": []
+  },
+  "podcastDetails": {
+    "hosts": [],
+    "notableGuests": [],
+    "links": []
+  },
+  "retreatCenterDetails": {
+    "retreatTypes": [],
+    "links": [],
+    "upcomingDates": []
+  },
+  "practiceDetails": {
+    "benefits": []
+  },
+  "appDetails": {
+    "appName": "Waking Up",
+    "creator": "Sam Harris",
+    "platforms": [
+      "iOS",
+      "Android",
+      "Web"
+    ],
+    "price": "$99.99/year (with free option available)",
+    "teachers": [
+      "Sam Harris",
+      "Joseph Goldstein",
+      "Loch Kelly",
+      "Richard Lang"
+    ],
+    "features": [
+      "Daily Meditations",
+      "Theory Lessons",
+      "Conversations",
+      "Timer",
+      "Progress Tracking"
+    ],
+    "links": [
+      "https://apps.apple.com/us/app/waking-up-guided-meditation/id1307736395",
+      "https://play.google.com/store/apps/details?id=org.wakingup.android",
+      "https://www.wakingup.com"
+    ]
+  },
+  "featured": false,
+  "viewCount": 5,
+  "averageRating": 0,
+  "createdAt": {
+    "$date": "2025-03-18T14:53:32.427Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-18T17:57:05.733Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d98912a17d7bd43fef1644"
+  },
+  "title": "Buddha at the Gas Pump",
+  "description": "Interviews with \"ordinary\" spiritually awakened people. The show features conversations with individuals who have experienced spiritual awakenings or shifts in consciousness.",
+  "type": "videoChannel",
+  "url": "https://www.youtube.com/c/BuddhaAtTheGasPump",
+  "imageUrl": "https://example.com/batgap.jpg",
+  "tags": [
+    "interviews",
+    "awakening",
+    "consciousness",
+    "spirituality"
+  ],
+  "slug": "buddha-at-the-gas-pump",
+  "teachers": [],
+  "traditions": [],
+  "bookDetails": {
+    "author": [],
+    "links": []
+  },
+  "videoChannelDetails": {
+    "channelName": "Buddha at the Gas Pump",
+    "creator": "Rick Archer",
+    "keyTopics": [
+      "Spiritual Awakening",
+      "Non-duality",
+      "Consciousness",
+      "Meditation"
+    ],
+    "links": [
+      "https://www.youtube.com/c/BuddhaAtTheGasPump",
+      "https://batgap.com"
+    ]
+  },
+  "websiteDetails": {
+    "primaryContentTypes": []
+  },
+  "podcastDetails": {
+    "hosts": [],
+    "notableGuests": [],
+    "links": []
+  },
+  "retreatCenterDetails": {
+    "retreatTypes": [],
+    "links": [],
+    "upcomingDates": []
+  },
+  "practiceDetails": {
+    "benefits": []
+  },
+  "appDetails": {
+    "platforms": [],
+    "teachers": [],
+    "features": [],
+    "links": []
+  },
+  "featured": false,
+  "viewCount": 32,
+  "averageRating": 0,
+  "createdAt": {
+    "$date": "2025-03-18T14:54:10.825Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T18:02:42.548Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d98913a17d7bd43fef164a"
+  },
+  "title": "Spirit Rock Meditation Center",
+  "description": "A meditation and retreat center in the San Francisco Bay Area. Offers a variety of programs including residential retreats, drop-in meditation, and classes on mindfulness and Buddhist practice.",
+  "type": "retreatCenter",
+  "url": "https://www.spiritrock.org",
+  "imageUrl": "https://example.com/spirit-rock.jpg",
+  "tags": [
+    "meditation",
+    "retreat",
+    "mindfulness",
+    "buddhism"
+  ],
+  "slug": "spirit-rock",
+  "teachers": [],
+  "traditions": [],
+  "bookDetails": {
+    "author": [],
+    "links": []
+  },
+  "videoChannelDetails": {
+    "keyTopics": [],
+    "links": []
+  },
+  "websiteDetails": {
+    "primaryContentTypes": []
+  },
+  "podcastDetails": {
+    "hosts": [],
+    "notableGuests": [],
+    "links": []
+  },
+  "retreatCenterDetails": {
+    "name": "Spirit Rock Meditation Center",
+    "location": "Woodacre, California, USA",
+    "retreatTypes": [
+      "Residential Retreats",
+      "Day Retreats",
+      "Online Programs",
+      "Classes"
+    ],
+    "links": [
+      "https://www.spiritrock.org"
+    ],
+    "upcomingDates": [
+      "June 15-21, 2025",
+      "July 10-17, 2025",
+      "August 5-12, 2025"
+    ]
+  },
+  "practiceDetails": {
+    "benefits": []
+  },
+  "appDetails": {
+    "platforms": [],
+    "teachers": [],
+    "features": [],
+    "links": []
+  },
+  "featured": false,
+  "viewCount": 7,
+  "averageRating": 0,
+  "createdAt": {
+    "$date": "2025-03-18T14:54:11.004Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-20T22:05:16.685Z"
+  },
+  "__v": 0
+}]

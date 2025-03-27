@@ -68,6 +68,16 @@ const teacherSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Tradition'
     }],
+    /**
+     * Detailed description sections for teacher profiles
+     * Each key is a section identifier (e.g., 'biography', 'teaching_style')
+     * Values can be either strings (for text sections) or arrays (for list sections)
+     */
+    descriptionSections: {
+      type: Map,
+      of: mongoose.Schema.Types.Mixed, // Allows both strings and arrays
+      default: {}
+    },
     relatedTeachers: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Teacher'

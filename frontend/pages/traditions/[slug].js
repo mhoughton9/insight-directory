@@ -8,6 +8,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import * as Typography from '../../components/common/TypographyStyles';
 import FavoriteButton from '../../components/ui/FavoriteButton';
+import TraditionDetailContent from '../../components/traditions/TraditionDetailContent';
 
 /**
  * TraditionDetailPage component
@@ -191,61 +192,13 @@ const TraditionDetailPage = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           <div className="w-full lg:w-2/3">
-            <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
-              <h2 className="text-2xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">
-                About {tradition.name}
-              </h2>
-              <div className="prose prose-neutral dark:prose-invert max-w-none font-inter">
-                {tradition.descriptionFull ? (
-                  tradition.descriptionFull.split('\n\n').map((paragraph, index) => (
-                    <p key={index} className="mb-4 last:mb-0 font-inter text-neutral-700 dark:text-neutral-300">{paragraph}</p>
-                  ))
-                ) : tradition.description ? (
-                  <p className="font-inter text-neutral-700 dark:text-neutral-300">{tradition.description}</p>
-                ) : (
-                  <p className="text-neutral-600 dark:text-neutral-400 italic font-inter">
-                    No description available for this tradition.
-                  </p>
-                )}
-              </div>
-            </div>
-            
-            <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
-              <h2 className="text-2xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">
-                Teachers in {tradition.name}
-              </h2>
-              
-              {/* Teachers section temporarily disabled until API endpoint is implemented */}
-              <p className="text-neutral-600 dark:text-neutral-400 italic font-inter">
-                Teachers for this tradition will be available soon.
-              </p>
-            </div>
-            
-            <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
-              <h2 className="text-2xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">
-                Resources for {tradition.name}
-              </h2>
-              
-              {/* Resources section temporarily disabled until API endpoint is implemented */}
-              <p className="text-neutral-600 dark:text-neutral-400 italic font-inter">
-                Resources for this tradition will be available soon.
-              </p>
-            </div>
-            
-            {/* Comments Section */}
-            <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
-              <h2 className="text-2xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">
-                Comments
-              </h2>
-              <p className="text-neutral-600 dark:text-neutral-400 italic font-inter">
-                Comments feature coming soon...
-              </p>
-            </div>
+            {/* Tradition Detail Content */}
+            <TraditionDetailContent tradition={tradition} />
           </div>
           
           <div className="w-full lg:w-1/3">
             <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
-              <h2 className="text-2xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">
+              <h2 className={Typography.sidebarHeading}>
                 Details
               </h2>
               
@@ -280,7 +233,7 @@ const TraditionDetailPage = () => {
             </div>
             
             <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
-              <h2 className="text-2xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">
+              <h2 className={Typography.sidebarHeading}>
                 Actions
               </h2>
               <div className="space-y-2 font-inter">
@@ -296,7 +249,7 @@ const TraditionDetailPage = () => {
             
             {tradition.relatedTraditions && tradition.relatedTraditions.length > 0 && (
               <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
-                <h2 className="text-2xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">
+                <h2 className={Typography.sidebarHeading}>
                   Related Traditions
                 </h2>
                 <div className="flex flex-wrap gap-2 font-inter">

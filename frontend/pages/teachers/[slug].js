@@ -8,6 +8,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import * as Typography from '../../components/common/TypographyStyles';
 import FavoriteButton from '../../components/ui/FavoriteButton';
+import TeacherDetailContent from '../../components/teachers/TeacherDetailContent';
 
 /**
  * TeacherDetailPage component
@@ -180,24 +181,8 @@ const TeacherDetailPage = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           <div className="w-full lg:w-2/3">
-            <div className={Typography.cardContainer}>
-              <h2 className={Typography.sectionHeading}>
-                Biography
-              </h2>
-              <div className="prose prose-neutral dark:prose-invert max-w-none">
-                {teacher.biographyFull ? (
-                  teacher.biographyFull.split('\n\n').map((paragraph, index) => (
-                    <p key={index} className={`${Typography.bodyText} mb-4 last:mb-0`}>{paragraph}</p>
-                  ))
-                ) : teacher.biography ? (
-                  <p className={Typography.bodyText}>{teacher.biography}</p>
-                ) : (
-                  <p className={Typography.emptyStateText}>
-                    No biography available for this teacher.
-                  </p>
-                )}
-              </div>
-            </div>
+            {/* Teacher Detail Content */}
+            <TeacherDetailContent teacher={teacher} />
             
             <div className={Typography.cardContainer}>
               <h2 className={Typography.sectionHeading}>
@@ -312,25 +297,6 @@ const TeacherDetailPage = () => {
                 </button>
               </div>
             </div>
-            
-            {teacher.traditions && teacher.traditions.length > 0 && (
-              <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
-                <h2 className="text-2xl font-medium mb-4 text-neutral-800 dark:text-neutral-200 font-lora">
-                  Traditions
-                </h2>
-                <div className="flex flex-wrap gap-2 font-inter">
-                  {teacher.traditions.map((tradition, index) => (
-                    <Link 
-                      key={index}
-                      href={`/traditions/${tradition.slug || tradition}`}
-                      className="px-2.5 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-md text-xs hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-                    >
-                      {tradition.name || tradition}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </main>

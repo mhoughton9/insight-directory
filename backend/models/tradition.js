@@ -45,7 +45,17 @@ const traditionSchema = new mongoose.Schema(
     relatedTraditions: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Tradition'
-    }]
+    }],
+    /**
+     * Detailed description sections for tradition profiles
+     * Each key is a section identifier (e.g., 'overview', 'historical_context')
+     * Values can be either strings (for text sections) or arrays (for list sections)
+     */
+    descriptionSections: {
+      type: Map,
+      of: mongoose.Schema.Types.Mixed, // Allows both strings and arrays
+      default: {}
+    }
   },
   {
     timestamps: true,

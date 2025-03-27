@@ -18,7 +18,7 @@ const resourceSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Resource type is required'],
       enum: [
-        'book', 'blog', 'videoChannel', 'podcast', 'practice', 
+        'book', 'blog', 'videoChannel', 'video', 'podcast', 'practice', 
         'retreatCenter', 'website', 'app'
       ]
     },
@@ -53,6 +53,16 @@ const resourceSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Tradition'
     }],
+    /**
+     * Detailed description sections that vary by resource type
+     * Each key is a section identifier (e.g., 'in_a_nutshell', 'quotes_worth_reflecting')
+     * Values can be either strings (for text sections) or arrays (for list sections)
+     */
+    descriptionSections: {
+      type: Map,
+      of: mongoose.Schema.Types.Mixed, // Allows both strings and arrays
+      default: {}
+    },
     // Book specific fields
     bookDetails: {
       author: [String],

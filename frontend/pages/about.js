@@ -47,13 +47,10 @@ export default function AboutPage() {
             <div className="flex justify-center">
               <Link 
                 href="/suggest" 
-                className="inline-block px-6 py-3 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px]"
+                className="inline-block px-6 py-3 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
                 style={{ 
                   background: 'var(--background)',
-                  border: '2px solid transparent',
-                  backgroundImage: 'linear-gradient(var(--background), var(--background)), var(--gradient-brand)',
-                  backgroundOrigin: 'border-box',
-                  backgroundClip: 'padding-box, border-box'
+                  border: '2px solid var(--brand-deep-blue)'
                 }}
               >
                 Suggest a Resource
