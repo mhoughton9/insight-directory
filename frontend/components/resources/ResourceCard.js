@@ -6,6 +6,38 @@ import { formatResourceType, getResourceSubtitle } from '../../utils/resource-ut
 import { Heading, Text } from '../ui/Typography';
 
 /**
+ * Get optimal image container styles based on resource type
+ * @param {string} type - Resource type (book, video, podcast, etc.)
+ * @returns {object} - Style object with appropriate aspect ratio and background
+ */
+function getImageContainerStyles(type) {
+  switch (type) {
+    case 'book':
+      return {
+        aspectRatio: '2/3',
+        background: 'linear-gradient(to bottom, #f3f4f6, #e5e7eb)',
+      };
+    case 'video':
+    case 'video-channel':
+      return {
+        aspectRatio: '16/9',
+        background: 'linear-gradient(to bottom, #f3f4f6, #e5e7eb)',
+      };
+    case 'podcast':
+    case 'audio':
+      return {
+        aspectRatio: '1/1', // Square for podcast artwork
+        background: 'linear-gradient(to bottom, #f3f4f6, #e5e7eb)',
+      };
+    default:
+      return {
+        aspectRatio: '4/3', // Default aspect ratio
+        background: 'linear-gradient(to bottom, #f3f4f6, #e5e7eb)',
+      };
+  }
+}
+
+/**
  * ResourceCard component
  * Displays a preview of a resource in a card format for the resource listing pages
  * Enhanced with search term highlighting
@@ -29,18 +61,29 @@ export default function ResourceCard({ resource, searchTerm = '' }) {
   // Get truncated description
   const truncatedDescription = truncateText(description, 120);
   
+  // Get optimal image container styles based on resource type
+  const imageContainerStyles = getImageContainerStyles(type);
+  
   return (
     <Link href={`/resources/${slug}`} className="block h-full">
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
         {/* Card Header with Image */}
-        <div className="relative h-48 bg-neutral-100 dark:bg-neutral-800">
+        <div 
+          className="relative bg-neutral-100 dark:bg-neutral-800 w-full overflow-hidden"
+          style={imageContainerStyles}
+        >
           {imageUrl ? (
-            <Image 
-              src={imageUrl} 
-              alt={title} 
-              fill
-              className="object-cover"
-            />
+            <div className="w-full h-full flex justify-center items-center">
+              <Image 
+                src={imageUrl} 
+                alt={title} 
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority={false}
+                className="object-contain"
+                style={{ objectFit: 'contain' }}
+              />
+            </div>
           ) : (
             <div className="flex items-center justify-center h-full">
               <ResourceTypeIcon type={type} size={48} className="text-neutral-400 dark:text-neutral-600" />

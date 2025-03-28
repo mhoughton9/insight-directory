@@ -1,0 +1,307 @@
+[
+  {
+    "type": "book",
+    "title": "Who Am I?",
+    "description": "A foundational text of self-inquiry from one of India's great sages.",
+    "tags": [],
+    "url": "https://www.amazon.com/Who-Am-Sri-Ramana-Maharshi/dp/818288094X",
+    "bookDetails": {
+      "authors": [
+        "Ramana Maharshi"
+      ],
+      "publishedDate": "1923-01-01",
+      "pages": 60,
+      "publisher": "Sri Ramanasramam"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Be As You Are",
+    "description": "A collection of teachings and commentary on the direct path of self-inquiry.",
+    "tags": [],
+    "url": "https://www.amazon.com/Be-You-Are-Teachings-Maharshi/dp/0140190627",
+    "bookDetails": {
+      "authors": [
+        "Ramana Maharshi",
+        "David Godman"
+      ],
+      "publishedDate": "1985-01-01",
+      "pages": 272,
+      "publisher": "Penguin"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Sacred Mirror",
+    "description": "Conversations on nondual wisdom and psychotherapy.",
+    "tags": [],
+    "url": "https://www.amazon.com/Sacred-Mirror-Nondual-Wisdom-Psychotherapy/dp/1591790041",
+    "bookDetails": {
+      "authors": [
+        "John J. Prendergast",
+        "Peter Fenner",
+        "Sheila Krystal"
+      ],
+      "publishedDate": "2003-01-01",
+      "pages": 240,
+      "publisher": "Sounds True"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Radiance of Being",
+    "description": "Dialogues on presence and awareness with a master of Advaita.",
+    "tags": [],
+    "url": "https://www.amazon.com/Radiance-Being-Understanding-True-Nature/dp/093521703X",
+    "bookDetails": {
+      "authors": [
+        "Jean Klein"
+      ],
+      "publishedDate": "1990-01-01",
+      "pages": 160,
+      "publisher": "Inner Directions"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Living Reality",
+    "description": "Conversations with Sri Atmananda, Sri Nisargadatta, and other modern masters.",
+    "tags": [],
+    "url": "https://www.amazon.com/Living-Reality-My-Extraordinary-Encounters/dp/0966490284",
+    "bookDetails": {
+      "authors": [
+        "James Braha"
+      ],
+      "publishedDate": "2013-01-01",
+      "pages": 278,
+      "publisher": "Hermetician Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Heart of Awareness",
+    "description": "A poetic rendering of the Ashtavakra Gita, a classic of Advaita Vedanta.",
+    "tags": [],
+    "url": "https://www.amazon.com/Heart-Awareness-Translation-Ashtavakra-Gita/dp/1570625971",
+    "bookDetails": {
+      "authors": [
+        "Thomas Byrom"
+      ],
+      "publishedDate": "1990-01-01",
+      "pages": 128,
+      "publisher": "Shambhala"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Presence, Volume I: The Art of Peace and Happiness",
+    "description": "Nondual essays that explore the experience of peace and inner joy.",
+    "tags": [],
+    "url": "https://www.amazon.com/Presence-Peace-Happiness-Rupert-Spira/dp/1908664020",
+    "bookDetails": {
+      "authors": [
+        "Rupert Spira"
+      ],
+      "publishedDate": "2011-01-01",
+      "pages": 230,
+      "publisher": "Sahaja Publications"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Presence, Volume II: The Intimacy of All Experience",
+    "description": "Investigates the immediacy of awareness in all aspects of life.",
+    "tags": [],
+    "url": "https://www.amazon.com/Presence-Intimacy-All-Experience/dp/1908664047",
+    "bookDetails": {
+      "authors": [
+        "Rupert Spira"
+      ],
+      "publishedDate": "2011-01-01",
+      "pages": 240,
+      "publisher": "Sahaja Publications"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Freedom Is",
+    "description": "An experiential path to emotional and spiritual liberation.",
+    "tags": [],
+    "url": "https://www.amazon.com/Freedom-Journey-Emotional-Spiritual-Liberation/dp/1582701440",
+    "bookDetails": {
+      "authors": [
+        "Brandon Bays"
+      ],
+      "publishedDate": "2003-01-01",
+      "pages": 224,
+      "publisher": "Simon & Schuster"
+    }
+  },
+  {
+    "type": "book",
+    "title": "A Thousand Names for Joy",
+    "description": "A Taoist-inspired reflection on awakening and surrender.",
+    "tags": [],
+    "url": "https://www.amazon.com/Thousand-Names-Joy-Living-Harmony/dp/0307339246",
+    "bookDetails": {
+      "authors": [
+        "Byron Katie",
+        "Stephen Mitchell"
+      ],
+      "publishedDate": "2007-01-01",
+      "pages": 336,
+      "publisher": "Harmony"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Open Secret",
+    "description": "A classic text on radical nonduality and the illusion of the separate self.",
+    "tags": [],
+    "url": "https://www.amazon.com/Open-Secret-Tony-Parsons/dp/0953303205",
+    "bookDetails": {
+      "authors": [
+        "Tony Parsons"
+      ],
+      "publishedDate": "2000-01-01",
+      "pages": 160,
+      "publisher": "Non-Duality Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Light That I Am",
+    "description": "A mystical journey into the realization of true nature.",
+    "tags": [],
+    "url": "https://www.amazon.com/Light-That-I-Am/dp/1905047401",
+    "bookDetails": {
+      "authors": [
+        "J.M. Harrison"
+      ],
+      "publishedDate": "2006-01-01",
+      "pages": 140,
+      "publisher": "O Books"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Courage to Be Disliked",
+    "description": "Blends Western psychology with Eastern philosophy to explore freedom and self-acceptance.",
+    "tags": [],
+    "url": "https://www.amazon.com/Courage-Be-Disliked-Phenomenon-Happiness/dp/1982109341",
+    "bookDetails": {
+      "authors": [
+        "Ichiro Kishimi",
+        "Fumitake Koga"
+      ],
+      "publishedDate": "2013-01-01",
+      "pages": 288,
+      "publisher": "Atria Books"
+    }
+  },
+  {
+    "type": "book",
+    "title": "The Untold Story of Sita",
+    "description": "A feminine spiritual perspective inspired by the Ramayana.",
+    "tags": [],
+    "url": "https://www.amazon.com/Untold-Story-Sita-Ancient-Awakening/dp/194862639X",
+    "bookDetails": {
+      "authors": [
+        "Dena Merriam"
+      ],
+      "publishedDate": "2020-01-01",
+      "pages": 280,
+      "publisher": "Monkfish Book Publishing"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Silence of the Heart",
+    "description": "Transcribed satsangs with a devotee of Ramana Maharshi, full of gentle nondual wisdom.",
+    "tags": [],
+    "url": "https://www.amazon.com/Silence-Heart-Dialogues-Awakened/dp/0979726782",
+    "bookDetails": {
+      "authors": [
+        "Robert Adams"
+      ],
+      "publishedDate": "1999-01-01",
+      "pages": 500,
+      "publisher": "Acropolis Books"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Love Without Conditions",
+    "description": "Speaks from the voice of Christ Consciousness about healing, love, and awakening.",
+    "tags": [],
+    "url": "https://www.amazon.com/Love-Without-Conditions-Reflections-Christ/dp/1879159551",
+    "bookDetails": {
+      "authors": [
+        "Paul Ferrini"
+      ],
+      "publishedDate": "1998-01-01",
+      "pages": 160,
+      "publisher": "Heartways Press"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Effortless Being",
+    "description": "Dialogues and essays on awareness and resting in being.",
+    "tags": [],
+    "url": "https://www.amazon.com/Effortless-Being-Jean-Klein/dp/093521619X",
+    "bookDetails": {
+      "authors": [
+        "Letourneau Jean"
+      ],
+      "publishedDate": "1993-01-01",
+      "pages": 160,
+      "publisher": "Inner Directions"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Dancing with Life",
+    "description": "Practical insight into using the Four Noble Truths as a map for spiritual maturity.",
+    "tags": [],
+    "url": "https://www.amazon.com/Dancing-Life-Buddhist-Journey-Suffering/dp/1594863542",
+    "bookDetails": {
+      "authors": [
+        "Phillip Moffitt"
+      ],
+      "publishedDate": "2008-01-01",
+      "pages": 352,
+      "publisher": "Rodale Books"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Bringing Home the Dharma",
+    "description": "Applies timeless Buddhist teachings to modern Western life.",
+    "tags": [],
+    "url": "https://www.amazon.com/Bringing-Home-Dharma-Awakening-Everyday/dp/1590309130",
+    "bookDetails": {
+      "authors": [
+        "Jack Kornfield"
+      ],
+      "publishedDate": "2011-01-01",
+      "pages": 304,
+      "publisher": "Shambhala"
+    }
+  },
+  {
+    "type": "book",
+    "title": "Being Myself",
+    "description": "A direct pointer to the nature of self and the end of suffering.",
+    "tags": [],
+    "url": "https://www.amazon.com/Being-Myself-Rupert-Spira/dp/1684030110",
+    "bookDetails": {
+      "authors": [
+        "Rupert Spira"
+      ],
+      "publishedDate": "2021-01-01",
+      "pages": 144,
+      "publisher": "Sahaja Publications"
+    }
+  }
+]
