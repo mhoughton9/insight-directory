@@ -160,10 +160,10 @@ const adminController = {
       const { isbn, amazonUrl, imageUrl } = req.body;
       
       // Validate required fields
-      if (!isbn || !amazonUrl) {
+      if (!amazonUrl) {
         return res.status(400).json({
           success: false,
-          message: 'ISBN and Amazon URL are required'
+          message: 'Amazon URL is required'
         });
       }
       
@@ -179,9 +179,13 @@ const adminController = {
       
       // Update data
       const updateData = {
-        isbn,
         url: amazonUrl
       };
+      
+      // Only add ISBN if it's provided
+      if (isbn) {
+        updateData.isbn = isbn;
+      }
       
       // Process image if URL is provided
       if (imageUrl) {
@@ -202,12 +206,11 @@ const adminController = {
             updateData.imageUrl = cloudinaryUrl;
             updateData.imageProcessed = true;
           }
-        } catch (imageError) {
-          console.error('Error processing image:', imageError);
+        } catch (err) {
+          console.error('Error processing image:', err);
           return res.status(400).json({
             success: false,
-            message: 'Error processing image',
-            error: imageError.message
+            message: `Image processing failed: ${err.message}`
           });
         }
       } else {
@@ -215,12 +218,8 @@ const adminController = {
         updateData.imageProcessed = true;
       }
       
-      // Update the book
-      const updatedBook = await Resource.findByIdAndUpdate(
-        id,
-        updateData,
-        { new: true }
-      );
+      // Update the book in the database
+      const updatedBook = await Resource.findByIdAndUpdate(id, updateData, { new: true });
       
       res.status(200).json({
         success: true,
@@ -244,16 +243,10 @@ const adminController = {
    */
   getProgress: async (req, res) => {
     try {
-      // Get total books count
+      // Get total count of books
       const totalBooks = await Resource.countDocuments({ type: 'book' });
       
-      // Get processed books count
-      const processedBooks = await Resource.countDocuments({ 
-        type: 'book', 
-        imageProcessed: true 
-      });
-      
-      // Get unprocessed books count
+      // Get count of unprocessed books
       const unprocessedBooks = await Resource.countDocuments({ 
         type: 'book',
         $or: [
@@ -262,13 +255,21 @@ const adminController = {
         ]
       });
       
+      // Calculate processed books
+      const processedBooks = totalBooks - unprocessedBooks;
+      
+      // Calculate percentage complete
+      const percentComplete = totalBooks > 0 
+        ? Math.round((processedBooks / totalBooks) * 100) 
+        : 0;
+      
       res.status(200).json({
         success: true,
         progress: {
           total: totalBooks,
           processed: processedBooks,
           unprocessed: unprocessedBooks,
-          percentComplete: totalBooks > 0 ? Math.round((processedBooks / totalBooks) * 100) : 0
+          percentComplete
         }
       });
     } catch (error) {
@@ -292,26 +293,33 @@ async function uploadToCloudinary(imageBuffer, fileName) {
   try {
     const timestamp = Math.floor(Date.now() / 1000);
     const publicId = `books/${fileName}`; // Store in 'books' folder
+    const transformation = 'c_fill,w_500,h_750,q_auto';
     
-    // Generate signature for authentication
-    const signature = crypto
-      .createHash('sha1')
-      .update(`public_id=${publicId}&timestamp=${timestamp}${API_SECRET}`)
-      .digest('hex');
+    // Create an object with all parameters to be signed
+    const paramsToSign = {
+      public_id: publicId,
+      timestamp: timestamp.toString(),
+      transformation: transformation
+    };
+    
+    // Sort parameters alphabetically and create the string to sign
+    const paramsSorted = Object.keys(paramsToSign)
+      .sort()
+      .map(key => `${key}=${paramsToSign[key]}`)
+      .join('&');
+    
+    // Generate signature by appending API secret
+    const signatureString = paramsSorted + API_SECRET;
+    const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
     
     // Create form data for upload
     const formData = new FormData();
     formData.append('file', imageBuffer, { filename: `${fileName}.jpg` });
-    formData.append('timestamp', timestamp.toString());
     formData.append('api_key', API_KEY);
+    formData.append('timestamp', timestamp.toString());
     formData.append('signature', signature);
     formData.append('public_id', publicId);
-    
-    // Add transformation parameters for consistent book covers
-    // c_fill: crop and fill to maintain aspect ratio
-    // w_500,h_750: standard book cover dimensions (2:3 ratio)
-    // q_auto: automatic quality optimization
-    formData.append('transformation', 'c_fill,w_500,h_750,q_auto');
+    formData.append('transformation', transformation);
     
     // Upload to Cloudinary
     const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
@@ -321,11 +329,12 @@ async function uploadToCloudinary(imageBuffer, fileName) {
     
     const data = await response.json();
     
-    if (data.secure_url) {
-      return data.secure_url;
-    } else {
-      throw new Error(data.error ? data.error.message : 'Unknown error');
+    if (!response.ok) {
+      console.error('Cloudinary error response:', data);
+      throw new Error(data.error?.message || 'Failed to upload image to Cloudinary');
     }
+    
+    return data.secure_url;
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error.message);
     throw error;

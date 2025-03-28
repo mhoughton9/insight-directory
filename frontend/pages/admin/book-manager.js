@@ -63,6 +63,8 @@ const BookManager = () => {
 
   // Process ISBN to remove dashes and spaces
   const processIsbn = (isbn) => {
+    // If ISBN is empty, return empty string
+    if (!isbn) return '';
     // Remove all non-alphanumeric characters
     return isbn.replace(/[^0-9X]/gi, '');
   };
@@ -200,7 +202,7 @@ const BookManager = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label htmlFor="isbn" className="block text-sm font-medium text-gray-700 mb-1">
-                    ISBN
+                    ISBN <span className="text-gray-500 font-normal">(optional)</span>
                   </label>
                   <input
                     type="text"
@@ -210,10 +212,9 @@ const BookManager = () => {
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Enter ISBN-10 or ISBN-13 (dashes are OK)"
-                    required
                   />
                   <p className="mt-1 text-sm text-gray-500">
-                    You can enter either ISBN-10 or ISBN-13 format. Dashes will be automatically removed.
+                    You can enter either ISBN-10 or ISBN-13 format. Leave blank if the book doesn't have an ISBN.
                   </p>
                 </div>
                 
