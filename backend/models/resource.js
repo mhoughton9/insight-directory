@@ -18,7 +18,7 @@ const resourceSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Resource type is required'],
       enum: [
-        'book', 'blog', 'videoChannel', 'video', 'podcast', 'practice', 
+        'book', 'blog', 'videoChannel', 'podcast', 'practice', 
         'retreatCenter', 'website', 'app'
       ]
     },
@@ -152,7 +152,20 @@ const resourceSchema = new mongoose.Schema(
     imageProcessed: {
       type: Boolean,
       default: false
-    }
+    },
+    // Processing metadata
+    processed: {
+      type: Boolean,
+      default: false
+    },
+    skipped: {
+      type: Boolean,
+      default: false
+    },
+    processingNotes: {
+      type: String,
+      trim: true
+    },
   },
   {
     timestamps: true,

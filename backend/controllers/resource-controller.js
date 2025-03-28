@@ -16,7 +16,10 @@ const resourceController = {
       const skip = (page - 1) * limit;
       
       // Build filter object based on query parameters
-      const filter = {};
+      const filter = {
+        // Only return processed resources for public site
+        processed: true
+      };
       
       // Handle multiple IDs for fetching favorites
       if (ids) {
@@ -112,6 +115,7 @@ const resourceController = {
   getResourceById: async (req, res) => {
     try {
       const { idOrSlug } = req.params;
+      const { admin } = req.query; // Optional flag for admin requests
       
       if (!idOrSlug) {
         return res.status(400).json({
@@ -120,20 +124,27 @@ const resourceController = {
         });
       }
       
+      // Build query to find by ID or slug
+      const query = {};
+      
       // Check if ID is a MongoDB ObjectId or a slug
       const isObjectId = /^[0-9a-fA-F]{24}$/.test(idOrSlug);
       
-      // Find resource by ID or slug
-      let resource;
       if (isObjectId) {
-        resource = await Resource.findById(idOrSlug)
-          .populate('teachers', 'name slug imageUrl bio')
-          .populate('traditions', 'name slug description');
+        query._id = idOrSlug;
       } else {
-        resource = await Resource.findOne({ slug: idOrSlug })
-          .populate('teachers', 'name slug imageUrl bio')
-          .populate('traditions', 'name slug description');
+        query.slug = idOrSlug;
       }
+      
+      // Only enforce processed check for public requests (not admin)
+      if (admin !== 'true') {
+        query.processed = true;
+      }
+      
+      // Find resource by ID or slug
+      const resource = await Resource.findOne(query)
+        .populate('teachers', 'name slug imageUrl bio')
+        .populate('traditions', 'name slug description');
       
       if (!resource) {
         return res.status(404).json({
@@ -270,7 +281,7 @@ const resourceController = {
    */
   searchResources: async (req, res) => {
     try {
-      const { q, page = 1, limit = 10, type, tradition, teacher } = req.query;
+      const { q, type, page = 1, limit = 10 } = req.query;
       const skip = (page - 1) * limit;
       
       if (!q) {
@@ -280,14 +291,17 @@ const resourceController = {
         });
       }
       
-      // Build search query with text search and optional filters
-      const searchQuery = { $text: { $search: q } };
+      // Build search query
+      const searchQuery = {
+        $text: { $search: q },
+        // Only return processed resources for public site
+        processed: true
+      };
+      
+      // Add type filter if provided
       if (type) {
-        // Don't convert to lowercase, as some types use camelCase in the database
         searchQuery.type = type;
       }
-      if (tradition) searchQuery.traditions = tradition;
-      if (teacher) searchQuery.teachers = teacher;
       
       // Define projection to select only needed fields
       const projection = {
@@ -340,8 +354,23 @@ const resourceController = {
   getResourcesByType: async (req, res) => {
     try {
       const { type } = req.params;
-      const { limit = 20, page = 1 } = req.query;
+      const { page = 1, limit = 10, sortBy = 'title', sortOrder = 'asc' } = req.query;
       const skip = (page - 1) * limit;
+      
+      // Validate type parameter
+      if (!type) {
+        return res.status(400).json({
+          success: false,
+          message: 'Resource type is required'
+        });
+      }
+      
+      // Build query
+      const query = {
+        type,
+        // Only return processed resources for public site
+        processed: true
+      };
       
       // Define projection to select only needed fields
       const projection = {
@@ -357,7 +386,7 @@ const resourceController = {
       };
       
       // Find resources by type with optimization
-      const resources = await Resource.find({ type: type }, projection)
+      const resources = await Resource.find(query, projection)
         .populate('teachers', 'name slug imageUrl')
         .populate('traditions', 'name slug')
         .sort({ createdAt: -1 })
@@ -366,7 +395,7 @@ const resourceController = {
         .lean(); // Use lean for better performance
       
       // Get total count for pagination
-      const total = await Resource.countDocuments({ type: type });
+      const total = await Resource.countDocuments(query);
       
       res.status(200).json({
         success: true,
@@ -395,32 +424,35 @@ const resourceController = {
     try {
       const { limit = 6 } = req.query;
       
-      // Define projection to select only needed fields
-      const projection = {
-        title: 1,
-        description: 1,
-        type: 1,
-        imageUrl: 1,
-        slug: 1,
-        teachers: 1,
-        traditions: 1,
-        tags: 1,
-        featured: 1,
-        createdAt: 1
-      };
-      
-      // Find featured resources with optimization
-      const featuredResources = await Resource.find({ featured: true }, projection)
-        .populate('teachers', 'name slug')
-        .populate('traditions', 'name slug')
-        .sort({ createdAt: -1 })
-        .limit(parseInt(limit))
-        .lean(); // Use lean for better performance
+      // Find featured resources
+      const resources = await Resource.find(
+        { 
+          featured: true,
+          // Only return processed resources for public site
+          processed: true 
+        },
+        { 
+          title: 1,
+          description: 1,
+          type: 1,
+          imageUrl: 1,
+          slug: 1,
+          teachers: 1,
+          traditions: 1,
+          tags: 1,
+          url: 1
+        }
+      )
+      .populate('teachers', 'name slug')
+      .populate('traditions', 'name slug')
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .lean(); // Use lean for better performance
       
       res.status(200).json({
         success: true,
-        count: featuredResources.length,
-        resources: featuredResources
+        count: resources.length,
+        resources
       });
     } catch (error) {
       console.error('Error in getFeaturedResources:', error);

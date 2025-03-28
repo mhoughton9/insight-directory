@@ -30,7 +30,8 @@ const adminController = {
           $or: [
             { imageProcessed: false },
             { imageProcessed: { $exists: false } }
-          ]
+          ],
+          skipped: { $ne: true } // Don't include skipped books
         },
         { 
           _id: 1,
@@ -54,7 +55,8 @@ const adminController = {
         $or: [
           { imageProcessed: false },
           { imageProcessed: { $exists: false } }
-        ]
+        ],
+        skipped: { $ne: true } // Don't include skipped books
       });
       
       // Get count of processed books
@@ -96,7 +98,8 @@ const adminController = {
           $or: [
             { imageProcessed: false },
             { imageProcessed: { $exists: false } }
-          ]
+          ],
+          skipped: { $ne: true } // Don't include skipped books
         },
         { 
           _id: 1,
@@ -113,9 +116,28 @@ const adminController = {
       .lean();
       
       if (!book) {
-        return res.status(404).json({
-          success: false,
-          message: 'No unprocessed books found'
+        // Get counts for progress tracking
+        const totalBooks = await Resource.countDocuments({ type: 'book' });
+        const unprocessedCount = await Resource.countDocuments({ 
+          type: 'book',
+          $or: [
+            { imageProcessed: false },
+            { imageProcessed: { $exists: false } }
+          ],
+          skipped: { $ne: true } // Don't include skipped books
+        });
+        const processedCount = totalBooks - unprocessedCount;
+        
+        return res.status(200).json({
+          success: true,
+          book: null,
+          allProcessed: true,
+          progress: {
+            processed: processedCount,
+            total: totalBooks,
+            remaining: unprocessedCount
+          },
+          message: 'All books have been processed!'
         });
       }
       
@@ -126,7 +148,8 @@ const adminController = {
         $or: [
           { imageProcessed: false },
           { imageProcessed: { $exists: false } }
-        ]
+        ],
+        skipped: { $ne: true } // Don't include skipped books
       });
       const processedCount = totalBooks - unprocessedCount;
       
@@ -157,7 +180,7 @@ const adminController = {
   updateBookData: async (req, res) => {
     try {
       const { id } = req.params;
-      const { isbn, amazonUrl, imageUrl } = req.body;
+      const { isbn, amazonUrl, imageUrl, pageCount } = req.body;
       
       // Validate required fields
       if (!amazonUrl) {
@@ -185,6 +208,12 @@ const adminController = {
       // Only add ISBN if it's provided
       if (isbn) {
         updateData.isbn = isbn;
+      }
+
+      // Update page count if provided
+      if (pageCount) {
+        // Update the bookDetails.pages field
+        updateData['bookDetails.pages'] = parseInt(pageCount, 10);
       }
       
       // Process image if URL is provided
@@ -237,6 +266,83 @@ const adminController = {
   },
 
   /**
+   * Skip a book in the processing queue
+   * @route PUT /api/admin/books/:id/skip
+   * @access Public (dev environment only)
+   */
+  skipBook: async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Find the book
+      const book = await Resource.findById(id);
+      
+      if (!book) {
+        return res.status(404).json({
+          success: false,
+          message: 'Book not found'
+        });
+      }
+      
+      // Mark as skipped
+      const updatedBook = await Resource.findByIdAndUpdate(
+        id, 
+        { skipped: true },
+        { new: true }
+      );
+      
+      res.status(200).json({
+        success: true,
+        message: 'Book skipped successfully',
+        book: updatedBook
+      });
+    } catch (error) {
+      console.error('Error in skipBook:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server Error',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Delete a book from the database
+   * @route DELETE /api/admin/books/:id
+   * @access Public (dev environment only)
+   */
+  deleteBook: async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Find the book
+      const book = await Resource.findById(id);
+      
+      if (!book) {
+        return res.status(404).json({
+          success: false,
+          message: 'Book not found'
+        });
+      }
+      
+      // Delete the book
+      await Resource.findByIdAndDelete(id);
+      
+      res.status(200).json({
+        success: true,
+        message: 'Book deleted successfully'
+      });
+    } catch (error) {
+      console.error('Error in deleteBook:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server Error',
+        error: error.message
+      });
+    }
+  },
+
+  /**
    * Get progress statistics
    * @route GET /api/admin/books/progress
    * @access Public (dev environment only)
@@ -252,7 +358,8 @@ const adminController = {
         $or: [
           { imageProcessed: false },
           { imageProcessed: { $exists: false } }
-        ]
+        ],
+        skipped: { $ne: true } // Don't include skipped books
       });
       
       // Calculate processed books
@@ -274,6 +381,146 @@ const adminController = {
       });
     } catch (error) {
       console.error('Error in getProgress:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server Error',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Get all resources with optional type filtering
+   * @route GET /api/admin/resources
+   * @access Public (dev environment only)
+   */
+  getAllResources: async (req, res) => {
+    try {
+      // Get type filter from query params
+      const { type } = req.query;
+      
+      // Build query object
+      const query = {};
+      if (type) {
+        query.type = type;
+      } else {
+        // Exclude 'video' type resources when not filtering by type
+        query.type = { $ne: 'video' };
+      }
+      
+      // Find resources matching query
+      const resources = await Resource.find(
+        query,
+        { 
+          _id: 1,
+          title: 1, 
+          description: 1,
+          type: 1,
+          slug: 1,
+          url: 1,
+          imageUrl: 1,
+          bookDetails: 1,
+          videoChannelDetails: 1,
+          websiteDetails: 1,
+          blogDetails: 1,
+          podcastDetails: 1,
+          publishedDate: 1,
+          tags: 1
+        }
+      )
+      .sort({ title: 1 })
+      .lean();
+      
+      // Get counts by type for filtering UI, excluding 'video' type
+      const typeCounts = await Resource.aggregate([
+        { $match: { type: { $ne: 'video' } } },
+        { $group: { _id: '$type', count: { $sum: 1 } } },
+        { $sort: { _id: 1 } }
+      ]);
+      
+      res.status(200).json({
+        success: true,
+        count: resources.length,
+        resources,
+        typeCounts
+      });
+    } catch (error) {
+      console.error('Error in getAllResources:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server Error',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Get a specific resource by ID
+   * @route GET /api/admin/resources/:id
+   * @access Public (dev environment only)
+   */
+  getResourceById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Find the resource
+      const resource = await Resource.findById(id).lean();
+      
+      if (!resource) {
+        return res.status(404).json({
+          success: false,
+          message: 'Resource not found'
+        });
+      }
+      
+      res.status(200).json({
+        success: true,
+        resource
+      });
+    } catch (error) {
+      console.error('Error in getResourceById:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server Error',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Update a resource
+   * @route PUT /api/admin/resources/:id
+   * @access Public (dev environment only)
+   */
+  updateResource: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+      
+      // Find the resource
+      const resource = await Resource.findById(id);
+      
+      if (!resource) {
+        return res.status(404).json({
+          success: false,
+          message: 'Resource not found'
+        });
+      }
+      
+      // Update the resource
+      const updatedResource = await Resource.findByIdAndUpdate(
+        id, 
+        updateData, 
+        { new: true }
+      );
+      
+      res.status(200).json({
+        success: true,
+        message: 'Resource updated successfully',
+        resource: updatedResource
+      });
+    } catch (error) {
+      console.error('Error in updateResource:', error);
       res.status(500).json({
         success: false,
         message: 'Server Error',
