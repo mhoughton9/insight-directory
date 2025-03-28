@@ -4,6 +4,7 @@ const teacherRoutes = require('./teacher-routes');
 const traditionRoutes = require('./tradition-routes');
 const userRoutes = require('./user-routes');
 const commentRoutes = require('./comment-routes');
+const adminRoutes = require('./admin-routes');
 
 const router = express.Router();
 
@@ -26,5 +27,8 @@ router.use('/users', userRoutes);
 
 // Mount comment routes
 router.use('/comments', commentRoutes);
+
+// Mount admin routes
+router.use('/admin', adminRoutes);
 
 module.exports = router;

@@ -143,6 +143,15 @@ const resourceSchema = new mongoose.Schema(
       min: 0,
       max: 5,
       default: 0
+    },
+    // Book-specific fields for identification
+    isbn: {
+      type: String,
+      trim: true
+    },
+    imageProcessed: {
+      type: Boolean,
+      default: false
     }
   },
   {
