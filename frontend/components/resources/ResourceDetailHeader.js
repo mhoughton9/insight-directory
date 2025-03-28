@@ -6,6 +6,38 @@ import { formatResourceType, normalizeResourceType } from '../../utils/resource-
 import { Heading, Text, Caption } from '../ui/Typography';
 
 /**
+ * Get optimal image container styles based on resource type
+ * @param {string} type - Resource type (book, video, podcast, etc.)
+ * @returns {object} - Style object with appropriate aspect ratio and background
+ */
+function getImageContainerStyles(type) {
+  switch (type) {
+    case 'book':
+      return {
+        aspectRatio: '2/3',
+        background: 'linear-gradient(to bottom, #f3f4f6, #e5e7eb)',
+      };
+    case 'video':
+    case 'videoChannel':
+      return {
+        aspectRatio: '16/9',
+        background: 'linear-gradient(to bottom, #f3f4f6, #e5e7eb)',
+      };
+    case 'podcast':
+    case 'audio':
+      return {
+        aspectRatio: '1/1', // Square for podcast artwork
+        background: 'linear-gradient(to bottom, #f3f4f6, #e5e7eb)',
+      };
+    default:
+      return {
+        aspectRatio: '4/3', // Default aspect ratio
+        background: 'linear-gradient(to bottom, #f3f4f6, #e5e7eb)',
+      };
+  }
+}
+
+/**
  * ResourceDetailHeader component
  * Displays the resource title, type, and basic metadata in a header section
  * @param {Object} props - Component props
@@ -22,6 +54,9 @@ const ResourceDetailHeader = ({ resource }) => {
         day: 'numeric'
       })
     : null;
+  
+  // Get optimal image container styles based on resource type
+  const imageContainerStyles = getImageContainerStyles(resource.type);
   
   return (
     <header className="w-full bg-gradient-to-r from-brand-start via-brand-mid to-brand-end bg-opacity-10 dark:bg-opacity-5 py-6 md:py-10 lg:py-12">
@@ -47,13 +82,16 @@ const ResourceDetailHeader = ({ resource }) => {
         <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
           {/* Resource image (if available) */}
           {resource.imageUrl && (
-            <div className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-lg overflow-hidden relative flex-shrink-0 border border-neutral-200 dark:border-neutral-700 shadow-sm transition-transform hover:scale-105">
+            <div 
+              className="w-24 h-auto md:w-28 lg:w-32 rounded-lg overflow-hidden relative flex-shrink-0 border border-neutral-200 dark:border-neutral-700 shadow-sm transition-transform hover:scale-105"
+              style={imageContainerStyles}
+            >
               <Image 
                 src={resource.imageUrl} 
                 alt={resource.title}
                 fill
                 sizes="(max-width: 640px) 96px, (max-width: 768px) 112px, 128px"
-                className="object-cover"
+                className="object-contain"
               />
             </div>
           )}
