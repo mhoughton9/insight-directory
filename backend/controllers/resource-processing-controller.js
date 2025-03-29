@@ -8,18 +8,22 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+/**
+ * Resource Processing Controller
+ * Handles logic for the admin resource processing tool
+ */
 const resourceProcessingController = {
   /**
-   * Get the next unprocessed resource of a specific type
+   * Get the next unprocessed resource, optionally after a specific resource ID.
    * @route GET /api/admin/process/next-unprocessed
    * @access Private (admin only)
    */
   getNextUnprocessedResource: async (req, res) => {
     try {
-      // Get type filter and include skipped flag from query params
-      const { type, includeSkipped = 'true' } = req.query;
+      // Get type filter and currentResourceId from query params
+      const { type, currentResourceId } = req.query;
       
-      // Build query object - match resources where processed is either false or undefined
+      // Base query: Find resources not yet processed
       const query = {
         $or: [
           { processed: false },
@@ -27,17 +31,21 @@ const resourceProcessingController = {
         ]
       };
       
-      // Only exclude skipped resources if explicitly requested
-      if (includeSkipped !== 'true') {
-        query.skipped = { $ne: true };
-      }
-      
       // Add type filter if provided
       if (type) {
         query.type = type;
       }
       
-      // Find the next unprocessed resource
+      // If currentResourceId is provided, find the next resource *after* it
+      if (currentResourceId) {
+        // We need a field to sort by consistently. Let's use _id.
+        // Find the document with currentResourceId to get its _id
+        // Note: This adds an extra query, could be optimized if needed
+        // For simplicity now, we assume sorting by _id works
+        query._id = { $gt: currentResourceId }; 
+      }
+      
+      // Find the next unprocessed resource, sorted by _id to ensure consistency
       const resource = await Resource.findOne(
         query,
         { 
@@ -58,123 +66,54 @@ const resourceProcessingController = {
           appDetails: 1,
           tags: 1,
           isbn: 1,
-          processingNotes: 1,
-          skipped: 1
+          processingNotes: 1
+          // Removed skipped field
         }
       )
-      .sort({ title: 1 })
+      .sort({ _id: 1 }) // Sort by _id for consistent ordering
       .lean();
       
-      // Get counts for progress tracking
-      let totalCount, unprocessedCount, skippedCount;
-      
-      // Query for unprocessed resources (processed=false OR processed doesn't exist)
-      const unprocessedQuery = {
+      // --- Recalculate Progress --- 
+      let totalCount, unprocessedCount;
+      const baseUnprocessedQuery = {
         $or: [
           { processed: false },
           { processed: { $exists: false } }
         ]
       };
-      
+
       if (type) {
-        // Count for specific type
         totalCount = await Resource.countDocuments({ type });
-        unprocessedCount = await Resource.countDocuments({ 
-          ...unprocessedQuery,
-          type
-        });
-        skippedCount = await Resource.countDocuments({
-          type,
-          skipped: true
-        });
+        unprocessedCount = await Resource.countDocuments({ ...baseUnprocessedQuery, type });
       } else {
-        // Count for all types
         totalCount = await Resource.countDocuments({});
-        unprocessedCount = await Resource.countDocuments(unprocessedQuery);
-        skippedCount = await Resource.countDocuments({ skipped: true });
+        unprocessedCount = await Resource.countDocuments(baseUnprocessedQuery);
       }
       
-      const processedCount = await Resource.countDocuments({
-        ...(type ? { type } : {}),
-        processed: true
-      });
+      const processedCount = totalCount - unprocessedCount;
       
-      // Get counts by type for the frontend - include both unprocessed and total counts
-      // First, get counts of unprocessed resources by type
-      const unprocessedTypeCounts = await Resource.aggregate([
-        { 
-          $match: { 
-            $or: [
-              { processed: false },
-              { processed: { $exists: false } }
-            ],
-            skipped: { $ne: true } 
-          } 
-        },
+      // Get counts by type (only unprocessed)
+      const typeCounts = await Resource.aggregate([
+        { $match: baseUnprocessedQuery },
         { $group: { _id: '$type', count: { $sum: 1 } } },
         { $sort: { _id: 1 } }
       ]);
       
-      // Get total counts by type (including processed and skipped)
-      const totalTypeCounts = await Resource.aggregate([
-        { $group: { _id: '$type', total: { $sum: 1 } } },
-        { $sort: { _id: 1 } }
-      ]);
-      
-      // Get skipped counts by type
-      const skippedTypeCounts = await Resource.aggregate([
-        { $match: { skipped: true } },
-        { $group: { _id: '$type', skipped: { $sum: 1 } } },
-        { $sort: { _id: 1 } }
-      ]);
-      
-      // Merge the counts into a single array with comprehensive information
-      const mergedTypeCounts = totalTypeCounts.map(typeTotal => {
-        const unprocessedInfo = unprocessedTypeCounts.find(item => item._id === typeTotal._id) || { count: 0 };
-        const skippedInfo = skippedTypeCounts.find(item => item._id === typeTotal._id) || { skipped: 0 };
-        
-        return {
-          _id: typeTotal._id,
-          count: unprocessedInfo.count, // Unprocessed count (for backward compatibility)
-          unprocessed: unprocessedInfo.count,
-          skipped: skippedInfo.skipped,
-          total: typeTotal.total,
-          processed: typeTotal.total - unprocessedInfo.count - skippedInfo.skipped
-        };
-      });
-      
-      // Add any types that might only have unprocessed resources but no processed ones
-      unprocessedTypeCounts.forEach(unprocessedType => {
-        if (!mergedTypeCounts.some(item => item._id === unprocessedType._id)) {
-          const skippedInfo = skippedTypeCounts.find(item => item._id === unprocessedType._id) || { skipped: 0 };
-          
-          mergedTypeCounts.push({
-            _id: unprocessedType._id,
-            count: unprocessedType.count, // Unprocessed count (for backward compatibility)
-            unprocessed: unprocessedType.count,
-            skipped: skippedInfo.skipped,
-            total: unprocessedType.count + skippedInfo.skipped,
-            processed: 0
-          });
-        }
-      });
-      
-      // If no resource found, return success with allProcessed flag
+      // If no resource found (either initially or after the last one)
       if (!resource) {
         return res.status(200).json({
           success: true,
           resource: null,
-          allProcessed: unprocessedCount === 0 && skippedCount === 0,
+          allProcessed: unprocessedCount === 0,
           progress: {
             processed: processedCount,
             total: totalCount,
-            remaining: unprocessedCount,
-            skipped: skippedCount
+            remaining: unprocessedCount
           },
-          typeCounts: mergedTypeCounts,
+          typeCounts,
           message: type 
-            ? `All ${type} resources have been processed!` 
-            : 'All resources have been processed!'
+            ? `All ${type} resources processed or none found after the current one!` 
+            : 'All resources processed or none found after the current one!'
         });
       }
       
@@ -182,28 +121,24 @@ const resourceProcessingController = {
       res.status(200).json({
         success: true,
         resource,
-        allProcessed: false,
+        allProcessed: false, // Since we found one
         progress: {
           processed: processedCount,
           total: totalCount,
-          remaining: unprocessedCount,
-          skipped: skippedCount
+          remaining: unprocessedCount
         },
-        typeCounts: mergedTypeCounts
+        typeCounts
       });
+
     } catch (error) {
       console.error('Error in getNextUnprocessedResource:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Server Error',
-        error: error.message
-      });
+      res.status(500).json({ success: false, message: 'Server error fetching next resource.', error: error.message });
     }
   },
 
   /**
-   * Process a resource (update with processed data)
-   * @route PUT /api/admin/process/:id
+   * Process a resource: Update its details and mark it as processed.
+   * @route PUT /api/admin/process/resource/:id
    * @access Private (admin only)
    */
   processResource: async (req, res) => {
@@ -211,328 +146,103 @@ const resourceProcessingController = {
       const { id } = req.params;
       const updateData = req.body;
       
-      // Find the resource
-      const resource = await Resource.findById(id);
-      
-      if (!resource) {
-        return res.status(404).json({
-          success: false,
-          message: 'Resource not found'
-        });
-      }
-      
-      // Always mark as processed
+      // Ensure the resource is marked as processed
       updateData.processed = true;
-      
-      // Handle image upload if provided
-      if (updateData.imageUrl && updateData.imageUrl.trim() !== '') {
-        try {
-          // Upload image to Cloudinary with transformation
-          const uploadResult = await cloudinary.uploader.upload(updateData.imageUrl, {
-            folder: 'insight-directory',
-            transformation: [
-              { width: 500, height: 750, crop: 'fill', quality: 'auto' }
-            ]
-          });
-          
-          // Update the imageUrl with the Cloudinary URL
-          updateData.imageUrl = uploadResult.secure_url;
-        } catch (uploadError) {
-          console.error('Error uploading image to Cloudinary:', uploadError);
-          // Continue with the update even if image upload fails
-        }
-      }
-      
-      // Update the resource
-      const updatedResource = await Resource.findByIdAndUpdate(
-        id, 
-        updateData, 
-        { new: true }
-      );
-      
-      res.status(200).json({
-        success: true,
-        message: 'Resource processed successfully',
-        resource: updatedResource
-      });
-    } catch (error) {
-      console.error('Error in processResource:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Server Error',
-        error: error.message
-      });
-    }
-  },
+      // Remove skipped field if present in body (shouldn't be)
+      delete updateData.skipped;
+      updateData.updatedAt = Date.now();
 
-  /**
-   * Skip a resource in the processing queue
-   * @route PUT /api/admin/process/:id/skip
-   * @access Private (admin only)
-   */
-  skipResource: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { processingNotes } = req.body;
-      
-      // Find the resource
-      const resource = await Resource.findById(id);
-      
-      if (!resource) {
-        return res.status(404).json({
-          success: false,
-          message: 'Resource not found'
-        });
+      const updatedResource = await Resource.findByIdAndUpdate(id, updateData, { new: true });
+
+      if (!updatedResource) {
+        return res.status(404).json({ success: false, message: 'Resource not found' });
       }
-      
-      // Update the resource to mark as skipped
-      const updateData = { skipped: true };
-      
-      // Add processing notes if provided
-      if (processingNotes) {
-        updateData.processingNotes = processingNotes;
-      }
-      
-      const updatedResource = await Resource.findByIdAndUpdate(
-        id, 
-        updateData, 
-        { new: true }
-      );
-      
-      // Get the next resource type for progress info
-      const type = resource.type;
-      
-      // Get updated progress information
-      const typeQuery = type ? { type } : {};
-      
-      // Get counts by type for reporting - include both unprocessed and total counts
-      // First, get counts of unprocessed resources by type
-      const unprocessedTypeCounts = await Resource.aggregate([
-        { 
-          $match: { 
-            $or: [
-              { processed: false },
-              { processed: { $exists: false } }
-            ],
-            skipped: { $ne: true } 
-          } 
-        },
-        { $group: { _id: '$type', count: { $sum: 1 } } },
-        { $sort: { _id: 1 } }
-      ]);
-      
-      // Get total counts by type (including processed and skipped)
-      const totalTypeCounts = await Resource.aggregate([
-        { $group: { _id: '$type', total: { $sum: 1 } } },
-        { $sort: { _id: 1 } }
-      ]);
-      
-      // Get skipped counts by type
-      const skippedTypeCounts = await Resource.aggregate([
-        { $match: { skipped: true } },
-        { $group: { _id: '$type', skipped: { $sum: 1 } } },
-        { $sort: { _id: 1 } }
-      ]);
-      
-      // Merge the counts into a single array with comprehensive information
-      const mergedTypeCounts = totalTypeCounts.map(typeTotal => {
-        const unprocessedInfo = unprocessedTypeCounts.find(item => item._id === typeTotal._id) || { count: 0 };
-        const skippedInfo = skippedTypeCounts.find(item => item._id === typeTotal._id) || { skipped: 0 };
-        
-        return {
-          _id: typeTotal._id,
-          count: unprocessedInfo.count, // Unprocessed count (for backward compatibility)
-          unprocessed: unprocessedInfo.count,
-          skipped: skippedInfo.skipped,
-          total: typeTotal.total,
-          processed: typeTotal.total - unprocessedInfo.count - skippedInfo.skipped
-        };
-      });
-      
-      // Add any types that might only have unprocessed resources but no processed ones
-      unprocessedTypeCounts.forEach(unprocessedType => {
-        if (!mergedTypeCounts.some(item => item._id === unprocessedType._id)) {
-          const skippedInfo = skippedTypeCounts.find(item => item._id === unprocessedType._id) || { skipped: 0 };
-          
-          mergedTypeCounts.push({
-            _id: unprocessedType._id,
-            count: unprocessedType.count, // Unprocessed count (for backward compatibility)
-            unprocessed: unprocessedType.count,
-            skipped: skippedInfo.skipped,
-            total: unprocessedType.count + skippedInfo.skipped,
-            processed: 0
-          });
-        }
-      });
-      
-      // Get total count
-      const totalCount = await Resource.countDocuments(typeQuery);
-      
-      // Get processed count
-      const processedCount = await Resource.countDocuments({
-        ...typeQuery,
-        processed: true
-      });
-      
-      // Get skipped count
-      const skippedCount = await Resource.countDocuments({
-        ...typeQuery,
-        skipped: true
-      });
-      
-      // Get remaining count (not processed and not skipped)
-      // This includes resources where processed is false OR processed doesn't exist
-      const remainingQuery = {
-        ...typeQuery,
+
+      // --- Recalculate Progress after processing ---
+      const type = updatedResource.type; // Get type for accurate progress update
+      let totalCount, unprocessedCount;
+      const baseUnprocessedQuery = {
         $or: [
           { processed: false },
           { processed: { $exists: false } }
-        ],
-        skipped: { $ne: true }
+        ]
       };
       
-      const remainingCount = await Resource.countDocuments(remainingQuery);
-      
+      if (type) {
+        totalCount = await Resource.countDocuments({ type });
+        unprocessedCount = await Resource.countDocuments({ ...baseUnprocessedQuery, type });
+      } else {
+        // Fallback if type wasn't updated? Should always have a type.
+        totalCount = await Resource.countDocuments({}); 
+        unprocessedCount = await Resource.countDocuments(baseUnprocessedQuery);
+      }
+
+      const processedCount = totalCount - unprocessedCount;
+
+      const typeCounts = await Resource.aggregate([
+        { $match: baseUnprocessedQuery },
+        { $group: { _id: '$type', count: { $sum: 1 } } },
+        { $sort: { _id: 1 } }
+      ]);
+
       res.status(200).json({
         success: true,
-        message: 'Resource skipped successfully',
         resource: updatedResource,
         progress: {
-          total: totalCount,
           processed: processedCount,
-          skipped: skippedCount,
-          remaining: remainingCount
+          total: totalCount,
+          remaining: unprocessedCount
         },
-        typeCounts: mergedTypeCounts
+        typeCounts
       });
     } catch (error) {
-      console.error('Error in skipResource:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Server Error',
-        error: error.message
-      });
+      console.error('Error processing resource:', error);
+      res.status(500).json({ success: false, message: 'Server error processing resource.', error: error.message });
     }
   },
 
   /**
-   * Get processing progress statistics
+   * Get processing progress statistics.
    * @route GET /api/admin/process/progress
    * @access Private (admin only)
    */
   getProgress: async (req, res) => {
     try {
-      // Get type filter from query params
       const { type } = req.query;
-      
-      // Build query object for type filtering
       const typeQuery = type ? { type } : {};
-      
-      // Get total count
-      const totalCount = await Resource.countDocuments(typeQuery);
-      
-      // Get processed count
-      const processedCount = await Resource.countDocuments({
-        ...typeQuery,
-        processed: true
-      });
-      
-      // Get skipped count
-      const skippedCount = await Resource.countDocuments({
-        ...typeQuery,
-        skipped: true
-      });
-      
-      // Get remaining count (not processed and not skipped)
-      // This includes resources where processed is false OR processed doesn't exist
-      const remainingQuery = {
-        ...typeQuery,
+
+      // Base query for unprocessed resources
+      const baseUnprocessedQuery = {
         $or: [
           { processed: false },
           { processed: { $exists: false } }
-        ],
-        skipped: { $ne: true }
+        ]
       };
-      
-      const remainingCount = await Resource.countDocuments(remainingQuery);
-      
-      // Get counts by type for reporting - include both unprocessed and total counts
-      // First, get counts of unprocessed resources by type
-      const unprocessedTypeCounts = await Resource.aggregate([
-        { 
-          $match: { 
-            $or: [
-              { processed: false },
-              { processed: { $exists: false } }
-            ],
-            skipped: { $ne: true } 
-          } 
-        },
+      const unprocessedQuery = { ...baseUnprocessedQuery, ...typeQuery };
+
+      const totalCount = await Resource.countDocuments(typeQuery);
+      const unprocessedCount = await Resource.countDocuments(unprocessedQuery);
+      const processedCount = totalCount - unprocessedCount;
+
+      // Get counts by type (only unprocessed)
+      const typeCounts = await Resource.aggregate([
+        { $match: baseUnprocessedQuery }, // Match all unprocessed regardless of query type
         { $group: { _id: '$type', count: { $sum: 1 } } },
         { $sort: { _id: 1 } }
       ]);
-      
-      // Get total counts by type (including processed and skipped)
-      const totalTypeCounts = await Resource.aggregate([
-        { $group: { _id: '$type', total: { $sum: 1 } } },
-        { $sort: { _id: 1 } }
-      ]);
-      
-      // Get skipped counts by type
-      const skippedTypeCounts = await Resource.aggregate([
-        { $match: { skipped: true } },
-        { $group: { _id: '$type', skipped: { $sum: 1 } } },
-        { $sort: { _id: 1 } }
-      ]);
-      
-      // Merge the counts into a single array with comprehensive information
-      const mergedTypeCounts = totalTypeCounts.map(typeTotal => {
-        const unprocessedInfo = unprocessedTypeCounts.find(item => item._id === typeTotal._id) || { count: 0 };
-        const skippedInfo = skippedTypeCounts.find(item => item._id === typeTotal._id) || { skipped: 0 };
-        
-        return {
-          _id: typeTotal._id,
-          count: unprocessedInfo.count, // Unprocessed count (for backward compatibility)
-          unprocessed: unprocessedInfo.count,
-          skipped: skippedInfo.skipped,
-          total: typeTotal.total,
-          processed: typeTotal.total - unprocessedInfo.count - skippedInfo.skipped
-        };
-      });
-      
-      // Add any types that might only have unprocessed resources but no processed ones
-      unprocessedTypeCounts.forEach(unprocessedType => {
-        if (!mergedTypeCounts.some(item => item._id === unprocessedType._id)) {
-          const skippedInfo = skippedTypeCounts.find(item => item._id === unprocessedType._id) || { skipped: 0 };
-          
-          mergedTypeCounts.push({
-            _id: unprocessedType._id,
-            count: unprocessedType.count, // Unprocessed count (for backward compatibility)
-            unprocessed: unprocessedType.count,
-            skipped: skippedInfo.skipped,
-            total: unprocessedType.count + skippedInfo.skipped,
-            processed: 0
-          });
-        }
-      });
-      
+
       res.status(200).json({
         success: true,
         progress: {
-          total: totalCount,
           processed: processedCount,
-          skipped: skippedCount,
-          remaining: remainingCount
+          total: totalCount,
+          remaining: unprocessedCount
         },
-        typeCounts: mergedTypeCounts
+        typeCounts // Now only contains unprocessed counts per type
       });
     } catch (error) {
-      console.error('Error in getProgress:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Server Error',
-        error: error.message
-      });
+      console.error('Error getting progress:', error);
+      res.status(500).json({ success: false, message: 'Server error getting progress.', error: error.message });
     }
   }
 };

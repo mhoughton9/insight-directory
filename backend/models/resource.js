@@ -158,10 +158,6 @@ const resourceSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-    skipped: {
-      type: Boolean,
-      default: false
-    },
     processingNotes: {
       type: String,
       trim: true

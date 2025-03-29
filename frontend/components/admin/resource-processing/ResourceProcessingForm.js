@@ -8,217 +8,130 @@ import PracticeProcessingForm from './forms/PracticeProcessingForm';
 import RetreatCenterProcessingForm from './forms/RetreatCenterProcessingForm';
 import AppProcessingForm from './forms/AppProcessingForm';
 
-const ResourceProcessingForm = ({ resource, onSuccess, onSkip }) => {
+const ResourceProcessingForm = ({ resource, onSuccess, onNext }) => {
   const [processingNotes, setProcessingNotes] = useState(resource.processingNotes || '');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
-  // Handle skipping the current resource
-  const handleSkip = async () => {
+  const handleSubmit = async (formData) => {
     try {
       setSubmitting(true);
       setError(null);
-      
-      const response = await fetch(`/api/admin/process/${resource._id}/skip`, {
+
+      const finalData = {
+        ...formData,
+        processingNotes,
+        ...(formData.bookDetails && { bookDetails: formData.bookDetails }),
+        ...(formData.videoChannelDetails && { videoChannelDetails: formData.videoChannelDetails }),
+        ...(formData.podcastDetails && { podcastDetails: formData.podcastDetails }),
+        ...(formData.websiteDetails && { websiteDetails: formData.websiteDetails }),
+        ...(formData.blogDetails && { blogDetails: formData.blogDetails }),
+        ...(formData.practiceDetails && { practiceDetails: formData.practiceDetails }),
+        ...(formData.retreatCenterDetails && { retreatCenterDetails: formData.retreatCenterDetails }),
+        ...(formData.appDetails && { appDetails: formData.appDetails })
+      };
+
+      const response = await fetch(`/api/admin/process/resource/${resource._id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ processingNotes })
+        body: JSON.stringify(finalData),
       });
-      
+
       const data = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to skip resource');
+        throw new Error(data.message || 'Failed to process resource');
       }
-      
-      // Explicitly fetch the next resource instead of relying on the parent component
-      const type = resource.type;
-      const nextResourceResponse = await fetch(`/api/admin/process/next-unprocessed?type=${type}`);
-      const nextResourceData = await nextResourceResponse.json();
-      
-      if (!nextResourceResponse.ok) {
-        throw new Error(nextResourceData.message || 'Failed to fetch next resource');
+
+      if (onSuccess) {
+        onSuccess(data.progress, data.typeCounts);
       }
-      
-      // Pass the progress data and the next resource data to the parent component
-      onSkip(data.progress, data.typeCounts, nextResourceData.resource);
+
     } catch (err) {
-      console.error('Error skipping resource:', err);
-      setError(err.message || 'Failed to skip resource');
+      console.error('Error processing resource:', err);
+      setError(err.message || 'Failed to process resource');
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Render the appropriate form based on resource type
+  const handleNext = () => {
+    if (onNext) {
+      onNext();
+    }
+  };
+
   const renderResourceForm = () => {
-    switch (resource.type) {
+    const type = resource.type ? resource.type.trim() : ''; // Trim whitespace defensively
+    switch (type) { // Use the trimmed type
       case 'book':
-        return (
-          <BookProcessingForm 
-            resource={resource} 
-            processingNotes={processingNotes}
-            setProcessingNotes={setProcessingNotes}
-            onSuccess={onSuccess}
-            submitting={submitting}
-            setSubmitting={setSubmitting}
-            error={error}
-            setError={setError}
-          />
-        );
-      case 'videoChannel':
-        return (
-          <VideoChannelProcessingForm 
-            resource={resource} 
-            processingNotes={processingNotes}
-            setProcessingNotes={setProcessingNotes}
-            onSuccess={onSuccess}
-            submitting={submitting}
-            setSubmitting={setSubmitting}
-            error={error}
-            setError={setError}
-          />
-        );
+        return <BookProcessingForm resource={resource} onSubmit={handleSubmit} submitting={submitting} />;
+      case 'video':
+        return <VideoChannelProcessingForm resource={resource} onSubmit={handleSubmit} submitting={submitting} />;
       case 'podcast':
-        return (
-          <PodcastProcessingForm 
-            resource={resource} 
-            processingNotes={processingNotes}
-            setProcessingNotes={setProcessingNotes}
-            onSuccess={onSuccess}
-            submitting={submitting}
-            setSubmitting={setSubmitting}
-            error={error}
-            setError={setError}
-          />
-        );
+        return <PodcastProcessingForm resource={resource} onSubmit={handleSubmit} submitting={submitting} />;
       case 'website':
-        return (
-          <WebsiteProcessingForm 
-            resource={resource} 
-            processingNotes={processingNotes}
-            setProcessingNotes={setProcessingNotes}
-            onSuccess={onSuccess}
-            submitting={submitting}
-            setSubmitting={setSubmitting}
-            error={error}
-            setError={setError}
-          />
-        );
+        return <WebsiteProcessingForm resource={resource} onSubmit={handleSubmit} submitting={submitting} />;
       case 'blog':
-        return (
-          <BlogProcessingForm 
-            resource={resource} 
-            processingNotes={processingNotes}
-            setProcessingNotes={setProcessingNotes}
-            onSuccess={onSuccess}
-            submitting={submitting}
-            setSubmitting={setSubmitting}
-            error={error}
-            setError={setError}
-          />
-        );
+        return <BlogProcessingForm resource={resource} onSubmit={handleSubmit} submitting={submitting} />;
       case 'practice':
-        return (
-          <PracticeProcessingForm 
-            resource={resource} 
-            processingNotes={processingNotes}
-            setProcessingNotes={setProcessingNotes}
-            onSuccess={onSuccess}
-            submitting={submitting}
-            setSubmitting={setSubmitting}
-            error={error}
-            setError={setError}
-          />
-        );
-      case 'retreatCenter':
-        return (
-          <RetreatCenterProcessingForm 
-            resource={resource} 
-            processingNotes={processingNotes}
-            setProcessingNotes={setProcessingNotes}
-            onSuccess={onSuccess}
-            submitting={submitting}
-            setSubmitting={setSubmitting}
-            error={error}
-            setError={setError}
-          />
-        );
+        return <PracticeProcessingForm resource={resource} onSubmit={handleSubmit} submitting={submitting} />;
+      case 'retreat':
+        return <RetreatCenterProcessingForm resource={resource} onSubmit={handleSubmit} submitting={submitting} />;
       case 'app':
-        return (
-          <AppProcessingForm 
-            resource={resource} 
-            processingNotes={processingNotes}
-            setProcessingNotes={setProcessingNotes}
-            onSuccess={onSuccess}
-            submitting={submitting}
-            setSubmitting={setSubmitting}
-            error={error}
-            setError={setError}
-          />
-        );
+        return <AppProcessingForm resource={resource} onSubmit={handleSubmit} submitting={submitting} />;
       default:
-        return (
-          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
-            <p>Unknown resource type: {resource.type}</p>
-          </div>
-        );
+        // Log the problematic type with quotes
+        console.error(`Unknown or mismatched resource type encountered: "${type}"`);
+        return <p className="text-red-500">Unknown resource type: {type}</p>;
     }
   };
 
   return (
     <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-medium mb-2">{resource.title || 'Untitled Resource'}</h2>
-        <p className="text-gray-600 mb-2">Type: {resource.type.charAt(0).toUpperCase() + resource.type.slice(1)}</p>
-        <p className="text-gray-600 mb-2">ID: {resource._id}</p>
-        
-        {resource.description && (
-          <div className="mt-4">
-            <h3 className="text-lg font-medium mb-2">Description</h3>
-            <p className="text-gray-700">{resource.description}</p>
-          </div>
+        <h3 className="text-lg font-semibold mb-2">Review & Process: {resource.title} ({resource.type})</h3>
+        <p className="text-sm text-gray-600 mb-1">ID: {resource._id}</p>
+        {resource.url && (
+          <a href={resource.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+            Visit Resource Link
+          </a>
         )}
       </div>
 
-      {/* Processing Notes */}
-      <div className="mb-6">
-        <label htmlFor="processingNotes" className="block text-sm font-medium text-gray-700 mb-1">
-          Processing Notes (internal only)
-        </label>
+      {renderResourceForm()}
+
+      <div className="mt-6 mb-6">
+        <label htmlFor="processingNotes" className="block text-sm font-medium text-gray-700 mb-1">Admin Processing Notes</label>
         <textarea
           id="processingNotes"
+          rows="3"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           value={processingNotes}
           onChange={(e) => setProcessingNotes(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          rows="3"
-          placeholder="Add any notes about processing this resource..."
-        />
+          placeholder="Add any notes relevant to processing this resource..."
+        ></textarea>
       </div>
 
-      {/* Skip Button */}
       <div className="mb-6">
         <button
-          onClick={handleSkip}
+          onClick={handleNext}
           disabled={submitting}
           className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded transition duration-200 mr-2"
         >
-          {submitting ? 'Skipping...' : 'Skip for Now'}
+          Next
         </button>
-        <span className="text-sm text-gray-500">Skip this resource and come back to it later</span>
+        <span className="text-sm text-gray-500">Move to the next resource without processing</span>
       </div>
 
-      {/* Error Message */}
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <strong className="font-bold">Error:</strong>
+          <span className="block sm:inline"> {error}</span>
         </div>
       )}
-
-      {/* Resource-specific Form */}
-      {renderResourceForm()}
     </div>
   );
 };

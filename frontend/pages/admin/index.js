@@ -2,23 +2,29 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { useUser } from '@clerk/nextjs';
 
 const AdminDashboard = () => {
+  const { user } = useUser();
   const [resourceProgress, setResourceProgress] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Fetch progress data
   const fetchProgress = async () => {
+    if (!user) return; // Don't fetch if user data isn't loaded yet
+    
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/process/progress');
+      setError(null);
+      // Append clerkId to the request URL
+      const response = await fetch(`/api/admin/process/progress?clerkId=${user.id}`);
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.message || 'Failed to fetch progress data');
       }
-      
+
       setResourceProgress(data.progress);
     } catch (err) {
       console.error('Error fetching progress:', err);
@@ -31,7 +37,7 @@ const AdminDashboard = () => {
   // Load progress on component mount
   useEffect(() => {
     fetchProgress();
-  }, []);
+  }, [user]); // Re-run fetchProgress when user data is available
 
   return (
     <AdminLayout>

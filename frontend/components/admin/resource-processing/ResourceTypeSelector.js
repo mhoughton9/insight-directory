@@ -14,43 +14,15 @@ const ResourceTypeSelector = ({ selectedType, typeCounts, onTypeChange, formatRe
     { id: 'app', label: 'Apps' }
   ];
 
-  // Find unprocessed count for a specific type (includes both unprocessed and skipped)
+  // Find unprocessed count for a specific type (now only uses 'count' from aggregation)
   const getUnprocessedCountForType = (type) => {
     const found = typeCounts.find(item => item._id === type);
-    if (!found) return 0;
-    
-    // Count both unprocessed and skipped resources as unprocessed
-    return (found.unprocessed || found.count || 0) + (found.skipped || 0);
+    return found ? (found.count || 0) : 0; // 'count' represents unprocessed
   };
 
-  // Get total unprocessed count across all types (includes both unprocessed and skipped)
+  // Get total unprocessed count across all types
   const getTotalUnprocessedCount = () => {
-    return typeCounts.reduce((sum, item) => {
-      // Count both unprocessed and skipped resources as unprocessed
-      return sum + (item.unprocessed || item.count || 0) + (item.skipped || 0);
-    }, 0);
-  };
-
-  // Get skipped count for a specific type (for display only)
-  const getSkippedCountForType = (type) => {
-    const found = typeCounts.find(item => item._id === type);
-    return found ? (found.skipped || 0) : 0;
-  };
-
-  // Get total skipped count across all types (for display only)
-  const getTotalSkippedCount = () => {
-    return typeCounts.reduce((sum, item) => sum + (item.skipped || 0), 0);
-  };
-
-  // Get truly unprocessed count (not skipped) for a specific type (for display only)
-  const getTrueUnprocessedCountForType = (type) => {
-    const found = typeCounts.find(item => item._id === type);
-    return found ? (found.unprocessed || found.count || 0) : 0;
-  };
-
-  // Get total truly unprocessed count (for display only)
-  const getTotalTrueUnprocessedCount = () => {
-    return typeCounts.reduce((sum, item) => sum + (item.unprocessed || item.count || 0), 0);
+    return typeCounts.reduce((sum, item) => sum + (item.count || 0), 0);
   };
 
   return (
@@ -59,13 +31,7 @@ const ResourceTypeSelector = ({ selectedType, typeCounts, onTypeChange, formatRe
       
       <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
         {resourceTypes.map((type) => {
-          // For enabling/disabling the button, we consider both unprocessed and skipped
           const unprocessedCount = type.id === '' ? getTotalUnprocessedCount() : getUnprocessedCountForType(type.id);
-          
-          // For display purposes, we show the breakdown
-          const trueUnprocessedCount = type.id === '' ? getTotalTrueUnprocessedCount() : getTrueUnprocessedCountForType(type.id);
-          const skippedCount = type.id === '' ? getTotalSkippedCount() : getSkippedCountForType(type.id);
-          
           const isActive = selectedType === type.id;
           
           return (
@@ -83,8 +49,7 @@ const ResourceTypeSelector = ({ selectedType, typeCounts, onTypeChange, formatRe
               <div className="font-medium">{type.label}</div>
               <div className="flex justify-between items-center mt-1">
                 <span className="text-xs text-gray-500">
-                  {trueUnprocessedCount} unprocessed
-                  {skippedCount > 0 && `, ${skippedCount} skipped`}
+                  {unprocessedCount} unprocessed
                 </span>
                 {unprocessedCount > 0 && (
                   <span className="text-xs px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded-full">

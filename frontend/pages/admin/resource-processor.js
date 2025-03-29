@@ -4,8 +4,10 @@ import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
 import ResourceTypeSelector from '@/components/admin/resource-processing/ResourceTypeSelector';
 import ResourceProcessingForm from '@/components/admin/resource-processing/ResourceProcessingForm';
+import { useUser } from '@clerk/nextjs';
 
 const ResourceProcessor = () => {
+  const { user } = useUser();
   const [currentResource, setCurrentResource] = useState(null);
   const [selectedType, setSelectedType] = useState('');
   const [loading, setLoading] = useState(true);
@@ -15,15 +17,21 @@ const ResourceProcessor = () => {
   const [typeCounts, setTypeCounts] = useState([]);
 
   // Fetch the next unprocessed resource
-  const fetchNextResource = async (type = selectedType) => {
+  const fetchNextResource = async (type = selectedType, currentResourceId = null) => { 
+    if (!user) return;
     try {
       setLoading(true);
       setError(null);
       setSuccessMessage('');
       
-      const url = type 
-        ? `/api/admin/process/next-unprocessed?type=${type}` 
-        : '/api/admin/process/next-unprocessed';
+      let url = type 
+        ? `/api/admin/process/next-unprocessed?type=${type}&clerkId=${user.id}` 
+        : `/api/admin/process/next-unprocessed?clerkId=${user.id}`;
+      
+      // Add currentResourceId if provided to fetch the *next* one
+      if (currentResourceId) {
+        url += `&currentResourceId=${currentResourceId}`;
+      }
       
       const response = await fetch(url);
       const data = await response.json();
@@ -56,8 +64,9 @@ const ResourceProcessor = () => {
 
   // Fetch processing progress and type counts
   const fetchProgress = async () => {
+    if (!user) return;
     try {
-      const response = await fetch('/api/admin/process/progress');
+      const response = await fetch(`/api/admin/process/progress?clerkId=${user.id}`);
       const data = await response.json();
       
       if (!response.ok) {
@@ -84,8 +93,27 @@ const ResourceProcessor = () => {
     
     // Wait a moment before fetching the next resource
     setTimeout(() => {
-      fetchNextResource();
+      const processedResourceId = currentResource?._id;
+      
+      if (processedResourceId) {
+        fetchNextResource(selectedType, processedResourceId);
+      } else {
+        // Fallback if ID was somehow lost
+        fetchNextResource(selectedType);
+      }
     }, 1500);
+  };
+
+  // Handle clicking the "Next" button in the form
+  const handleNext = () => {
+    // Fetch the next resource *after* the current one
+    if (currentResource?._id) {
+        fetchNextResource(selectedType, currentResource._id);
+    } else {
+        // If there's no current resource (e.g., at the end), fetch the first one again?
+        // Or maybe disable the button? For now, fetch first.
+        fetchNextResource(selectedType);
+    }
   };
 
   // Format resource type for display
@@ -114,9 +142,11 @@ const ResourceProcessor = () => {
 
   // Load first resource and progress on component mount
   useEffect(() => {
-    fetchProgress();
-    fetchNextResource();
-  }, []);
+    if (user) {
+      fetchProgress();
+      fetchNextResource();
+    }
+  }, [user]);
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
@@ -184,6 +214,7 @@ const ResourceProcessor = () => {
           <ResourceProcessingForm
             resource={currentResource}
             onSuccess={handleProcessingSuccess}
+            onNext={handleNext}
             onSkip={(progressData, typeCountsData, nextResource) => {
               // Update progress and typeCounts with the data from the API
               if (progressData) setProgress(progressData);
