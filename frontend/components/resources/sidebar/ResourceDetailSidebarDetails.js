@@ -105,7 +105,8 @@ const ResourceDetailSidebarDetails = ({ resource }) => {
         </>
       )}
       
-      {/* Tags */}
+      {/* Tags - Temporarily hidden but infrastructure preserved for future use */}
+      {/* Uncomment this section when ready to use tags again
       {resource.tags && resource.tags.length > 0 && (
         <div className="mb-3">
           <p className="font-inter text-neutral-500 dark:text-neutral-400 mb-1">Tags: </p>
@@ -118,6 +119,7 @@ const ResourceDetailSidebarDetails = ({ resource }) => {
           </div>
         </div>
       )}
+      */}
     </div>
   );
 };

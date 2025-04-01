@@ -2,8 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 // Next.js API route handler
 export default async function handler(req, res) {
-  // Don't allow non-GET methods for this route
-  if (req.method !== 'GET') {
+  // Allow GET and POST methods for this route
+  if (req.method !== 'GET' && req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
@@ -12,8 +12,31 @@ export default async function handler(req, res) {
     const queryParams = new URLSearchParams(req.query).toString();
     const apiUrl = `${backendUrl}/api/admin/resources${queryParams ? `?${queryParams}` : ''}`;
     
-    const response = await fetch(apiUrl);
+    // Handle different HTTP methods
+    const fetchOptions = {
+      method: req.method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    
+    // Add body for POST requests
+    if (req.method === 'POST') {
+      fetchOptions.body = JSON.stringify(req.body);
+      console.log('Sending data to backend:', req.body);
+    }
+    
+    const response = await fetch(apiUrl, fetchOptions);
     const data = await response.json();
+    
+    // Log detailed error information if the request failed
+    if (!response.ok) {
+      console.error('Backend API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        data
+      });
+    }
     
     return res.status(response.status).json(data);
   } catch (error) {

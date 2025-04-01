@@ -8,6 +8,9 @@ const router = express.Router();
  * Base path: /api/admin
  */
 
+// Resource statistics route
+router.get('/resources/stats', adminController.getResourceStats);
+
 // Book management routes
 router.get('/books/unprocessed', adminController.getUnprocessedBooks);
 router.get('/books/next-unprocessed', adminController.getNextUnprocessedBook);
@@ -19,7 +22,12 @@ router.delete('/books/:id', adminController.deleteBook);
 // Resource management routes
 router.get('/resources', adminController.getAllResources);
 router.get('/resources/:id', adminController.getResourceById);
+router.post('/resources', adminController.createResource);
 router.put('/resources/:id', adminController.updateResource);
+router.delete('/resources/:id', adminController.deleteResource);
+
+// Bulk import route
+router.post('/bulk-import', adminController.bulkImportResources);
 
 // Resource processing routes
 router.use('/process', require('./resource-processing-routes'));

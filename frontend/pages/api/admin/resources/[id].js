@@ -2,8 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 // Next.js API route handler
 export default async function handler(req, res) {
-  // Allow GET and PUT methods for this route
-  if (req.method !== 'GET' && req.method !== 'PUT') {
+  // Allow GET, PUT, and DELETE methods for this route
+  if (req.method !== 'GET' && req.method !== 'PUT' && req.method !== 'DELETE') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 

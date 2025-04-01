@@ -17,11 +17,11 @@ export default function AdminLayout({ children }) {
                 <Link href="/admin" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
                   Dashboard
                 </Link>
-                <Link href="/admin/resource-processor" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                  Resource Processor
-                </Link>
                 <Link href="/admin/resources" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
                   Resource Management
+                </Link>
+                <Link href="/admin/add-resource" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                  Add Resource
                 </Link>
               </nav>
             </div>

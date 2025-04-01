@@ -13,6 +13,121 @@ const API_SECRET = process.env.CLOUDINARY_API_SECRET;
  */
 const adminController = {
   /**
+   * Get resource statistics
+   * @route GET /api/admin/resources/stats
+   * @access Private (admin only)
+   */
+  getResourceStats: async (req, res) => {
+    try {
+      // Get total count of resources
+      const total = await Resource.countDocuments();
+      
+      // Get count of published resources
+      const published = await Resource.countDocuments({ processed: true });
+      
+      // Get count of pending resources
+      const pending = await Resource.countDocuments({ processed: false });
+      
+      // Get counts by resource type
+      const typeAggregation = await Resource.aggregate([
+        { $group: { _id: '$type', count: { $sum: 1 } } },
+        { $sort: { count: -1 } }
+      ]);
+      
+      const byType = typeAggregation.map(item => ({
+        type: item._id,
+        count: item.count
+      }));
+      
+      // Return statistics
+      return res.status(200).json({
+        success: true,
+        stats: {
+          total,
+          published,
+          pending,
+          typeCount: byType.length,
+          byType
+        }
+      });
+    } catch (error) {
+      console.error('Error getting resource statistics:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to get resource statistics',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Create a new resource
+   * @route POST /api/admin/resources
+   * @access Private (admin only)
+   */
+  createResource: async (req, res) => {
+    try {
+      // Log the request body for debugging
+      console.log('Creating resource with data:', JSON.stringify(req.body, null, 2));
+      
+      // Create a new resource with the request body
+      const resourceData = req.body;
+      
+      // Generate a slug from the title if not provided
+      if (!resourceData.slug && resourceData.title) {
+        // Create base slug from title
+        const baseSlug = resourceData.title
+          .toLowerCase()
+          .replace(/[^\w\s-]/g, '') // Remove special characters
+          .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+          .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+        
+        // Check if the slug already exists
+        let slug = baseSlug;
+        let counter = 1;
+        let slugExists = true;
+        
+        // Keep checking until we find a unique slug
+        while (slugExists) {
+          // Check if this slug exists in the database
+          const existingResource = await Resource.findOne({ slug });
+          
+          if (!existingResource) {
+            // If no resource with this slug exists, we can use it
+            slugExists = false;
+          } else {
+            // If the slug exists, append a number and try again
+            slug = `${baseSlug}-${counter}`;
+            counter++;
+          }
+        }
+        
+        // Set the unique slug
+        resourceData.slug = slug;
+      }
+      
+      const newResource = new Resource(resourceData);
+      
+      // Save the resource to the database
+      await newResource.save();
+      
+      // Return the created resource
+      return res.status(201).json({
+        success: true,
+        message: 'Resource created successfully',
+        resource: newResource
+      });
+    } catch (error) {
+      console.error('Error creating resource:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to create resource',
+        error: error.message
+      });
+    }
+  },
+
+  /**
    * Get books that need Amazon data processing
    * @route GET /api/admin/books/unprocessed
    * @access Public (dev environment only)
@@ -396,16 +511,24 @@ const adminController = {
    */
   getAllResources: async (req, res) => {
     try {
-      // Get type filter from query params
-      const { type } = req.query;
+      // Get filters from query params
+      const { type, processed } = req.query;
       
       // Build query object
       const query = {};
+      
+      // Add type filter if provided
       if (type) {
         query.type = type;
       } else {
         // Exclude 'video' type resources when not filtering by type
         query.type = { $ne: 'video' };
+      }
+      
+      // Add processed status filter if provided
+      if (processed !== undefined) {
+        // Convert string 'true'/'false' to boolean
+        query.processed = processed === 'true';
       }
       
       // Find resources matching query
@@ -425,6 +548,8 @@ const adminController = {
           blogDetails: 1,
           podcastDetails: 1,
           publishedDate: 1,
+          processed: 1,
+          createdAt: 1,
           tags: 1
         }
       )
@@ -521,6 +646,125 @@ const adminController = {
       });
     } catch (error) {
       console.error('Error in updateResource:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server Error',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Delete a resource
+   * @route DELETE /api/admin/resources/:id
+   * @access Public (dev environment only)
+   */
+  deleteResource: async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Find the resource
+      const resource = await Resource.findById(id);
+      
+      if (!resource) {
+        return res.status(404).json({
+          success: false,
+          message: 'Resource not found'
+        });
+      }
+      
+      // Delete the resource
+      await Resource.findByIdAndDelete(id);
+      
+      res.status(200).json({
+        success: true,
+        message: 'Resource deleted successfully'
+      });
+    } catch (error) {
+      console.error('Error in deleteResource:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server Error',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Bulk import resources
+   * @route POST /api/admin/bulk-import
+   * @access Private (admin only)
+   */
+  bulkImportResources: async (req, res) => {
+    try {
+      const { resources } = req.body;
+      
+      if (!resources || !Array.isArray(resources) || resources.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid request: resources must be a non-empty array'
+        });
+      }
+      
+      // Track results
+      const results = {
+        success: 0,
+        errors: []
+      };
+      
+      // Process each resource
+      for (const resourceData of resources) {
+        try {
+          // Ensure required fields
+          if (!resourceData.title || !resourceData.description || !resourceData.type) {
+            results.errors.push(`Resource with title "${resourceData.title || 'Unknown'}" is missing required fields`);
+            continue;
+          }
+          
+          // Generate slug if not provided
+          if (!resourceData.slug) {
+            const slugBase = resourceData.title
+              .toLowerCase()
+              .replace(/[^\w\s-]/g, '') // Remove special characters
+              .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+              .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+            
+            // Check if slug exists and append random string if needed
+            let slug = slugBase;
+            let slugExists = await Resource.findOne({ slug });
+            let counter = 0;
+            
+            while (slugExists && counter < 10) {
+              counter++;
+              slug = `${slugBase}-${counter}`;
+              slugExists = await Resource.findOne({ slug });
+            }
+            
+            resourceData.slug = slug;
+          }
+          
+          // Create a new resource
+          const resource = new Resource(resourceData);
+          
+          // Save the resource
+          await resource.save();
+          
+          // Increment success counter
+          results.success++;
+        } catch (error) {
+          // Add error to results
+          results.errors.push(`Error importing resource "${resourceData.title || 'Unknown'}": ${error.message}`);
+        }
+      }
+      
+      // Return results
+      res.status(200).json({
+        success: true,
+        message: `Successfully imported ${results.success} resources with ${results.errors.length} errors`,
+        ...results
+      });
+    } catch (error) {
+      console.error('Error in bulkImportResources:', error);
       res.status(500).json({
         success: false,
         message: 'Server Error',
