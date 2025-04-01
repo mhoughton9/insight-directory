@@ -70,8 +70,12 @@ const teacherSchema = new mongoose.Schema(
     }],
     /**
      * Detailed description sections for teacher profiles
-     * Each key is a section identifier (e.g., 'biography', 'teaching_style')
-     * Values can be either strings (for text sections) or arrays (for list sections)
+     * Each key is a section identifier with standardized fields:
+     * - in_a_nutshell: Brief summary of the teacher's approach
+     * - key_contributions: Major contributions to spiritual teachings
+     * - teaching_style: Description of their teaching approach
+     * - notable_quotes: Array of significant quotes
+     * - historical_context: Their place in the broader spiritual landscape
      */
     descriptionSections: {
       type: Map,
@@ -95,6 +99,30 @@ teacherSchema.virtual('resources', {
   ref: 'Resource',
   localField: '_id',
   foreignField: 'teachers'
+});
+
+// Pre-save middleware to sync website with links array
+teacherSchema.pre('save', function(next) {
+  // If website is set but not in links, add it to links
+  if (this.website) {
+    // Initialize links array if it doesn't exist
+    if (!this.links) {
+      this.links = [];
+    }
+    
+    // Check if website is already in links
+    const websiteInLinks = this.links.some(link => link.url === this.website);
+    
+    // If not, add it to links
+    if (!websiteInLinks) {
+      this.links.push({
+        url: this.website,
+        label: 'Website'
+      });
+    }
+  }
+  
+  next();
 });
 
 const Teacher = mongoose.model('Teacher', teacherSchema);

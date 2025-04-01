@@ -42,14 +42,22 @@ const traditionSchema = new mongoose.Schema(
       type: String,
       trim: true
     },
+    links: [{
+      url: String,
+      label: String
+    }],
     relatedTraditions: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Tradition'
     }],
     /**
      * Detailed description sections for tradition profiles
-     * Each key is a section identifier (e.g., 'overview', 'historical_context')
-     * Values can be either strings (for text sections) or arrays (for list sections)
+     * Each key is a section identifier with standardized fields:
+     * - in_a_nutshell: Brief summary of the tradition
+     * - historical_context: Origins and development of the tradition
+     * - key_teachings: Core principles and concepts
+     * - practices: Common practices associated with the tradition
+     * - modern_relevance: How the tradition is practiced or interpreted today
      */
     descriptionSections: {
       type: Map,
