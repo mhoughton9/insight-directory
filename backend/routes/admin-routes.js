@@ -32,4 +32,7 @@ router.post('/bulk-import', adminController.bulkImportResources);
 // Resource processing routes
 router.use('/process', require('./resource-processing-routes'));
 
+// Suggestion management routes
+router.use('/suggestions', require('./admin-suggestion-routes'));
+
 module.exports = router;

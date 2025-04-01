@@ -10,6 +10,7 @@ import Link from 'next/link';
 const Dashboard = () => {
   const { user } = useUser();
   const [resourceStats, setResourceStats] = useState(null);
+  const [suggestionStats, setSuggestionStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -31,9 +32,19 @@ const Dashboard = () => {
         }
         
         setResourceStats(data.stats);
+
+        // Fetch suggestion statistics
+        const suggestionResponse = await fetch(`/api/admin/suggestions/stats?clerkId=${user.id}`);
+        const suggestionData = await suggestionResponse.json();
+        
+        if (!suggestionResponse.ok) {
+          throw new Error(suggestionData.message || 'Failed to fetch suggestion statistics');
+        }
+        
+        setSuggestionStats(suggestionData.data);
       } catch (err) {
-        console.error('Error fetching resource statistics:', err);
-        setError(err.message || 'Failed to fetch resource statistics');
+        console.error('Error fetching statistics:', err);
+        setError(err.message || 'Failed to fetch statistics');
       } finally {
         setLoading(false);
       }
@@ -107,6 +118,55 @@ const Dashboard = () => {
         )}
       </div>
 
+      {/* Suggestion Statistics */}
+      {suggestionStats && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-medium mb-4">User Suggestions</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="bg-gray-50 p-4 rounded-md">
+              <div className="text-sm text-gray-500 mb-1">Total</div>
+              <div className="text-2xl font-semibold">{suggestionStats.total || 0}</div>
+            </div>
+            <div className="bg-blue-50 p-4 rounded-md">
+              <div className="text-sm text-gray-500 mb-1">New</div>
+              <div className="text-2xl font-semibold">{suggestionStats.new || 0}</div>
+            </div>
+            <div className="bg-yellow-50 p-4 rounded-md">
+              <div className="text-sm text-gray-500 mb-1">Reviewed</div>
+              <div className="text-2xl font-semibold">{suggestionStats.reviewed || 0}</div>
+            </div>
+            <div className="bg-green-50 p-4 rounded-md">
+              <div className="text-sm text-gray-500 mb-1">Approved</div>
+              <div className="text-2xl font-semibold">{suggestionStats.approved || 0}</div>
+            </div>
+            <div className="bg-red-50 p-4 rounded-md">
+              <div className="text-sm text-gray-500 mb-1">Rejected</div>
+              <div className="text-2xl font-semibold">{suggestionStats.rejected || 0}</div>
+            </div>
+          </div>
+          
+          {/* New Suggestions Alert */}
+          {suggestionStats.new > 0 && (
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md flex items-center justify-between">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                <span className="text-blue-800">
+                  You have {suggestionStats.new} new suggestion{suggestionStats.new !== 1 ? 's' : ''} to review
+                </span>
+              </div>
+              <Link 
+                href="/admin/suggestions?status=new" 
+                className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm"
+              >
+                Review Now
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-medium mb-4">Quick Actions</h2>
@@ -133,6 +193,11 @@ const Dashboard = () => {
           >
             <h3 className="font-medium mb-1">User Suggestions</h3>
             <p className="text-sm text-gray-600">Review and process user suggestions</p>
+            {suggestionStats && suggestionStats.new > 0 && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-2">
+                {suggestionStats.new} new
+              </span>
+            )}
           </Link>
         </div>
       </div>

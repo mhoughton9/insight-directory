@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { useUser, useAuth } from '@clerk/nextjs';
 import { Heading, Text } from '../components/ui/Typography';
+import { SignInButton } from '@clerk/nextjs';
 
 /**
  * Resource suggestion form component
  * Allows users to suggest new resources to be added to the directory
  */
 export default function SuggestResourcePage() {
+  const router = useRouter();
+  const { user, isSignedIn, isLoaded } = useUser();
+  const { getToken } = useAuth();
+  
   // Form state
   const [formData, setFormData] = useState({
     title: '',
@@ -14,14 +21,14 @@ export default function SuggestResourcePage() {
     description: '',
     link: '',
     creator: '',
-    email: '',
     additionalInfo: ''
   });
   
   const [submitStatus, setSubmitStatus] = useState({
     submitted: false,
     success: false,
-    message: ''
+    message: '',
+    isSubmitting: false
   });
 
   // Resource types matching the types used in the rest of the application
@@ -54,23 +61,56 @@ export default function SuggestResourcePage() {
       setSubmitStatus({
         submitted: true,
         success: false,
-        message: 'Please fill out all required fields.'
+        message: 'Please fill out all required fields.',
+        isSubmitting: false
       });
       return;
     }
 
     try {
-      // In a real implementation, this would send data to an API endpoint
-      // For now, we'll just simulate a successful submission
+      // Set submitting state
+      setSubmitStatus(prev => ({ ...prev, isSubmitting: true }));
       
-      // Simulating API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Get the authentication token
+      const token = await getToken();
+      
+      // Prepare the data for submission
+      const suggestionData = {
+        ...formData,
+        // Convert type to lowercase and remove spaces for backend compatibility
+        type: formData.type.toLowerCase().replace(' ', ''),
+        // Include the user ID for authentication
+        clerkId: user.id
+      };
+      
+      // Add user info if available
+      if (user) {
+        suggestionData.submitterName = user.fullName || '';
+        suggestionData.submitterEmail = user.primaryEmailAddress?.emailAddress || '';
+      }
+      
+      // Submit to API
+      const response = await fetch('/api/suggestions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(suggestionData)
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Error submitting suggestion');
+      }
       
       // Success state
       setSubmitStatus({
         submitted: true,
         success: true,
-        message: 'Thank you for your suggestion! We will review it soon.'
+        message: 'Thank you for your suggestion! We will review it soon.',
+        isSubmitting: false
       });
       
       // Reset form
@@ -80,7 +120,6 @@ export default function SuggestResourcePage() {
         description: '',
         link: '',
         creator: '',
-        email: '',
         additionalInfo: ''
       });
       
@@ -89,10 +128,55 @@ export default function SuggestResourcePage() {
       setSubmitStatus({
         submitted: true,
         success: false,
-        message: 'There was an error submitting your suggestion. Please try again later.'
+        message: error.message || 'There was an error submitting your suggestion. Please try again later.',
+        isSubmitting: false
       });
     }
   };
+
+  // If Clerk is still loading, show a loading state
+  if (!isLoaded) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-12 sm:px-6 lg:px-8 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-neutral-300 border-t-neutral-600 mx-auto"></div>
+        <p className="mt-4 text-neutral-600">Loading...</p>
+      </div>
+    );
+  }
+
+  // If user is not signed in, show sign-in prompt
+  if (!isSignedIn) {
+    return (
+      <>
+        <Head>
+          <title>Suggest a Resource - Insight Directory</title>
+          <meta name="description" content="Suggest a resource to be added to the Insight Directory." />
+        </Head>
+
+        <div className="max-w-3xl mx-auto px-4 py-12 sm:px-6 lg:px-8 text-center">
+          <Heading as="h1" size="4xl" className="mb-8">
+            Suggest a Resource
+          </Heading>
+          
+          <Text size="lg" className="mb-8">
+            To suggest a resource, please sign in with your account first.
+          </Text>
+          
+          <div className="bg-white dark:bg-neutral-800 p-8 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 text-center">
+            <Text className="mb-6">
+              Sign in to suggest resources for the Insight Directory.
+            </Text>
+            
+            <SignInButton mode="modal">
+              <button className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors">
+                Sign In
+              </button>
+            </SignInButton>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -203,24 +287,6 @@ export default function SuggestResourcePage() {
               />
             </div>
 
-            {/* Your Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                Your Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-500 focus:border-transparent"
-              />
-              <Text size="xs" className="mt-1 text-neutral-500 dark:text-neutral-400">
-                Optional. We'll only use this to contact you if we have questions about your suggestion.
-              </Text>
-            </div>
-
             {/* Additional Information */}
             <div>
               <label htmlFor="additionalInfo" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
@@ -234,23 +300,26 @@ export default function SuggestResourcePage() {
                 rows="3"
                 className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-500 focus:border-transparent"
               ></textarea>
-              <Text size="xs" className="mt-1 text-neutral-500 dark:text-neutral-400">
-                Any other details that might help us understand why this resource should be included.
-              </Text>
+              <p className="text-sm text-neutral-500 mt-1">
+                Any other details that might be helpful (e.g., why you recommend this resource)
+              </p>
             </div>
 
             {/* Submit Button */}
-            <div className="mt-2 flex justify-center">
+            <div className="mt-2">
               <button
                 type="submit"
-                className="px-6 py-3 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
-                style={{ 
-                  fontFamily: 'Inter, sans-serif',
-                  background: 'var(--background)',
-                  border: '2px solid var(--brand-deep-blue)'
-                }}
+                disabled={submitStatus.isSubmitting}
+                className="w-full px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
               >
-                Submit Suggestion
+                {submitStatus.isSubmitting ? (
+                  <>
+                    <span className="inline-block animate-spin mr-2">⟳</span>
+                    Submitting...
+                  </>
+                ) : (
+                  'Submit Suggestion'
+                )}
               </button>
             </div>
           </div>

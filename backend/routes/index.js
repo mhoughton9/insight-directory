@@ -5,6 +5,7 @@ const traditionRoutes = require('./tradition-routes');
 const userRoutes = require('./user-routes');
 const commentRoutes = require('./comment-routes');
 const adminRoutes = require('./admin-routes');
+const suggestionRoutes = require('./suggestion-routes');
 
 const router = express.Router();
 
@@ -27,6 +28,9 @@ router.use('/users', userRoutes);
 
 // Mount comment routes
 router.use('/comments', commentRoutes);
+
+// Mount suggestion routes
+router.use('/suggestions', suggestionRoutes);
 
 // Mount admin routes
 router.use('/admin', adminRoutes);
