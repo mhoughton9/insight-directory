@@ -35,4 +35,7 @@ router.use('/process', require('./resource-processing-routes'));
 // Suggestion management routes
 router.use('/suggestions', require('./admin-suggestion-routes'));
 
+// AI generation routes
+router.use('/', require('./ai-generation-routes'));
+
 module.exports = router;

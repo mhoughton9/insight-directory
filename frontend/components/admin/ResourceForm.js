@@ -14,6 +14,8 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showDescriptionSections, setShowDescriptionSections] = useState(!!resource?.descriptionSections);
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiError, setAiError] = useState(null);
   
   // Initialize form data from resource or with defaults
   const [formData, setFormData] = useState({
@@ -142,6 +144,69 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
         [sectionKey]: content
       }
     });
+  };
+
+  // Handle AI generation for description sections
+  const handleGenerateWithAI = async () => {
+    try {
+      // Clear any previous errors
+      setAiError(null);
+      setAiGenerating(true);
+      
+      // Get the appropriate section keys for this resource type
+      const sections = getDescriptionSectionsForType();
+      const sectionKeys = sections.map(section => section.key);
+      
+      // Call the API
+      const response = await fetch(`/api/admin/resources/${resource._id}/generate-descriptions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          sectionKeys,
+          clerkId: user.id // Add the clerkId for authentication
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error('AI generation failed:', data);
+        let errorMessage = data.message || 'Failed to generate descriptions';
+        
+        // If we have run details, add them to the error message
+        if (data.runDetails) {
+          errorMessage += '\n\nRun details: ' + JSON.stringify(data.runDetails, null, 2);
+        }
+        
+        throw new Error(errorMessage);
+      }
+      
+      // Update the form data with the generated sections
+      setFormData({
+        ...formData,
+        descriptionSections: {
+          ...formData.descriptionSections,
+          ...data.generatedSections
+        }
+      });
+      
+      // Ensure the description sections are visible
+      setShowDescriptionSections(true);
+      setExpandedSections({
+        ...expandedSections,
+        descriptionSections: true
+      });
+      
+      // Show success message
+      alert('Descriptions generated successfully!');
+    } catch (err) {
+      console.error('Error generating descriptions:', err);
+      setAiError(err.message || 'Failed to generate descriptions');
+    } finally {
+      setAiGenerating(false);
+    }
   };
 
   // Handle form submission
@@ -550,15 +615,22 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
               <button
                 type="button"
                 className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md transition-colors flex items-center"
-                onClick={() => {
-                  // Placeholder for future AI generation
-                  alert('AI generation will be implemented in the future');
-                }}
+                onClick={handleGenerateWithAI}
+                disabled={aiGenerating}
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                Generate with AI
+                {aiGenerating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Generate with AI
+                  </>
+                )}
               </button>
             )}
             
@@ -575,6 +647,30 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
         
         {expandedSections.descriptionSections && (
           <div className="p-4 border-t border-gray-200">
+            {/* AI Error message */}
+            {aiError && (
+              <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-700">
+                      {aiError.includes('rate_limit_exceeded') ? (
+                        <>
+                          <strong>OpenAI API rate limit exceeded.</strong> The API key has reached its usage limit. Please check your OpenAI account billing status or try again later.
+                        </>
+                      ) : (
+                        aiError
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
               <div className="flex">
                 <div className="flex-shrink-0">
