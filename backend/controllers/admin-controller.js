@@ -1,7 +1,10 @@
 const Resource = require('../models/resource');
+const Teacher = require('../models/teacher');
+const Tradition = require('../models/tradition'); // Add this line
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 const crypto = require('crypto');
+const { uploadImageToCloudinary } = require('../utils/image-utils');
 
 // Cloudinary configuration
 const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
@@ -61,6 +64,92 @@ const adminController = {
   },
 
   /**
+   * Get teacher statistics
+   * @route GET /api/admin/teachers/stats
+   * @access Private (admin only)
+   */
+  getTeacherStats: async (req, res) => {
+    try {
+      console.log('Fetching teacher statistics...');
+      
+      // Get total count of teachers
+      const total = await Teacher.countDocuments() || 0;
+      console.log('Total teachers:', total);
+      
+      // Get count of published teachers
+      const published = await Teacher.countDocuments({ processed: true }) || 0;
+      console.log('Published teachers:', published);
+      
+      // Get count of pending teachers
+      const pending = await Teacher.countDocuments({ processed: false }) || 0;
+      console.log('Pending teachers:', pending);
+      
+      // Return statistics
+      const stats = { total, published, pending };
+      console.log('Returning teacher stats:', stats);
+      
+      return res.status(200).json({
+        success: true,
+        stats
+      });
+    } catch (error) {
+      console.error('Error getting teacher statistics:', error);
+      // Return default values on error
+      return res.status(200).json({
+        success: true,
+        stats: {
+          total: 0,
+          published: 0,
+          pending: 0
+        }
+      });
+    }
+  },
+
+  /**
+   * Get tradition statistics
+   * @route GET /api/admin/traditions/stats
+   * @access Private (admin only)
+   */
+  getTraditionStats: async (req, res) => {
+    try {
+      console.log('Fetching tradition statistics...');
+      
+      // Get total count of traditions
+      const total = await Tradition.countDocuments() || 0;
+      console.log('Total traditions:', total);
+      
+      // Get count of published traditions
+      const published = await Tradition.countDocuments({ processed: true }) || 0;
+      console.log('Published traditions:', published);
+      
+      // Get count of pending traditions
+      const pending = await Tradition.countDocuments({ processed: false }) || 0;
+      console.log('Pending traditions:', pending);
+      
+      // Return statistics
+      const stats = { total, published, pending };
+      console.log('Returning tradition stats:', stats);
+      
+      return res.status(200).json({
+        success: true,
+        stats
+      });
+    } catch (error) {
+      console.error('Error getting tradition statistics:', error);
+      // Return default values on error
+      return res.status(200).json({
+        success: true,
+        stats: {
+          total: 0,
+          published: 0,
+          pending: 0
+        }
+      });
+    }
+  },
+
+  /**
    * Create a new resource
    * @route POST /api/admin/resources
    * @access Private (admin only)
@@ -104,6 +193,25 @@ const adminController = {
         
         // Set the unique slug
         resourceData.slug = slug;
+      }
+      
+      // Process image if URL is provided
+      if (resourceData.imageUrl && !resourceData.imageUrl.includes('res.cloudinary.com')) {
+        try {
+          // Upload image to Cloudinary
+          const cloudinaryUrl = await uploadImageToCloudinary(
+            resourceData.imageUrl, 
+            resourceData.type, 
+            resourceData.slug
+          );
+          
+          if (cloudinaryUrl) {
+            resourceData.imageUrl = cloudinaryUrl;
+          }
+        } catch (err) {
+          console.error('Error processing image:', err);
+          // Continue with creation even if image processing fails
+        }
       }
       
       const newResource = new Resource(resourceData);
@@ -334,17 +442,8 @@ const adminController = {
       // Process image if URL is provided
       if (imageUrl) {
         try {
-          // Generate a safe filename from the book slug
-          const fileName = book.slug.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-          
-          // Download and upload the image
-          const imageResponse = await fetch(imageUrl);
-          if (!imageResponse.ok) {
-            throw new Error(`Failed to fetch image: ${imageResponse.statusText}`);
-          }
-          
-          const imageBuffer = await imageResponse.buffer();
-          const cloudinaryUrl = await uploadToCloudinary(imageBuffer, fileName);
+          // Upload image to Cloudinary
+          const cloudinaryUrl = await uploadImageToCloudinary(imageUrl, 'book', book.slug);
           
           if (cloudinaryUrl) {
             updateData.imageUrl = cloudinaryUrl;
@@ -512,7 +611,7 @@ const adminController = {
   getAllResources: async (req, res) => {
     try {
       // Get filters from query params
-      const { type, processed } = req.query;
+      const { type, processed, search } = req.query;
       
       // Build query object
       const query = {};
@@ -529,6 +628,16 @@ const adminController = {
       if (processed !== undefined) {
         // Convert string 'true'/'false' to boolean
         query.processed = processed === 'true';
+      }
+      
+      // Add search functionality if search term is provided
+      if (search && search.trim() !== '') {
+        const searchRegex = new RegExp(search.trim(), 'i');
+        query.$or = [
+          { title: searchRegex },
+          { description: searchRegex },
+          { tags: searchRegex }
+        ];
       }
       
       // Find resources matching query
@@ -630,6 +739,25 @@ const adminController = {
           success: false,
           message: 'Resource not found'
         });
+      }
+      
+      // Process image if URL is provided and it's not already a Cloudinary URL
+      if (updateData.imageUrl && !updateData.imageUrl.includes('res.cloudinary.com')) {
+        try {
+          // Upload image to Cloudinary
+          const cloudinaryUrl = await uploadImageToCloudinary(
+            updateData.imageUrl, 
+            updateData.type || resource.type, 
+            updateData.slug || resource.slug
+          );
+          
+          if (cloudinaryUrl) {
+            updateData.imageUrl = cloudinaryUrl;
+          }
+        } catch (err) {
+          console.error('Error processing image:', err);
+          // Continue with update even if image processing fails
+        }
       }
       
       // Update the resource
@@ -771,61 +899,579 @@ const adminController = {
         error: error.message
       });
     }
+  },
+
+  /**
+   * Get all teachers with optional filtering
+   * @route GET /api/admin/teachers
+   * @access Private (admin only)
+   */
+  getAllTeachers: async (req, res) => {
+    try {
+      // Get query parameters
+      const { clerkId } = req.query;
+      
+      // Verify clerk ID is provided
+      if (!clerkId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Clerk ID is required'
+        });
+      }
+      
+      // Build query
+      const query = {};
+      
+      // Fetch teachers
+      const teachers = await Teacher.find(query).sort({ name: 1 });
+      
+      // Return teachers
+      return res.status(200).json({
+        success: true,
+        teachers
+      });
+    } catch (error) {
+      console.error('Error fetching teachers:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to fetch teachers',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Get a specific teacher by ID
+   * @route GET /api/admin/teachers/:id
+   * @access Private (admin only)
+   */
+  getTeacherById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { clerkId } = req.query;
+      
+      // Verify clerk ID is provided
+      if (!clerkId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Clerk ID is required'
+        });
+      }
+      
+      // Find the teacher
+      const teacher = await Teacher.findById(id).populate('traditions');
+      
+      if (!teacher) {
+        return res.status(404).json({
+          success: false,
+          message: 'Teacher not found'
+        });
+      }
+      
+      // Return the teacher
+      return res.status(200).json({
+        success: true,
+        teacher
+      });
+    } catch (error) {
+      console.error('Error fetching teacher:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to fetch teacher',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Create a new teacher
+   * @route POST /api/admin/teachers
+   * @access Private (admin only)
+   */
+  createTeacher: async (req, res) => {
+    try {
+      const { clerkId } = req.query;
+      
+      // Verify clerk ID is provided
+      if (!clerkId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Clerk ID is required'
+        });
+      }
+      
+      // Get teacher data from request body
+      const teacherData = req.body;
+      
+      // Generate slug if not provided
+      if (!teacherData.slug) {
+        teacherData.slug = teacherData.name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, '');
+      }
+      
+      // Process image if URL is provided and it's not already a Cloudinary URL
+      if (teacherData.imageUrl && !teacherData.imageUrl.includes('res.cloudinary.com')) {
+        try {
+          console.log('Attempting to upload image to Cloudinary:', {
+            imageUrl: teacherData.imageUrl,
+            entityType: 'teacher',
+            slug: teacherData.slug
+          });
+          
+          // Upload image to Cloudinary
+          const cloudinaryUrl = await uploadImageToCloudinary(
+            teacherData.imageUrl, 
+            'teacher', 
+            teacherData.slug
+          );
+          
+          if (cloudinaryUrl) {
+            console.log('Successfully uploaded image to Cloudinary:', cloudinaryUrl);
+            teacherData.imageUrl = cloudinaryUrl;
+          } else {
+            console.error('Failed to upload image to Cloudinary: No URL returned');
+          }
+        } catch (err) {
+          console.error('Error processing image:', err);
+          // Continue with creation even if image processing fails
+        }
+      } else {
+        console.log('No image upload needed:', 
+          teacherData.imageUrl ? 'URL is already a Cloudinary URL' : 'No image URL provided');
+      }
+      
+      // Create the teacher
+      const teacher = await Teacher.create(teacherData);
+      
+      // Return the created teacher
+      return res.status(201).json({
+        success: true,
+        message: 'Teacher created successfully',
+        teacher
+      });
+    } catch (error) {
+      console.error('Error creating teacher:', error);
+      
+      // Handle duplicate key error
+      if (error.code === 11000) {
+        return res.status(400).json({
+          success: false,
+          message: 'A teacher with this name or slug already exists',
+          error: error.message
+        });
+      }
+      
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to create teacher',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Update a teacher
+   * @route PUT /api/admin/teachers/:id
+   * @access Private (admin only)
+   */
+  updateTeacher: async (req, res) => {
+    try {
+      // Log the request body
+      console.log('UPDATE TEACHER REQUEST BODY:', req.body);
+      
+      // Test Cloudinary configuration
+      console.log('Cloudinary Configuration Test:', {
+        CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? 'Set' : 'Missing',
+        API_KEY: process.env.CLOUDINARY_API_KEY ? 'Set' : 'Missing',
+        API_SECRET: process.env.CLOUDINARY_API_SECRET ? 'Set' : 'Missing'
+      });
+      
+      const { id } = req.params;
+      const { clerkId } = req.query;
+      
+      // Verify clerk ID is provided
+      if (!clerkId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Clerk ID is required'
+        });
+      }
+      
+      // Get update data from request body
+      const updateData = req.body;
+      
+      // Find the teacher
+      const teacher = await Teacher.findById(id);
+      
+      if (!teacher) {
+        return res.status(404).json({
+          success: false,
+          message: 'Teacher not found'
+        });
+      }
+      
+      // Process image if URL is provided
+      if (updateData.imageUrl) {
+        console.log('IMAGE URL DETECTED:', updateData.imageUrl);
+        
+        // Check if it's already a Cloudinary URL
+        const isCloudinaryUrl = updateData.imageUrl.includes('res.cloudinary.com');
+        console.log('IS CLOUDINARY URL:', isCloudinaryUrl);
+        
+        if (!isCloudinaryUrl) {
+          console.log('ATTEMPTING CLOUDINARY UPLOAD');
+          try {
+            // Upload image to Cloudinary
+            const cloudinaryUrl = await uploadImageToCloudinary(
+              updateData.imageUrl, 
+              'teacher', 
+              updateData.slug || teacher.slug
+            );
+            
+            if (cloudinaryUrl) {
+              console.log('CLOUDINARY UPLOAD SUCCESS:', cloudinaryUrl);
+              updateData.imageUrl = cloudinaryUrl;
+            } else {
+              console.error('CLOUDINARY UPLOAD FAILED: No URL returned');
+            }
+          } catch (err) {
+            console.error('CLOUDINARY UPLOAD ERROR:', err.message);
+            // Continue with update even if image processing fails
+          }
+        } else {
+          console.log('SKIPPING CLOUDINARY UPLOAD: Already a Cloudinary URL');
+        }
+      } else {
+        console.log('NO IMAGE URL PROVIDED');
+      }
+      
+      // Update the teacher
+      const updatedTeacher = await Teacher.findByIdAndUpdate(
+        id, 
+        updateData, 
+        { new: true }
+      );
+      
+      return res.status(200).json({
+        success: true,
+        message: 'Teacher updated successfully',
+        teacher: updatedTeacher
+      });
+    } catch (error) {
+      console.error('Error updating teacher:', error);
+      
+      if (error.code === 11000) {
+        return res.status(400).json({
+          success: false,
+          message: 'A teacher with this name or slug already exists',
+          error: error.message
+        });
+      }
+      
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to update teacher',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Delete a teacher
+   * @route DELETE /api/admin/teachers/:id
+   * @access Private (admin only)
+   */
+  deleteTeacher: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { clerkId } = req.query;
+      
+      // Verify clerk ID is provided
+      if (!clerkId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Clerk ID is required'
+        });
+      }
+      
+      // Find and delete the teacher
+      const teacher = await Teacher.findByIdAndDelete(id);
+      
+      if (!teacher) {
+        return res.status(404).json({
+          success: false,
+          message: 'Teacher not found'
+        });
+      }
+      
+      // Return success message
+      return res.status(200).json({
+        success: true,
+        message: 'Teacher deleted successfully'
+      });
+    } catch (error) {
+      console.error('Error deleting teacher:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to delete teacher',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Get all traditions with optional filtering
+   * @route GET /api/admin/traditions
+   * @access Private (admin only)
+   */
+  getAllTraditions: async (req, res) => {
+    try {
+      // Get query parameters
+      const { clerkId } = req.query;
+      
+      // Verify clerk ID is provided
+      if (!clerkId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication required'
+        });
+      }
+      
+      // Get all traditions
+      const traditions = await Tradition.find()
+        .sort({ name: 1 });
+      
+      res.status(200).json({
+        success: true,
+        traditions
+      });
+    } catch (error) {
+      console.error('Error getting traditions:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error retrieving traditions',
+        error: error.message
+      });
+    }
+  },
+  
+  /**
+   * Get a specific tradition by ID
+   * @route GET /api/admin/traditions/:id
+   * @access Private (admin only)
+   */
+  getTraditionById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { clerkId } = req.query;
+      
+      // Verify clerk ID is provided
+      if (!clerkId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication required'
+        });
+      }
+      
+      // Find tradition by ID
+      const tradition = await Tradition.findById(id)
+        .populate('relatedTraditions', 'name slug');
+      
+      if (!tradition) {
+        return res.status(404).json({
+          success: false,
+          message: 'Tradition not found'
+        });
+      }
+      
+      res.status(200).json({
+        success: true,
+        tradition
+      });
+    } catch (error) {
+      console.error('Error getting tradition:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error retrieving tradition',
+        error: error.message
+      });
+    }
+  },
+  
+  /**
+   * Create a new tradition
+   * @route POST /api/admin/traditions
+   * @access Private (admin only)
+   */
+  createTradition: async (req, res) => {
+    try {
+      const traditionData = req.body;
+      const { clerkId } = req.query;
+      
+      // Verify clerk ID is provided
+      if (!clerkId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication required'
+        });
+      }
+      
+      // Process image if provided
+      if (traditionData.imageUrl && !traditionData.imageUrl.includes('res.cloudinary.com')) {
+        // Upload image to Cloudinary
+        const cloudinaryUrl = await uploadImageToCloudinary(
+          traditionData.imageUrl, 
+          'tradition', 
+          traditionData.slug
+        );
+        
+        if (cloudinaryUrl) {
+          traditionData.imageUrl = cloudinaryUrl;
+        }
+      }
+      
+      // Create new tradition
+      const tradition = new Tradition(traditionData);
+      await tradition.save();
+      
+      res.status(201).json({
+        success: true,
+        message: 'Tradition created successfully',
+        tradition
+      });
+    } catch (error) {
+      console.error('Error creating tradition:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error creating tradition',
+        error: error.message
+      });
+    }
+  },
+  
+  /**
+   * Update a tradition
+   * @route PUT /api/admin/traditions/:id
+   * @access Private (admin only)
+   */
+  updateTradition: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+      const { clerkId } = req.query;
+      
+      // Verify clerk ID is provided
+      if (!clerkId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication required'
+        });
+      }
+      
+      // Find tradition by ID
+      const tradition = await Tradition.findById(id);
+      
+      if (!tradition) {
+        return res.status(404).json({
+          success: false,
+          message: 'Tradition not found'
+        });
+      }
+      
+      // Process image if provided and not already a Cloudinary URL
+      if (updateData.imageUrl && !updateData.imageUrl.includes('res.cloudinary.com')) {
+        // Upload image to Cloudinary
+        const cloudinaryUrl = await uploadImageToCloudinary(
+          updateData.imageUrl, 
+          'tradition', 
+          updateData.slug || tradition.slug
+        );
+        
+        if (cloudinaryUrl) {
+          updateData.imageUrl = cloudinaryUrl;
+        }
+      }
+      
+      // Update tradition
+      const updatedTradition = await Tradition.findByIdAndUpdate(
+        id,
+        updateData,
+        { new: true, runValidators: true }
+      );
+      
+      res.status(200).json({
+        success: true,
+        message: 'Tradition updated successfully',
+        tradition: updatedTradition
+      });
+    } catch (error) {
+      console.error('Error updating tradition:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error updating tradition',
+        error: error.message
+      });
+    }
+  },
+  
+  /**
+   * Delete a tradition
+   * @route DELETE /api/admin/traditions/:id
+   * @access Private (admin only)
+   */
+  deleteTradition: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { clerkId } = req.query;
+      
+      // Verify clerk ID is provided
+      if (!clerkId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication required'
+        });
+      }
+      
+      // Find and delete tradition
+      const tradition = await Tradition.findByIdAndDelete(id);
+      
+      if (!tradition) {
+        return res.status(404).json({
+          success: false,
+          message: 'Tradition not found'
+        });
+      }
+      
+      res.status(200).json({
+        success: true,
+        message: 'Tradition deleted successfully'
+      });
+    } catch (error) {
+      console.error('Error deleting tradition:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error deleting tradition',
+        error: error.message
+      });
+    }
   }
 };
 
 /**
- * Upload image to Cloudinary
+ * Upload image to Cloudinary (Legacy wrapper for backward compatibility)
  * @param {Buffer} imageBuffer - Image buffer
  * @param {string} fileName - File name
  * @returns {Promise<string>} - Cloudinary URL
  */
 async function uploadToCloudinary(imageBuffer, fileName) {
   try {
-    const timestamp = Math.floor(Date.now() / 1000);
-    const publicId = `books/${fileName}`; // Store in 'books' folder
-    const transformation = 'c_fill,w_500,h_750,q_auto';
+    // Create a temporary local file URL (in-memory)
+    const tempUrl = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
     
-    // Create an object with all parameters to be signed
-    const paramsToSign = {
-      public_id: publicId,
-      timestamp: timestamp.toString(),
-      transformation: transformation
-    };
-    
-    // Sort parameters alphabetically and create the string to sign
-    const paramsSorted = Object.keys(paramsToSign)
-      .sort()
-      .map(key => `${key}=${paramsToSign[key]}`)
-      .join('&');
-    
-    // Generate signature by appending API secret
-    const signatureString = paramsSorted + API_SECRET;
-    const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
-    
-    // Create form data for upload
-    const formData = new FormData();
-    formData.append('file', imageBuffer, { filename: `${fileName}.jpg` });
-    formData.append('api_key', API_KEY);
-    formData.append('timestamp', timestamp.toString());
-    formData.append('signature', signature);
-    formData.append('public_id', publicId);
-    formData.append('transformation', transformation);
-    
-    // Upload to Cloudinary
-    const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-      method: 'POST',
-      body: formData
-    });
-    
-    const data = await response.json();
-    
-    if (!response.ok) {
-      console.error('Cloudinary error response:', data);
-      throw new Error(data.error?.message || 'Failed to upload image to Cloudinary');
-    }
-    
-    return data.secure_url;
+    // Use the new utility function
+    return await uploadImageToCloudinary(tempUrl, 'book', fileName);
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error.message);
     throw error;

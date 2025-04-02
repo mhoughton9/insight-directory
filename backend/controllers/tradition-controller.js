@@ -15,7 +15,7 @@ const traditionController = {
       const skip = (page - 1) * limit;
       
       // Build filter object based on query parameters
-      const filter = {};
+      const filter = { processed: true }; // Only show processed (posted) traditions on public site
       
       // Handle multiple IDs for fetching favorites
       if (ids) {
@@ -89,7 +89,7 @@ const traditionController = {
       const isObjectId = idOrSlug.match(/^[0-9a-fA-F]{24}$/);
       
       // Build query based on parameter type
-      const query = isObjectId ? { _id: idOrSlug } : { slug: idOrSlug };
+      const query = isObjectId ? { _id: idOrSlug, processed: true } : { slug: idOrSlug, processed: true };
       
       // Find tradition and populate related data
       const tradition = await Tradition.findOne(query)
@@ -244,7 +244,7 @@ const traditionController = {
       const skip = (page - 1) * limit;
       
       // Build search query
-      const searchQuery = {};
+      const searchQuery = { processed: true }; // Only show processed (posted) traditions on public site
       
       // Add text search if query provided
       if (q) {

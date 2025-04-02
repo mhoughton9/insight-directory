@@ -42,6 +42,11 @@ const traditionSchema = new mongoose.Schema(
       type: String,
       trim: true
     },
+    processed: {
+      type: Boolean,
+      default: false,
+      description: 'Whether this tradition has been processed and is ready to be displayed (true = Posted, false = Pending)'
+    },
     links: [{
       url: String,
       label: String

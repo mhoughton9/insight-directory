@@ -15,7 +15,7 @@ const teacherController = {
       const skip = (page - 1) * limit;
       
       // Build filter object based on query parameters
-      const filter = {};
+      const filter = { processed: true }; // Only show processed (posted) teachers on public site
       
       // Handle multiple IDs for fetching favorites
       if (ids) {
@@ -96,6 +96,9 @@ const teacherController = {
       
       // Build query based on parameter type
       const query = isObjectId ? { _id: idOrSlug } : { slug: idOrSlug };
+      
+      // Only show processed (posted) teachers on public site
+      query.processed = true;
       
       // Find teacher and populate related data
       const teacher = await Teacher.findOne(query)
@@ -245,7 +248,7 @@ const teacherController = {
       const skip = (page - 1) * limit;
       
       // Build search query
-      const searchQuery = {};
+      const searchQuery = { processed: true }; // Only show processed (posted) teachers on public site
       
       // Add text search if query provided
       if (q) {

@@ -13,15 +13,18 @@ export default function AdminLayout({ children }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex justify-between items-center">
               <h1 className="text-xl font-semibold text-gray-900">Admin Dashboard</h1>
-              <nav className="flex space-x-6">
+              <nav className="flex space-x-8">
                 <Link href="/admin" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
                   Dashboard
                 </Link>
                 <Link href="/admin/resources" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                  Resource Management
+                  Resources
                 </Link>
-                <Link href="/admin/add-resource" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                  Add Resource
+                <Link href="/admin/teachers" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                  Teachers
+                </Link>
+                <Link href="/admin/traditions" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                  Traditions
                 </Link>
               </nav>
             </div>

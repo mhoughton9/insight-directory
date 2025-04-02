@@ -52,7 +52,7 @@ function TeacherCardSkeleton() {
   return (
     <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full animate-pulse">
       {/* Card Header with Image */}
-      <div className="h-48 bg-neutral-200 dark:bg-neutral-700"></div>
+      <div className="aspect-square w-full bg-neutral-200 dark:bg-neutral-700"></div>
       
       {/* Card Content */}
       <div className="p-4">

@@ -9,6 +9,8 @@ import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import * as Typography from '../../components/common/TypographyStyles';
 import FavoriteButton from '../../components/ui/FavoriteButton';
 import TeacherDetailContent from '../../components/teachers/TeacherDetailContent';
+import TeacherDetailSidebarLinks from '../../components/teachers/sidebar/TeacherDetailSidebarLinks';
+import { getTeacherImageContainerStyles } from '../../utils/teacher-utils';
 
 /**
  * TeacherDetailPage component
@@ -138,7 +140,10 @@ const TeacherDetailPage = () => {
           <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
             {/* Teacher image (if available) */}
             {teacher.imageUrl && (
-              <div className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-lg overflow-hidden relative flex-shrink-0 border border-neutral-200 dark:border-neutral-700 shadow-sm transition-transform hover:scale-105">
+              <div 
+                className="rounded-lg overflow-hidden relative flex-shrink-0 border border-neutral-200 dark:border-neutral-700 shadow-sm transition-transform hover:scale-105"
+                style={getTeacherImageContainerStyles()}
+              >
                 <Image 
                   src={teacher.imageUrl} 
                   alt={teacher.name}
@@ -244,40 +249,13 @@ const TeacherDetailPage = () => {
             </div>
             
             {teacher.links && teacher.links.length > 0 && (
-              <div className={Typography.cardContainer}>
+              <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
                 <h2 className={Typography.sidebarHeading}>
                   Links
                 </h2>
-                <ul className="space-y-2">
-                  {teacher.links.map((link, index) => (
-                    <li key={index}>
-                      <a 
-                        href={link.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className={`${Typography.linkText} flex items-center overflow-hidden`}
-                      >
-                        {/* Icon based on link type */}
-                        {link.type === 'website' && (
-                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                          </svg>
-                        )}
-                        {link.type === 'youtube' && (
-                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M23.498 6.186a3.016 3.016 0 000 6.364L12 20.364l-7.682-7.682a3.016 3.016 0 00-6.364 0L3.34 16.868a3.016 3.016 0 000 6.364l7.682 7.682a3.016 3.016 0 006.364 0L23.498 6.186z" />
-                          </svg>
-                        )}
-                        {link.type === 'article' && (
-                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                          </svg>
-                        )}
-                        <span className="truncate">{link.title || link.url}</span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                <div className="mt-4">
+                  <TeacherDetailSidebarLinks teacher={teacher} />
+                </div>
               </div>
             )}
             

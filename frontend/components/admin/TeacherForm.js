@@ -1,46 +1,42 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { RESOURCE_TYPES, formatResourceType, getResourceTypeConfig, getTitleLabel } from './utils/resource-type-utils';
-import { RESOURCE_SECTIONS, normalizeResourceTypeForSections } from '@/utils/resource-section-config';
+import { TEACHER_SECTIONS, DEFAULT_TEACHER_FORM_DATA, prepareTeacherForForm, validateTeacherForm, getTeacherImageContainerStyles } from '../../utils/teacher-utils';
 
 /**
- * Resource Form Component
+ * Teacher Form Component
  * 
- * A unified form for creating and editing resources of all types
- * Supports collapsible sections and type-specific fields
+ * A form for creating and editing teachers
+ * Supports collapsible sections and relationship fields
  */
-const ResourceForm = ({ resource = null, onSave, onCancel }) => {
+const TeacherForm = ({ teacher = null, onSave, onCancel }) => {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showDescriptionSections, setShowDescriptionSections] = useState(!!resource?.descriptionSections);
   const [aiGenerating, setAiGenerating] = useState(false);
   const [aiError, setAiError] = useState(null);
   
-  // Initialize form data from resource or with defaults
+  // Initialize form data from teacher or with defaults
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    type: 'book',
-    publishedDate: '',
-    creator: [],
-    imageUrl: '',
-    processed: false, // Default to Pending status
-    descriptionSections: {},
-    // Type-specific details will be added dynamically
-    ...resource
+    ...DEFAULT_TEACHER_FORM_DATA,
+    biographyFull: undefined,
   });
-
+  
   // Track which sections are expanded/collapsed
   const [expandedSections, setExpandedSections] = useState({
     basicInfo: true,
-    typeSpecific: true,
     media: true,
-    descriptionSections: !!resource?.descriptionSections
+    relationships: false,
+    descriptionSections: false
   });
+  
+  // Determine if we should show description sections (only if teacher exists)
+  const showDescriptionSections = !!teacher?._id;
 
-  // Get type-specific fields configuration based on selected resource type
-  const typeConfig = getResourceTypeConfig(formData.type);
+  useEffect(() => {
+    if (teacher) {
+      setFormData(prepareTeacherForForm(teacher));
+    }
+  }, [teacher]);
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -51,21 +47,7 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
     });
   };
 
-  // Handle type-specific field changes
-  const handleTypeSpecificChange = (e) => {
-    const { name, value } = e.target;
-    const detailsPath = typeConfig.detailsPath;
-    
-    setFormData({
-      ...formData,
-      [detailsPath]: {
-        ...formData[detailsPath],
-        [name]: value
-      }
-    });
-  };
-
-  // Handle array field changes (creator, tags, etc.)
+  // Handle array field changes (keyTeachings, notableTeachings, etc.)
   const handleArrayChange = (field, values) => {
     setFormData({
       ...formData,
@@ -73,37 +55,19 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
     });
   };
 
-  // Handle type-specific array field changes
-  const handleTypeSpecificArrayChange = (field, values) => {
-    const detailsPath = typeConfig.detailsPath;
-    
-    setFormData({
-      ...formData,
-      [detailsPath]: {
-        ...formData[detailsPath],
-        [field]: values
-      }
-    });
-  };
-
-  // Handle adding a new link to the type-specific details
+  // Handle adding a new link
   const handleAddLink = () => {
-    const detailsPath = typeConfig.detailsPath;
-    const currentLinks = formData[detailsPath]?.links || [];
+    const currentLinks = formData.links || [];
     
     setFormData({
       ...formData,
-      [detailsPath]: {
-        ...formData[detailsPath],
-        links: [...currentLinks, { url: '', label: '' }]
-      }
+      links: [...currentLinks, { url: '', label: '' }]
     });
   };
 
   // Handle updating a link
   const handleLinkChange = (index, field, value) => {
-    const detailsPath = typeConfig.detailsPath;
-    const currentLinks = [...(formData[detailsPath]?.links || [])];
+    const currentLinks = [...(formData.links || [])];
     
     currentLinks[index] = {
       ...currentLinks[index],
@@ -112,26 +76,19 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
     
     setFormData({
       ...formData,
-      [detailsPath]: {
-        ...formData[detailsPath],
-        links: currentLinks
-      }
+      links: currentLinks
     });
   };
 
   // Handle removing a link
   const handleRemoveLink = (index) => {
-    const detailsPath = typeConfig.detailsPath;
-    const currentLinks = [...(formData[detailsPath]?.links || [])];
+    const currentLinks = [...(formData.links || [])];
     
     currentLinks.splice(index, 1);
     
     setFormData({
       ...formData,
-      [detailsPath]: {
-        ...formData[detailsPath],
-        links: currentLinks
-      }
+      links: currentLinks
     });
   };
 
@@ -146,65 +103,22 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
     });
   };
 
-  // Handle AI generation for description sections
+  // Handle AI generation for description sections (placeholder for now)
   const handleGenerateWithAI = async () => {
     try {
       // Clear any previous errors
       setAiError(null);
       setAiGenerating(true);
       
-      // Get the appropriate section keys for this resource type
-      const sections = getDescriptionSectionsForType();
-      const sectionKeys = sections.map(section => section.key);
+      // This is a placeholder - AI generation will be implemented later
+      setTimeout(() => {
+        setAiGenerating(false);
+        alert('AI generation functionality will be implemented later.');
+      }, 1000);
       
-      // Call the API
-      const response = await fetch(`/api/admin/resources/${resource._id}/generate-descriptions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          sectionKeys,
-          clerkId: user.id // Add the clerkId for authentication
-        }),
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        console.error('AI generation failed:', data);
-        let errorMessage = data.message || 'Failed to generate descriptions';
-        
-        // If we have run details, add them to the error message
-        if (data.runDetails) {
-          errorMessage += '\n\nRun details: ' + JSON.stringify(data.runDetails, null, 2);
-        }
-        
-        throw new Error(errorMessage);
-      }
-      
-      // Update the form data with the generated sections
-      setFormData({
-        ...formData,
-        descriptionSections: {
-          ...formData.descriptionSections,
-          ...data.generatedSections
-        }
-      });
-      
-      // Ensure the description sections are visible
-      setShowDescriptionSections(true);
-      setExpandedSections({
-        ...expandedSections,
-        descriptionSections: true
-      });
-      
-      // Show success message
-      alert('Descriptions generated successfully!');
     } catch (err) {
       console.error('Error generating descriptions:', err);
       setAiError(err.message || 'Failed to generate descriptions');
-    } finally {
       setAiGenerating(false);
     }
   };
@@ -217,11 +131,20 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
       setLoading(true);
       setError(null);
       
+      // Validate form data
+      const { isValid, errors } = validateTeacherForm(formData);
+      
+      if (!isValid) {
+        setError(Object.values(errors).join(', '));
+        setLoading(false);
+        return;
+      }
+      
       // Call the onSave callback with the form data
       await onSave(formData);
     } catch (err) {
-      console.error('Error saving resource:', err);
-      setError(err.message || 'Failed to save resource');
+      console.error('Error saving teacher:', err);
+      setError(err.message || 'Failed to save teacher');
     } finally {
       setLoading(false);
     }
@@ -233,25 +156,6 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
       ...expandedSections,
       [section]: !expandedSections[section]
     });
-  };
-
-  // Initialize type-specific details when type changes
-  useEffect(() => {
-    const detailsPath = typeConfig.detailsPath;
-    
-    // If the details object doesn't exist for this type, create it
-    if (!formData[detailsPath]) {
-      setFormData({
-        ...formData,
-        [detailsPath]: {}
-      });
-    }
-  }, [formData.type]);
-
-  // Get the appropriate description sections for the current resource type
-  const getDescriptionSectionsForType = () => {
-    const normalizedType = normalizeResourceTypeForSections(formData.type);
-    return RESOURCE_SECTIONS[normalizedType] || [];
   };
 
   return (
@@ -283,126 +187,92 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
         
         {expandedSections.basicInfo && (
           <div className="p-4 border-t border-gray-200 space-y-4">
-            {/* Title with dynamic label based on resource type */}
+            {/* Name */}
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                {getTitleLabel(formData.type)} <span className="text-red-500">*</span>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                id="title"
-                name="title"
-                value={formData.title}
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleInputChange}
                 required
                 className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
             
-            {/* Resource Type */}
+            {/* Short Biography */}
             <div>
-              <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
-                Resource Type <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="type"
-                name="type"
-                value={formData.type}
-                onChange={handleInputChange}
-                required
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              >
-                {RESOURCE_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {formatResourceType(type)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            {/* Short Description */}
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                Short Description <span className="text-red-500">*</span>
+              <label htmlFor="biography" className="block text-sm font-medium text-gray-700 mb-1">
+                Short Biography <span className="text-red-500">*</span>
               </label>
               <div className="mt-1">
                 <p className="text-xs text-gray-500 mb-1">
-                  A brief 1-2 line summary that will appear on resource cards and in search results.
+                  A brief 1-2 line summary that will appear on teacher cards and in search results.
                 </p>
                 <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
+                  id="biography"
+                  name="biography"
+                  value={formData.biography || ''}
                   onChange={handleInputChange}
-                  required
+                  placeholder="A brief 1-2 line summary that will appear on teacher cards and in search results."
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   rows={2}
                   maxLength={200}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="Brief summary of the resource (1-2 lines)"
                 />
-                <p className="text-xs text-gray-500 mt-1 text-right">
-                  {formData.description.length}/200 characters
-                </p>
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {formData.biography ? formData.biography.length : 0}/200 characters
+                </div>
               </div>
             </div>
             
-            {/* Creator */}
+            {/* Birth Year */}
             <div>
-              <label htmlFor="creator" className="block text-sm font-medium text-gray-700 mb-1">
-                Creator/Author
-              </label>
-              <div className="flex items-center">
-                <input
-                  type="text"
-                  id="creator"
-                  placeholder="Add creator and press Enter"
-                  className="flex-grow rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      const value = e.target.value.trim();
-                      if (value && !formData.creator.includes(value)) {
-                        handleArrayChange('creator', [...formData.creator, value]);
-                        e.target.value = '';
-                      }
-                    }
-                  }}
-                />
-              </div>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {formData.creator.map((item, index) => (
-                  <div key={index} className="bg-gray-100 px-2 py-1 rounded-md flex items-center">
-                    <span className="text-sm">{item}</span>
-                    <button
-                      type="button"
-                      className="ml-1 text-gray-500 hover:text-gray-700"
-                      onClick={() => {
-                        const newCreator = [...formData.creator];
-                        newCreator.splice(index, 1);
-                        handleArrayChange('creator', newCreator);
-                      }}
-                    >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Publication Date */}
-            <div>
-              <label htmlFor="publishedDate" className="block text-sm font-medium text-gray-700 mb-1">
-                Publication Date
+              <label htmlFor="birthYear" className="block text-sm font-medium text-gray-700 mb-1">
+                Birth Year
               </label>
               <input
-                type="date"
-                id="publishedDate"
-                name="publishedDate"
-                value={formData.publishedDate ? new Date(formData.publishedDate).toISOString().split('T')[0] : ''}
+                type="number"
+                id="birthYear"
+                name="birthYear"
+                value={formData.birthYear || ''}
                 onChange={handleInputChange}
                 className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder="e.g., 1950"
+              />
+            </div>
+            
+            {/* Death Year */}
+            <div>
+              <label htmlFor="deathYear" className="block text-sm font-medium text-gray-700 mb-1">
+                Death Year
+              </label>
+              <input
+                type="number"
+                id="deathYear"
+                name="deathYear"
+                value={formData.deathYear || ''}
+                onChange={handleInputChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder="Leave blank if still alive"
+              />
+            </div>
+            
+            {/* Country */}
+            <div>
+              <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
+                Country
+              </label>
+              <input
+                type="text"
+                id="country"
+                name="country"
+                value={formData.country}
+                onChange={handleInputChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder="Country of origin"
               />
             </div>
             
@@ -430,120 +300,7 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
           </div>
         )}
       </div>
-      
-      {/* Type-Specific Details Section */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div 
-          className="flex justify-between items-center p-4 cursor-pointer bg-gray-50"
-          onClick={() => toggleSection('typeSpecific')}
-        >
-          <h3 className="text-lg font-medium text-gray-900">{formatResourceType(formData.type)} Details</h3>
-          <svg 
-            className={`h-5 w-5 text-gray-500 transform ${expandedSections.typeSpecific ? 'rotate-180' : ''}`} 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
-        
-        {expandedSections.typeSpecific && (
-          <div className="p-4 border-t border-gray-200 space-y-4">
-            {/* Render fields based on resource type */}
-            {typeConfig.fields.map((field) => {
-              const detailsPath = typeConfig.detailsPath;
-              const fieldValue = formData[detailsPath]?.[field.name] || '';
-              
-              // Handle different field types
-              if (field.type === 'text' || field.type === 'number' || field.type === 'url') {
-                return (
-                  <div key={field.name}>
-                    <label 
-                      htmlFor={`${detailsPath}.${field.name}`} 
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      {field.label} {field.required && <span className="text-red-500">*</span>}
-                    </label>
-                    <input
-                      type={field.type}
-                      id={`${detailsPath}.${field.name}`}
-                      name={field.name}
-                      value={fieldValue}
-                      onChange={handleTypeSpecificChange}
-                      required={field.required}
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
-                );
-              }
-              
-              return null;
-            })}
 
-            {/* Links Section */}
-            <div className="mt-6">
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium text-gray-700">Links</label>
-                <button
-                  type="button"
-                  onClick={handleAddLink}
-                  className="text-indigo-600 hover:text-indigo-900 text-sm flex items-center"
-                >
-                  <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Add Link
-                </button>
-              </div>
-              
-              <div className="space-y-3">
-                {formData[typeConfig.detailsPath]?.links?.map((link, index) => (
-                  <div key={index} className="grid grid-cols-5 gap-4">
-                    <div className="col-span-2">
-                      <input
-                        type="text"
-                        placeholder="Label (e.g., 'Amazon', 'Goodreads')"
-                        value={link.label || ''}
-                        onChange={(e) => handleLinkChange(index, 'label', e.target.value)}
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                      />
-                    </div>
-                    <div className="col-span-2">
-                      <input
-                        type="url"
-                        placeholder="URL (https://...)"
-                        value={link.url || ''}
-                        onChange={(e) => handleLinkChange(index, 'url', e.target.value)}
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                      />
-                    </div>
-                    <div className="col-span-1 flex items-center justify-end">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveLink(index)}
-                        className="inline-flex items-center justify-center p-1 rounded-md text-red-500 hover:text-red-700 hover:bg-red-100 transition-colors"
-                        aria-label="Remove link"
-                      >
-                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-                
-                {(!formData[typeConfig.detailsPath]?.links || formData[typeConfig.detailsPath]?.links.length === 0) && (
-                  <div className="text-center py-4 text-sm text-gray-500 italic border border-dashed border-gray-300 rounded-md">
-                    No links added yet. Click "Add Link" to add external links to this resource.
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-      
       {/* Media Section */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div 
@@ -583,21 +340,121 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
             {formData.imageUrl && (
               <div className="mt-2">
                 <p className="text-sm font-medium text-gray-700 mb-1">Preview</p>
-                <div className="border border-gray-300 rounded-md p-2 w-48 h-48 flex items-center justify-center overflow-hidden">
-                  <img 
-                    src={formData.imageUrl} 
-                    alt="Resource preview" 
-                    className="max-w-full max-h-full object-contain" 
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = '/placeholder-image.jpg';
-                    }}
-                  />
+                <div 
+                  className="relative border border-gray-300 rounded-md overflow-hidden w-32 h-32 md:w-40 md:h-40"
+                  style={getTeacherImageContainerStyles()}
+                >
+                  <div className="w-full h-full flex justify-center items-center">
+                    <img 
+                      src={formData.imageUrl} 
+                      alt="Teacher preview" 
+                      className="w-full h-full object-cover" 
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/placeholder-image.jpg';
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             )}
             
-            {/* TODO: Add Cloudinary image upload when needed */}
+            {/* Links Section */}
+            <div className="mt-6">
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700">Links</label>
+                <button
+                  type="button"
+                  onClick={handleAddLink}
+                  className="text-indigo-600 hover:text-indigo-900 text-sm flex items-center"
+                >
+                  <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Add Link
+                </button>
+              </div>
+              
+              <div className="space-y-3">
+                {formData.links?.map((link, index) => (
+                  <div key={index} className="grid grid-cols-5 gap-4">
+                    <div className="col-span-2">
+                      <input
+                        type="text"
+                        placeholder="Label (e.g., 'Wikipedia', 'YouTube')"
+                        value={link.label || ''}
+                        onChange={(e) => handleLinkChange(index, 'label', e.target.value)}
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <input
+                        type="url"
+                        placeholder="URL (https://...)"
+                        value={link.url || ''}
+                        onChange={(e) => handleLinkChange(index, 'url', e.target.value)}
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                      />
+                    </div>
+                    <div className="col-span-1 flex items-center justify-end">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveLink(index)}
+                        className="inline-flex items-center justify-center p-1 rounded-md text-red-500 hover:text-red-700 hover:bg-red-100 transition-colors"
+                        aria-label="Remove link"
+                      >
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                
+                {formData.links?.length === 0 && (
+                  <div className="text-center py-4 text-sm text-gray-500 italic border border-dashed border-gray-300 rounded-md">
+                    No links added yet. Click "Add Link" to add external links to this teacher's resources.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {/* Relationships Section */}
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div 
+          className="flex justify-between items-center p-4 cursor-pointer bg-gray-50"
+          onClick={() => toggleSection('relationships')}
+        >
+          <h3 className="text-lg font-medium text-gray-900">Relationships</h3>
+          <svg 
+            className={`h-5 w-5 text-gray-500 transform ${expandedSections.relationships ? 'rotate-180' : ''}`} 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+        
+        {expandedSections.relationships && (
+          <div className="p-4 border-t border-gray-200 space-y-4">
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-blue-700">
+                    Relationship selection functionality will be implemented in a future update.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -612,13 +469,13 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
             <h3 className="text-lg font-medium text-gray-900">Detailed Description Sections</h3>
             <p className="text-sm text-gray-500 mt-1">
               {showDescriptionSections 
-                ? 'Edit detailed description sections for this resource' 
-                : 'These sections will appear on the resource detail page. You can add them after creating the resource.'}
+                ? 'Edit detailed description sections for this teacher' 
+                : 'These sections will appear on the teacher detail page. You can add them after creating the teacher.'}
             </p>
           </div>
           
           <div className="flex items-center space-x-2">
-            {resource?._id && (
+            {teacher?._id && (
               <button
                 type="button"
                 className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md transition-colors flex items-center"
@@ -660,18 +517,12 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
                 <div className="flex">
                   <div className="flex-shrink-0">
                     <svg className="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div className="ml-3">
                     <p className="text-sm text-red-700">
-                      {aiError.includes('rate_limit_exceeded') ? (
-                        <>
-                          <strong>OpenAI API rate limit exceeded.</strong> The API key has reached its usage limit. Please check your OpenAI account billing status or try again later.
-                        </>
-                      ) : (
-                        aiError
-                      )}
+                      {aiError}
                     </p>
                   </div>
                 </div>
@@ -687,17 +538,17 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
                 </div>
                 <div className="ml-3">
                   <p className="text-sm text-blue-700">
-                    Each resource type has 5 specific description sections. These sections will be displayed on the resource detail page.
+                    Each teacher has 5 specific description sections. These sections will be displayed on the teacher detail page.
                     <br />
-                    In the future, you'll be able to generate these sections using AI.
+                    AI generation functionality will be implemented in a future update.
                   </p>
                 </div>
               </div>
             </div>
             
-            {/* Display the 5 description sections for the current resource type */}
+            {/* Display the 5 description sections for teachers */}
             <div className="space-y-4">
-              {getDescriptionSectionsForType().map((section) => (
+              {TEACHER_SECTIONS.map((section) => (
                 <div key={section.key} className="border border-gray-200 rounded-md p-4">
                   <h4 className="font-medium text-gray-800 mb-2">{section.label}</h4>
                   <p className="text-gray-500 text-sm italic mb-2">
@@ -727,7 +578,7 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
           </div>
         )}
       </div>
-      
+
       {/* Form Actions */}
       <div className="flex justify-end space-x-3">
         <button
@@ -748,7 +599,7 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
               Saving...
             </>
           ) : (
-            'Save Resource'
+            'Save Teacher'
           )}
         </button>
       </div>
@@ -756,4 +607,4 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
   );
 };
 
-export default ResourceForm;
+export default TeacherForm;

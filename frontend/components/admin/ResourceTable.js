@@ -16,6 +16,7 @@ const ResourceTable = () => {
   const [selectedType, setSelectedType] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [resourceTypes, setResourceTypes] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch resources based on filters
   useEffect(() => {
@@ -31,6 +32,7 @@ const ResourceTable = () => {
         queryParams.append('clerkId', user.id);
         if (selectedType) queryParams.append('type', selectedType);
         if (selectedStatus) queryParams.append('processed', selectedStatus);
+        if (searchTerm) queryParams.append('search', searchTerm);
         
         // Fetch resources from the API
         const response = await fetch(`/api/admin/resources?${queryParams.toString()}`);
@@ -57,7 +59,7 @@ const ResourceTable = () => {
     };
     
     fetchResources();
-  }, [user, selectedType, selectedStatus]);
+  }, [user, selectedType, selectedStatus, searchTerm]);
 
   // Handle resource deletion
   const handleDeleteResource = async (resourceId) => {
@@ -96,10 +98,25 @@ const ResourceTable = () => {
         <h2 className="text-xl font-medium">Resource Management</h2>
         <Link 
           href="/admin/add-resource" 
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition-colors shadow-sm"
         >
           Add New Resource
         </Link>
+      </div>
+      
+      {/* Search Bar */}
+      <div className="mb-6">
+        <label htmlFor="search-input" className="block text-sm font-medium text-gray-700 mb-1">
+          Search Resources
+        </label>
+        <input
+          id="search-input"
+          type="search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          placeholder="Search by title, description, or tags"
+        />
       </div>
       
       {/* Filters */}
@@ -207,7 +224,7 @@ const ResourceTable = () => {
         </div>
       ) : (
         <div className="text-center py-8 text-gray-500">
-          No resources found. {selectedType || selectedStatus ? 'Try adjusting your filters.' : ''}
+          No resources found. {selectedType || selectedStatus || searchTerm ? 'Try adjusting your filters.' : ''}
         </div>
       )}
     </div>

@@ -85,7 +85,12 @@ const teacherSchema = new mongoose.Schema(
     relatedTeachers: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Teacher'
-    }]
+    }],
+    processed: {
+      type: Boolean,
+      default: false, // Default to 'Pending' status
+      description: 'Whether the teacher is fully processed and ready to be displayed (true = Posted, false = Pending)'
+    }
   },
   {
     timestamps: true,

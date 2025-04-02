@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Heading, Text } from '../ui/Typography';
 import { getTypographyClasses } from '../../utils/fontUtils';
+import { getTeacherImageContainerStyles } from '../../utils/teacher-utils';
 
 /**
  * TeacherCard component
@@ -30,13 +31,15 @@ export default function TeacherCard({ teacher }) {
     <Link href={`/teachers/${teacherSlug}`} className="block h-full">
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
         {/* Card Header with Image */}
-        <div className="relative h-48 bg-neutral-100 dark:bg-neutral-800">
+        <div className="relative aspect-square w-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
           {imageUrl ? (
             <Image 
               src={imageUrl} 
               alt={name} 
               fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover"
+              priority={false}
             />
           ) : (
             <div className="flex items-center justify-center h-full">

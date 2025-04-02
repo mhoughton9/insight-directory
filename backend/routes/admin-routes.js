@@ -11,6 +11,12 @@ const router = express.Router();
 // Resource statistics route
 router.get('/resources/stats', adminController.getResourceStats);
 
+// Teacher statistics route
+router.get('/teachers/stats', adminController.getTeacherStats);
+
+// Tradition statistics route
+router.get('/traditions/stats', adminController.getTraditionStats);
+
 // Book management routes
 router.get('/books/unprocessed', adminController.getUnprocessedBooks);
 router.get('/books/next-unprocessed', adminController.getNextUnprocessedBook);
@@ -28,6 +34,20 @@ router.delete('/resources/:id', adminController.deleteResource);
 
 // Bulk import route
 router.post('/bulk-import', adminController.bulkImportResources);
+
+// Teacher management routes
+router.get('/teachers', adminController.getAllTeachers);
+router.get('/teachers/:id', adminController.getTeacherById);
+router.post('/teachers', adminController.createTeacher);
+router.put('/teachers/:id', adminController.updateTeacher);
+router.delete('/teachers/:id', adminController.deleteTeacher);
+
+// Tradition management routes
+router.get('/traditions', adminController.getAllTraditions);
+router.get('/traditions/:id', adminController.getTraditionById);
+router.post('/traditions', adminController.createTradition);
+router.put('/traditions/:id', adminController.updateTradition);
+router.delete('/traditions/:id', adminController.deleteTradition);
 
 // Resource processing routes
 router.use('/process', require('./resource-processing-routes'));

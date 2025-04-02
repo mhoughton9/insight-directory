@@ -9,6 +9,7 @@ import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import * as Typography from '../../components/common/TypographyStyles';
 import FavoriteButton from '../../components/ui/FavoriteButton';
 import TraditionDetailContent from '../../components/traditions/TraditionDetailContent';
+import TraditionDetailSidebarLinks from '../../components/traditions/sidebar/TraditionDetailSidebarLinks';
 
 /**
  * TraditionDetailPage component
@@ -202,35 +203,34 @@ const TraditionDetailPage = () => {
                 Details
               </h2>
               
+              {/* Founding Period */}
               {tradition.foundingPeriod && (
-                <div className="mb-3 font-inter">
-                  <p className="text-neutral-800 dark:text-neutral-200">
-                    <span className="text-neutral-500 dark:text-neutral-400">Founding Period: </span>
-                    {tradition.foundingPeriod}
-                  </p>
+                <div className="mt-4">
+                  <h3 className={Typography.sidebarSubheading}>Founding Period:</h3>
+                  <p className={Typography.sidebarText}>{tradition.foundingPeriod}</p>
                 </div>
               )}
               
+              {/* Origin */}
               {tradition.origin && (
-                <div className="mb-3 font-inter">
-                  <p className="text-neutral-800 dark:text-neutral-200">
-                    <span className="text-neutral-500 dark:text-neutral-400">Origin: </span>
-                    {tradition.origin}
-                  </p>
-                </div>
-              )}
-              
-              {tradition.keyTeachings && tradition.keyTeachings.length > 0 && (
-                <div className="mb-3 font-inter">
-                  <p className="text-neutral-800 dark:text-neutral-200">
-                    <span className="text-neutral-500 dark:text-neutral-400">Key Teachings: </span>
-                    {Array.isArray(tradition.keyTeachings) 
-                      ? tradition.keyTeachings.join(', ') 
-                      : tradition.keyTeachings}
-                  </p>
+                <div className="mt-4">
+                  <h3 className={Typography.sidebarSubheading}>Origin:</h3>
+                  <p className={Typography.sidebarText}>{tradition.origin}</p>
                 </div>
               )}
             </div>
+            
+            {/* Links Section */}
+            {tradition.links && tradition.links.length > 0 && (
+              <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
+                <h2 className={Typography.sidebarHeading}>
+                  Links
+                </h2>
+                <div className="mt-4">
+                  <TraditionDetailSidebarLinks tradition={tradition} />
+                </div>
+              </div>
+            )}
             
             <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
               <h2 className={Typography.sidebarHeading}>
