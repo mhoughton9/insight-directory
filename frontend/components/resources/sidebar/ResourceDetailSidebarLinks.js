@@ -92,41 +92,74 @@ const ResourceDetailSidebarLinks = ({ resource }) => {
     try {
       const hostname = new URL(url).hostname.toLowerCase();
       
+      if (hostname.includes('youtube')) {
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="#FF0000">
+            <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+          </svg>
+        );
+      }
+      
       if (hostname.includes('amazon')) {
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M18.42,14.79a2.88,2.88,0,0,0-1.74.56,1.38,1.38,0,0,0-.58,1.16,1.3,1.3,0,0,0,.33.93,1.92,1.92,0,0,0,1.25.35A2.19,2.19,0,0,0,19.5,17a2.3,2.3,0,0,0,.5-1.62v-.57Z"/>
-            <path d="M21.13,18.24a.32.32,0,0,1-.35.3c-1.31-.22-1.62-.32-2.38.73a.3.3,0,0,1-.39.06C16.3,18.52,15.1,18,14,18a5.8,5.8,0,0,1-3.27.9c-1.53,0-2.79-1.25-2.79-3.06,0-1.6.88-2.7,2.12-3.22A9.92,9.92,0,0,1,14,12c.52,0,1.12,0,1.73.09,0-.57,0-1-.24-1.39a2.12,2.12,0,0,0-1.31-.49,3.56,3.56,0,0,0-2.35.81.34.34,0,0,1-.31.06.35.35,0,0,1-.22-.25L11,9.56a.34.34,0,0,1,.14-.34A4.9,4.9,0,0,1,14,8.5a3.15,3.15,0,0,1,2.52.89,3.67,3.67,0,0,1,.73,2.57v2.31c0,.69.28,1,.87,1.31a.34.34,0,0,1,.16.31l0,.35ZM3,8.89l0,.29a.34.34,0,0,0,.1.24A20.11,20.11,0,0,0,6.7,12.56a.34.34,0,0,0,.38,0A16.37,16.37,0,0,0,9.44,10a.33.33,0,0,0,.06-.38.34.34,0,0,0-.34-.21H8.27A3.51,3.51,0,0,1,3,8.89Zm19.56,6.33a.34.34,0,0,0-.09-.26c-.16-.12-.37-.08-.52.08a6.46,6.46,0,0,1-3.14,1.77.34.34,0,0,0-.26.33v.47a.34.34,0,0,0,.21.31,6.89,6.89,0,0,0,3.44.13.34.34,0,0,0,.26-.33v-.5h0v-.9h0v-1.1Z"/>
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="#E47911" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
           </svg>
         );
       }
       
       if (hostname.includes('goodreads')) {
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18.5A8.5,8.5,0,1,1,20.5,12,8.51,8.51,0,0,1,12,20.5ZM15,7H9V17h6a3,3,0,0,0,3-3V10A3,3,0,0,0,15,7Zm1,7a1,1,0,0,1-1,1H11V9h4a1,1,0,0,1,1,1Z"/>
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="#553B08" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
           </svg>
         );
       }
       
-      // Default external link icon
+      if (hostname.includes('spotify')) {
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="#1DB954">
+            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+          </svg>
+        );
+      }
+      
+      if (hostname.includes('apple.com')) {
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="#A2AAAD">
+            <path d="M22 17.607c-.786 2.28-3.139 6.317-5.563 6.361-1.608.031-2.125-.953-3.963-.953-1.837 0-2.412.923-3.932.983-2.572.099-6.542-5.827-6.542-10.995 0-4.747 3.308-7.1 6.198-7.143 1.55-.028 3.014 1.045 3.959 1.045.949 0 2.727-1.29 4.596-1.101.782.033 2.979.315 4.389 2.377-3.741 2.442-3.158 7.549.858 9.426zm-5.222-17.607c-2.826.114-5.132 3.079-4.81 5.531 2.612.203 5.118-2.725 4.81-5.531z"/>
+          </svg>
+        );
+      }
+      
+      if (hostname.includes('google.com')) {
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="#4285F4">
+            <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+          </svg>
+        );
+      }
+      
+      // Default external link icon with enhanced styling
       return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2 flex-shrink-0 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="#6B7280" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
         </svg>
       );
     } catch (e) {
       // Default icon if URL parsing fails
       return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2 flex-shrink-0 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="#6B7280" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
         </svg>
       );
     }
   };
   
   return (
-    <div className="space-y-2">
+    <div className="flex flex-wrap gap-2">
       {links.map((link, index) => {
         // Skip invalid links
         if (!link) return null;
@@ -143,9 +176,11 @@ const ResourceDetailSidebarLinks = ({ resource }) => {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center text-brand-purple hover:text-brand-purple-dark transition-colors group"
+            className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-2 rounded-md transition-all duration-200 group"
           >
-            {icon}
+            <span className="text-gray-600 group-hover:scale-110 transition-transform duration-200">
+              {icon}
+            </span>
             <span className="font-inter truncate">{label}</span>
           </a>
         );

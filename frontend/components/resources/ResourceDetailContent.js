@@ -1,6 +1,6 @@
 import React from 'react';
 import { Heading, Text } from '../ui/Typography';
-import { normalizeResourceType } from '../../utils/resource-utils';
+import { formatResourceType, normalizeResourceType } from '../../utils/resource-utils';
 import { getSectionsForResourceType } from '../../utils/resource-section-config';
 import { SectionContainer } from './sections';
 
@@ -27,7 +27,7 @@ const ResourceDetailContent = ({ resource }) => {
       {!hasDescriptionSections && (
         <div className="mb-6 md:mb-8">
           <Heading as="h2" size="xl" className="mb-3 md:mb-4">
-            About this {normalizeResourceType(resource.type)}
+            About this {formatResourceType(resource.type)}
           </Heading>
           
           <div className="prose prose-neutral dark:prose-invert max-w-none">
@@ -48,7 +48,7 @@ const ResourceDetailContent = ({ resource }) => {
       {hasDescriptionSections && (
         <div className="mb-6 md:mb-8">
           <Heading as="h2" size="xl" className="mb-5 md:mb-6">
-            About this {normalizeResourceType(resource.type)}
+            About this {formatResourceType(resource.type)}
           </Heading>
           
           {sections.map((section) => (

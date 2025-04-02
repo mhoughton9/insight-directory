@@ -74,9 +74,9 @@ const ResourceDetailHeader = ({ resource }) => {
             {formatResourceType(resource.type)}s
           </Link>
           <span>/</span>
-          <Caption as="span" className="text-neutral-500 dark:text-neutral-500 truncate max-w-[120px] sm:max-w-[150px] md:max-w-xs">
+          <span className="text-neutral-500 dark:text-neutral-500 truncate max-w-[120px] sm:max-w-[150px] md:max-w-xs whitespace-nowrap">
             {resource.title}
-          </Caption>
+          </span>
         </div>
         
         <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
@@ -101,18 +101,6 @@ const ResourceDetailHeader = ({ resource }) => {
             <Heading as="h1" size="3xl">
               {resource.title}
             </Heading>
-            
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-purple bg-opacity-10 text-brand-purple dark:bg-opacity-20">
-                <ResourceTypeIcon type={resource.type} className="w-4 h-4 mr-1" />
-                {formatResourceType(resource.type)}
-              </span>
-              {formattedDate && (
-                <Caption className="text-neutral-500 dark:text-neutral-400">
-                  {formattedDate}
-                </Caption>
-              )}
-            </div>
             
             {resource.description && (
               <Text className="mt-2 line-clamp-2">
