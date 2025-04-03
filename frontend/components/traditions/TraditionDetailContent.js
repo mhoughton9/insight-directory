@@ -53,70 +53,56 @@ const TraditionDetailContent = ({ tradition }) => {
           {/* In a Nutshell Section */}
           {tradition.descriptionSections.in_a_nutshell && (
             <SectionContainer 
-              title="In a Nutshell (description)"
+              title="In a Nutshell"
               content={tradition.descriptionSections.in_a_nutshell}
               type="text"
               className="mb-6"
             />
           )}
           
-          {/* The Steel-man case Section */}
-          {tradition.descriptionSections.the_steel_man_case && (
+          {/* Historical Context Section */}
+          {tradition.descriptionSections.historical_context && (
             <SectionContainer 
-              title="The Steel-man case"
-              content={tradition.descriptionSections.the_steel_man_case}
+              title="Historical Context"
+              content={tradition.descriptionSections.historical_context}
               type="text"
               className="mb-6"
             />
           )}
           
-          {/* If you only read one book Section */}
-          {tradition.descriptionSections.if_you_only_read_one_book && (
+          {/* Key Teachings Section */}
+          {tradition.descriptionSections.key_teachings && (
             <SectionContainer 
-              title="If you only read one book"
-              content={tradition.descriptionSections.if_you_only_read_one_book}
+              title="Key Teachings"
+              content={tradition.descriptionSections.key_teachings}
               type="text"
               className="mb-6"
             />
           )}
           
-          {/* Common misunderstanding clarified Section */}
-          {tradition.descriptionSections.common_misunderstanding_clarified && (
+          {/* Practices Section */}
+          {tradition.descriptionSections.practices && (
             <SectionContainer 
-              title="Common misunderstanding clarified"
-              content={tradition.descriptionSections.common_misunderstanding_clarified}
+              title="Practices"
+              content={tradition.descriptionSections.practices}
               type="text"
               className="mb-6"
             />
           )}
           
-          {/* Practical Exercises Section */}
-          {tradition.descriptionSections.practical_exercises && (
+          {/* Modern Relevance Section */}
+          {tradition.descriptionSections.modern_relevance && (
             <SectionContainer 
-              title="Practical Exercises"
-              content={tradition.descriptionSections.practical_exercises}
-              type="array"
+              title="Modern Relevance"
+              content={tradition.descriptionSections.modern_relevance}
+              type="text"
               className="mb-6"
             />
           )}
         </div>
       )}
       
-      {/* Key Teachings section - always show if available */}
-      {tradition.keyTeachings && tradition.keyTeachings.length > 0 && (
-        <div className="mb-6 md:mb-8">
-          <Heading as="h2" size="lg" className="mb-3 md:mb-4">
-            Key Teachings
-          </Heading>
-          <ul className="list-disc pl-5 space-y-2">
-            {tradition.keyTeachings.map((teaching, index) => (
-              <li key={index} className="text-neutral-700 dark:text-neutral-300">
-                {teaching}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {/* Key Teachings section removed as requested */}
     </div>
   );
 };

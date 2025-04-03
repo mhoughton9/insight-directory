@@ -117,9 +117,15 @@ const TraditionForm = ({ tradition = null, onSave, onCancel }) => {
   };
 
   // Generate content with AI
-  const generateWithAI = async (field) => {
+  const generateWithAI = async () => {
     if (!formData.name) {
       setAiError('Please enter a tradition name first');
+      return;
+    }
+    
+    // Make sure we have a tradition ID (can only generate for existing traditions)
+    if (!tradition?._id) {
+      setAiError('Tradition must be saved before generating descriptions');
       return;
     }
     
@@ -127,49 +133,50 @@ const TraditionForm = ({ tradition = null, onSave, onCancel }) => {
     setAiError(null);
     
     try {
-      // Build query parameters with clerk ID for authentication
-      let queryParams = new URLSearchParams();
-      queryParams.append('clerkId', user.id);
-      queryParams.append('entity', 'tradition');
-      queryParams.append('field', field);
-      queryParams.append('name', formData.name);
+      // Get the section keys to generate
+      const sectionKeys = TRADITION_SECTIONS.map(section => section.key);
       
-      // Add context fields if available
-      if (formData.description) queryParams.append('description', formData.description);
-      if (formData.origin) queryParams.append('origin', formData.origin);
-      if (formData.foundingPeriod) queryParams.append('foundingPeriod', formData.foundingPeriod);
-      
-      const response = await fetch(`/api/admin/generate?${queryParams.toString()}`);
-      const data = await response.json();
+      // Call the API to generate descriptions
+      const response = await fetch(`/api/admin/traditions/${tradition._id}/generate-descriptions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          sectionKeys,
+          clerkId: user.id // Add the clerkId for authentication
+        }),
+      });
       
       if (!response.ok) {
-        throw new Error(data.message || 'Error generating content');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to generate descriptions');
       }
       
-      // Update form data with generated content
-      if (field === 'description') {
-        setFormData({
-          ...formData,
-          description: data.content
-        });
-      } else if (field === 'descriptionFull') {
-        setFormData({
-          ...formData,
-          descriptionFull: data.content
-        });
-      } else if (field.startsWith('descriptionSections.')) {
-        const sectionKey = field.split('.')[1];
-        handleDescriptionSectionChange(sectionKey, data.content);
-      } else if (field === 'allDescriptionSections') {
-        const updatedFormData = { ...formData };
-        TRADITION_SECTIONS.forEach((section) => {
-          updatedFormData.descriptionSections[section.key] = data.content[section.key];
-        });
-        setFormData(updatedFormData);
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to generate descriptions');
       }
+      
+      // Update the form with the generated sections
+      setFormData(prevData => ({
+        ...prevData,
+        descriptionSections: {
+          ...prevData.descriptionSections,
+          ...data.generatedSections
+        }
+      }));
+      
+      // Expand the description sections to show the generated content
+      setExpandedSections(prev => ({
+        ...prev,
+        descriptionSections: true
+      }));
+      
     } catch (err) {
-      console.error('Error generating content:', err);
-      setAiError(err.message || 'Error generating content');
+      console.error('Error generating descriptions:', err);
+      setAiError(err.message || 'Failed to generate descriptions');
     } finally {
       setAiGenerating(false);
     }
@@ -433,11 +440,11 @@ const TraditionForm = ({ tradition = null, onSave, onCancel }) => {
                 </p>
                 <button
                   type="button"
-                  onClick={() => generateWithAI('allDescriptionSections')}
-                  disabled={aiGenerating || !formData.name}
+                  onClick={generateWithAI}
+                  disabled={aiGenerating || !formData.name || !tradition?._id}
                   className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                 >
-                  {aiGenerating ? 'Generating...' : 'Generate All with AI'}
+                  {aiGenerating ? 'Generating...' : 'Generate with AI'}
                 </button>
               </div>
               

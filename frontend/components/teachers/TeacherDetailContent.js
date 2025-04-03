@@ -60,41 +60,41 @@ const TeacherDetailContent = ({ teacher }) => {
             />
           )}
           
-          {/* What students say Section */}
-          {teacher.descriptionSections.what_students_say && (
+          {/* Key Contributions Section */}
+          {teacher.descriptionSections.key_contributions && (
             <SectionContainer 
-              title="What students say"
-              content={teacher.descriptionSections.what_students_say}
+              title="Key Contributions"
+              content={teacher.descriptionSections.key_contributions}
               type="text"
               className="mb-6"
             />
           )}
           
-          {/* Common Misunderstanding clarified Section */}
-          {teacher.descriptionSections.common_misunderstanding_clarified && (
+          {/* Teaching Style Section */}
+          {teacher.descriptionSections.teaching_style && (
             <SectionContainer 
-              title="Common Misunderstanding clarified"
-              content={teacher.descriptionSections.common_misunderstanding_clarified}
+              title="Teaching Style"
+              content={teacher.descriptionSections.teaching_style}
               type="text"
               className="mb-6"
             />
           )}
           
-          {/* If you only read/watch one thing Section */}
-          {teacher.descriptionSections.if_you_only_read_watch_one_thing && (
+          {/* Historical Context Section */}
+          {teacher.descriptionSections.historical_context && (
             <SectionContainer 
-              title="If you only read/watch one thing"
-              content={teacher.descriptionSections.if_you_only_read_watch_one_thing}
+              title="Historical Context"
+              content={teacher.descriptionSections.historical_context}
               type="text"
               className="mb-6"
             />
           )}
           
-          {/* Quotes worth remembering Section */}
-          {teacher.descriptionSections.quotes_worth_remembering && (
+          {/* Notable Quotes Section */}
+          {teacher.descriptionSections.notable_quotes && (
             <SectionContainer 
-              title="Quotes worth remembering"
-              content={teacher.descriptionSections.quotes_worth_remembering}
+              title="Notable Quotes"
+              content={teacher.descriptionSections.notable_quotes}
               type="array"
               className="mb-6"
             />
@@ -102,21 +102,7 @@ const TeacherDetailContent = ({ teacher }) => {
         </div>
       )}
       
-      {/* Key Teachings section - always show if available */}
-      {teacher.keyTeachings && teacher.keyTeachings.length > 0 && (
-        <div className="mb-6 md:mb-8">
-          <Heading as="h2" size="lg" className="mb-3 md:mb-4">
-            Key Teachings
-          </Heading>
-          <ul className="list-disc pl-5 space-y-2">
-            {teacher.keyTeachings.map((teaching, index) => (
-              <li key={index} className="text-neutral-700 dark:text-neutral-300">
-                {teaching}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {/* Key Teachings section removed as requested */}
     </div>
   );
 };

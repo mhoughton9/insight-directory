@@ -103,22 +103,63 @@ const TeacherForm = ({ teacher = null, onSave, onCancel }) => {
     });
   };
 
-  // Handle AI generation for description sections (placeholder for now)
+  // Handle AI generation for description sections
   const handleGenerateWithAI = async () => {
     try {
       // Clear any previous errors
       setAiError(null);
       setAiGenerating(true);
       
-      // This is a placeholder - AI generation will be implemented later
-      setTimeout(() => {
-        setAiGenerating(false);
-        alert('AI generation functionality will be implemented later.');
-      }, 1000);
+      // Make sure we have a teacher ID (can only generate for existing teachers)
+      if (!teacher?._id) {
+        throw new Error('Teacher must be saved before generating descriptions');
+      }
+      
+      // Get the section keys to generate
+      const sectionKeys = TEACHER_SECTIONS.map(section => section.key);
+      
+      // Call the API to generate descriptions
+      const response = await fetch(`/api/admin/teachers/${teacher._id}/generate-descriptions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          sectionKeys,
+          clerkId: user.id // Add the clerkId for authentication
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to generate descriptions');
+      }
+      
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to generate descriptions');
+      }
+      
+      // Update the form with the generated sections
+      setFormData(prevData => ({
+        ...prevData,
+        descriptionSections: {
+          ...prevData.descriptionSections,
+          ...data.generatedSections
+        }
+      }));
+      
+      // Expand the description sections to show the generated content
+      setExpandedSections(prev => ({
+        ...prev,
+        descriptionSections: true
+      }));
       
     } catch (err) {
       console.error('Error generating descriptions:', err);
       setAiError(err.message || 'Failed to generate descriptions');
+    } finally {
       setAiGenerating(false);
     }
   };
@@ -540,7 +581,7 @@ const TeacherForm = ({ teacher = null, onSave, onCancel }) => {
                   <p className="text-sm text-blue-700">
                     Each teacher has 5 specific description sections. These sections will be displayed on the teacher detail page.
                     <br />
-                    AI generation functionality will be implemented in a future update.
+                    Use the "Generate with AI" button to automatically create content for all sections based on the teacher's information.
                   </p>
                 </div>
               </div>

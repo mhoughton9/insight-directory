@@ -2,12 +2,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import { MenuIcon } from '../ui/Icons';
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs';
 import { Text } from '../ui/Typography';
 import { getTypographyClasses } from '../../utils/fontUtils';
 
+// List of admin user IDs - same as in AdminProtected.js
+const ADMIN_USER_IDS = ['user_2udVqD2UHTR7pqFQgAF7A2RT3PG']; // Example ID, replace with yours
+
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isLoaded, isSignedIn, user } = useUser();
+  const isAdmin = isLoaded && isSignedIn && ADMIN_USER_IDS.includes(user?.id);
 
   // Common navigation link classes
   const navLinkClasses = "text-neutral-700 hover:text-accent transition-all duration-300 transform hover:translate-y-[-2px]";
@@ -62,6 +67,14 @@ export default function Header() {
           <div className="flex items-center">
             <SignedIn>
               <div className="flex items-center space-x-4">
+                {isAdmin && (
+                  <Link 
+                    href="/admin" 
+                    className={`${buttonClasses} bg-accent text-white ${getTypographyClasses({ type: 'body' })}`}
+                  >
+                    <Text as="span">Admin</Text>
+                  </Link>
+                )}
                 <Link 
                   href="/profile" 
                   className={`${navLinkClasses} ${getTypographyClasses({ type: 'body' })}`}
@@ -142,6 +155,14 @@ export default function Header() {
             </Link>
             
             <SignedIn>
+              {isAdmin && (
+                <Link 
+                  href="/admin" 
+                  className={`${navLinkClasses} text-accent font-semibold ${getTypographyClasses({ type: 'body' })}`}
+                >
+                  <Text as="span">Admin</Text>
+                </Link>
+              )}
               <Link href="/profile" className={`${navLinkClasses} ${getTypographyClasses({ type: 'body' })}`}>
                 <Text as="span">Profile</Text>
               </Link>
