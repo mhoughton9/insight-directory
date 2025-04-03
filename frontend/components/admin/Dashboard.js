@@ -112,8 +112,7 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* Dashboard Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-gray-800">Admin Dashboard</h1>
+      <div className="flex justify-end">
         <Link 
           href="/admin/add-resource" 
           className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition-colors shadow-sm"
@@ -262,6 +261,41 @@ const Dashboard = () => {
           )}
         </div>
       )}
+
+      {/* Quick Actions */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl font-medium mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <Link 
+            href="/admin/resources" 
+            className="block p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <h3 className="font-medium mb-1">Manage Resources</h3>
+            <p className="text-sm text-gray-600">View, edit, and delete resources</p>
+          </Link>
+          
+          <Link 
+            href="/admin/bulk-import" 
+            className="block p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <h3 className="font-medium mb-1">Bulk Import</h3>
+            <p className="text-sm text-gray-600">Import multiple resources at once</p>
+          </Link>
+          
+          <Link 
+            href="/admin/suggestions" 
+            className="block p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <h3 className="font-medium mb-1">User Suggestions</h3>
+            <p className="text-sm text-gray-600">Review and process user suggestions</p>
+            {suggestionStats && suggestionStats.new > 0 && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-2">
+                {suggestionStats.new} new
+              </span>
+            )}
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };
