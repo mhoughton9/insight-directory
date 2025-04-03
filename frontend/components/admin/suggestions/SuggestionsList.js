@@ -41,6 +41,10 @@ const SuggestionsList = ({ suggestions, loading, error, onSuggestionClick }) => 
         return 'App';
       case 'retreatCenter':
         return 'Retreat Center';
+      case 'teacher':
+        return 'Teacher';
+      case 'tradition':
+        return 'Tradition';
       default:
         return type;
     }

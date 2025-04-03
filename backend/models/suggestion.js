@@ -20,7 +20,7 @@ const suggestionSchema = new mongoose.Schema(
       required: [true, 'Resource type is required'],
       enum: [
         'book', 'blog', 'videoChannel', 'podcast', 'practice', 
-        'retreatCenter', 'website', 'app'
+        'retreatCenter', 'website', 'app', 'teacher', 'tradition'
       ]
     },
     link: {

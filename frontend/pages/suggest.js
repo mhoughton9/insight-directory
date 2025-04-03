@@ -40,7 +40,9 @@ export default function SuggestResourcePage() {
     'Blog',
     'Practice',
     'App',
-    'Retreat Center'
+    'Retreat Center',
+    'Teacher',
+    'Tradition'
   ];
 
   // Handle form input changes
@@ -78,7 +80,7 @@ export default function SuggestResourcePage() {
       const suggestionData = {
         ...formData,
         // Convert type to lowercase and remove spaces for backend compatibility
-        type: formData.type.toLowerCase().replace(' ', ''),
+        type: formData.type.toLowerCase().replace(/ /g, ''),
         // Include the user ID for authentication
         clerkId: user.id
       };

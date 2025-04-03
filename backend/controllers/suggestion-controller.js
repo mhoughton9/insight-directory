@@ -14,6 +14,11 @@ const suggestionController = {
     try {
       const { title, type, description, link, creator, additionalInfo } = req.body;
       
+      // Debug logging
+      console.log('Received suggestion with type:', type);
+      console.log('Suggestion model path:', require.resolve('../models/suggestion'));
+      console.log('Valid enum values:', require('../models/suggestion').schema.path('type').enumValues);
+      
       // Basic validation
       if (!title || !type || !description) {
         return res.status(400).json({

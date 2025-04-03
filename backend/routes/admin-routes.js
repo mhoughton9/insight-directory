@@ -32,8 +32,8 @@ router.post('/resources', adminController.createResource);
 router.put('/resources/:id', adminController.updateResource);
 router.delete('/resources/:id', adminController.deleteResource);
 
-// Bulk import route
-router.post('/bulk-import', adminController.bulkImportResources);
+// Bulk import routes
+router.post('/bulk-import', adminController.bulkImport); // New unified endpoint that handles all entity types
 
 // Teacher management routes
 router.get('/teachers', adminController.getAllTeachers);

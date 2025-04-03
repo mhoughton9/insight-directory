@@ -31,6 +31,10 @@ const SuggestionDetailModal = ({ isOpen, onClose, suggestion, onUpdateStatus, on
         return 'App';
       case 'retreatCenter':
         return 'Retreat Center';
+      case 'teacher':
+        return 'Teacher';
+      case 'tradition':
+        return 'Tradition';
       default:
         return type;
     }

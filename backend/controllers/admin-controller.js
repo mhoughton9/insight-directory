@@ -819,13 +819,149 @@ const adminController = {
   },
 
   /**
-   * Bulk import resources
+   * Bulk import entities (resources, teachers, or traditions)
+   * @route POST /api/admin/bulk-import
+   * @access Private (admin only)
+   */
+  bulkImport: async (req, res) => {
+    try {
+      console.log('Bulk import request received');
+      console.log('Request body:', req.body);
+      console.log('Request query:', req.query);
+      
+      const { entities } = req.body;
+      const { entityType } = req.query;
+      
+      if (!entities || !Array.isArray(entities) || entities.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid request: ${entityType}s must be a non-empty array`
+        });
+      }
+      
+      if (!['resource', 'teacher', 'tradition'].includes(entityType)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid entity type. Must be one of: resource, teacher, tradition'
+        });
+      }
+      
+      // Track results
+      const results = {
+        success: 0,
+        errors: []
+      };
+      
+      // Select the appropriate model based on entity type
+      let Model;
+      let nameField = 'title'; // Default for resources
+      
+      switch (entityType) {
+        case 'teacher':
+          Model = Teacher;
+          nameField = 'name';
+          break;
+        case 'tradition':
+          Model = Tradition;
+          nameField = 'name';
+          break;
+        default: // resource
+          Model = Resource;
+          nameField = 'title';
+      }
+      
+      // Process each entity
+      for (const entityData of entities) {
+        try {
+          // Check for required fields based on entity type
+          let missingFields = false;
+          
+          if (entityType === 'resource') {
+            if (!entityData.title || !entityData.description || !entityData.type) {
+              results.errors.push(`Resource with title "${entityData.title || 'Unknown'}" is missing required fields`);
+              missingFields = true;
+            }
+          } else if (entityType === 'teacher') {
+            if (!entityData.name || !entityData.biography) {
+              results.errors.push(`Teacher with name "${entityData.name || 'Unknown'}" is missing required fields`);
+              missingFields = true;
+            }
+          } else if (entityType === 'tradition') {
+            if (!entityData.name || !entityData.description) {
+              results.errors.push(`Tradition with name "${entityData.name || 'Unknown'}" is missing required fields`);
+              missingFields = true;
+            }
+          }
+          
+          if (missingFields) continue;
+          
+          // Generate slug if not provided
+          if (!entityData.slug) {
+            const slugBase = entityData[nameField]
+              .toLowerCase()
+              .replace(/[^\w\s-]/g, '') // Remove special characters
+              .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+              .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+            
+            // Check if slug exists and append random string if needed
+            let slug = slugBase;
+            let slugExists = await Model.findOne({ slug });
+            let counter = 0;
+            
+            while (slugExists && counter < 10) {
+              counter++;
+              slug = `${slugBase}-${counter}`;
+              slugExists = await Model.findOne({ slug });
+            }
+            
+            entityData.slug = slug;
+          }
+          
+          // Create a new entity
+          const entity = new Model(entityData);
+          
+          // Save the entity
+          await entity.save();
+          
+          // Increment success counter
+          results.success++;
+        } catch (error) {
+          // Add error to results
+          const entityName = entityData[nameField] || 'Unknown';
+          results.errors.push(`Error importing ${entityType} "${entityName}": ${error.message}`);
+        }
+      }
+      
+      // Return results
+      res.status(200).json({
+        success: true,
+        message: `Successfully imported ${results.success} ${entityType}s with ${results.errors.length} errors`,
+        ...results
+      });
+    } catch (error) {
+      console.error(`Error in bulkImport for ${req.query.entityType || 'unknown entity type'}:`, error);
+      res.status(500).json({
+        success: false,
+        message: 'Server Error',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Bulk import resources (legacy method for backward compatibility)
    * @route POST /api/admin/bulk-import
    * @access Private (admin only)
    */
   bulkImportResources: async (req, res) => {
     try {
       const { resources } = req.body;
+      
+      // If entityType is specified, use the new unified method
+      if (req.query.entityType) {
+        req.body.entities = resources;
+        return adminController.bulkImport(req, res);
+      }
       
       if (!resources || !Array.isArray(resources) || resources.length === 0) {
         return res.status(400).json({
