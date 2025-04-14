@@ -24,7 +24,17 @@ const resourceController = {
       // Handle multiple IDs for fetching favorites
       if (ids) {
         try {
-          const idArray = ids.split(',').map(id => id.trim());
+          const idArray = ids.split(',').map(id => id ? id.trim() : null).filter(id => id !== null && id !== '');
+          
+          // Validate the parsed IDs
+          if (!idArray || idArray.length === 0) {
+            console.error('Invalid or empty IDs parameter provided:', ids);
+            return res.status(400).json({
+              success: false,
+              message: 'Bad Request: Invalid or empty IDs parameter provided.'
+            });
+          }
+          
           console.log('Fetching resources with IDs:', idArray);
           filter._id = { $in: idArray };
           // When fetching by IDs, ignore pagination limits
@@ -146,6 +156,7 @@ const resourceController = {
         .populate('teachers', 'name slug imageUrl bio')
         .populate('traditions', 'name slug description');
       
+      // Check if resource was found
       if (!resource) {
         return res.status(404).json({
           success: false,
@@ -471,35 +482,21 @@ const resourceController = {
    */
   getResourceTypes: async (req, res) => {
     try {
-      // Define the available resource types
-      // Based on the resource schema enum values
-      const types = [
-        'Book',
-        'Blog',
-        'Video Channel',
-        'Podcast',
-        'Practice', 
-        'Retreat Center',
-        'Website',
-        'App'
-      ];
+      // Dynamically get enum values from the schema
+      const types = Resource.schema.path('type').enumValues;
       
-      // Map for internal type values (used in database)
-      const typeMapping = {
-        'Book': 'book',
-        'Blog': 'blog',
-        'Video Channel': 'videoChannel',
-        'Podcast': 'podcast',
-        'Practice': 'practice',
-        'Retreat Center': 'retreatCenter',
-        'Website': 'website',
-        'App': 'app'
-      };
+      if (!types || types.length === 0) {
+        console.error('Could not retrieve resource types from schema or enum is empty.');
+        return res.status(500).json({
+          success: false,
+          message: 'Server Error: Could not determine resource types.'
+        });
+      }
       
+      // Return the dynamically fetched enum values
       res.status(200).json({
         success: true,
-        types,
-        typeMapping
+        types // Array of internal enum values like 'book', 'videoChannel'
       });
     } catch (error) {
       console.error('Error in getResourceTypes:', error);

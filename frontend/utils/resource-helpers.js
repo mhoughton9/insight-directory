@@ -25,59 +25,98 @@ export const getResourceDetail = (resource, type, field) => {
 /**
  * Get links from a resource based on its type
  * @param {Object} resource - The resource object
- * @returns {Array} Array of links
+ * @returns {Array<{url: string, label: string}>} Array of link objects
  */
 export const getResourceLinks = (resource) => {
   if (!resource) return [];
-  
+
   const resourceType = normalizeResourceType(resource.type || 'unknown');
   const detailsKey = `${resourceType}Details`;
-  
-  // Default to resource.links if available
-  let links = [];
-  
+
+  // Consolidate potential link sources
+  let rawLinks = [];
   if (resource.links && Array.isArray(resource.links)) {
-    links = [...resource.links];
-  } else if (resource[detailsKey]?.links) {
-    links = [...resource[detailsKey].links];
-  } else if (resourceType === 'website' && resource[detailsKey]?.link) {
-    links = [resource[detailsKey].link];
-  } else if (resourceType === 'blog' && resource[detailsKey]?.link) {
-    links = [resource[detailsKey].link];
-  } else if (resource.url) {
-    links = [resource.url];
+    rawLinks = [...resource.links];
+  } else if (resource[detailsKey]?.links && Array.isArray(resource[detailsKey].links)) {
+    rawLinks = [...resource[detailsKey].links];
+  } else if (
+    (resourceType === 'website' || resourceType === 'blog') &&
+    resource[detailsKey]?.link &&
+    typeof resource[detailsKey].link === 'string'
+  ) {
+    rawLinks = [resource[detailsKey].link]; // Keep as string for now
+  } else if (resource.url && typeof resource.url === 'string') {
+    rawLinks = [resource.url]; // Keep as string for now
   }
-  
-  // Sort links based on resource type
-  if (links.length > 1) {
-    if (resourceType === 'book') {
-      // For books, prioritize Amazon links
-      links.sort((a, b) => {
-        if (a.includes('amazon')) return -1;
-        if (b.includes('amazon')) return 1;
-        return 0;
-      });
-    } else if (resourceType === 'podcast') {
-      // For podcasts, prioritize Spotify and Apple Podcasts
-      links.sort((a, b) => {
-        if (a.includes('spotify')) return -1;
-        if (b.includes('spotify')) return 1;
-        if (a.includes('apple')) return -1;
-        if (b.includes('apple')) return 1;
-        return 0;
-      });
-    } else if (resourceType === 'app') {
-      // For apps, prioritize App Store and Google Play
-      links.sort((a, b) => {
-        if (a.includes('apple')) return -1;
-        if (b.includes('apple')) return 1;
-        if (a.includes('play.google')) return -1;
-        if (b.includes('play.google')) return 1;
-        return 0;
-      });
+
+  // Ensure all elements in links are objects with url and label
+  let links = rawLinks.map(link => {
+    if (typeof link === 'string') {
+      return { url: link, label: getLinkLabel(link) };
+    } else if (typeof link === 'object' && link !== null && typeof link.url === 'string') {
+      // Ensure label exists, generate if not
+      return { url: link.url, label: typeof link.label === 'string' ? link.label : getLinkLabel(link.url) };
     }
+    console.warn('Skipping invalid link format:', link);
+    return null; // Skip invalid formats
+  }).filter(link => link !== null && link.url); // Filter out nulls and ensure URL exists
+
+  // Sort links based on resource type and common platforms
+  if (links.length > 1) {
+    const sortOrder = {
+      // Books
+      amazon: 1,
+      // Podcasts
+      spotify: 10,
+      apple_podcast: 11,
+      // Apps
+      apple_app: 20,
+      google_play: 21,
+      // Video
+      youtube: 30,
+      // General/Other
+      website: 50, // Prioritize official website if identifiable
+      other: 99,
+    };
+
+    const getSortValue = (linkUrl) => {
+      if (!linkUrl) return sortOrder.other;
+      try {
+        const url = new URL(linkUrl);
+        const domain = url.hostname.replace(/^www\./i, '');
+
+        // Type-specific overrides first
+        if (resourceType === 'book' && domain.includes('amazon.')) return sortOrder.amazon;
+        if (resourceType === 'podcast') {
+          if (domain.includes('spotify.')) return sortOrder.spotify;
+          if (domain.includes('apple.') && url.pathname.includes('/podcast')) return sortOrder.apple_podcast;
+        }
+        if (resourceType === 'app') {
+          if (domain.includes('apple.') && url.pathname.includes('/app')) return sortOrder.apple_app;
+          if (domain.includes('play.google.')) return sortOrder.google_play;
+        }
+        // General platform checks
+        if (domain.includes('youtube.')) return sortOrder.youtube;
+        if (domain.includes('spotify.')) return sortOrder.spotify; // Catch spotify if not podcast
+        if (domain.includes('apple.') && url.pathname.includes('/podcast')) return sortOrder.apple_podcast; // Catch apple podcast if not podcast type
+        if (domain.includes('apple.') && url.pathname.includes('/app')) return sortOrder.apple_app; // Catch apple app if not app type
+        if (domain.includes('play.google.')) return sortOrder.google_play; // Catch google play if not app type
+        if (domain.includes('amazon.')) return sortOrder.amazon; // Catch amazon if not book
+
+        // Check if it matches websiteDetails.link for website/blog types
+        if ((resourceType === 'website' || resourceType === 'blog') && resource[detailsKey]?.link === linkUrl) {
+            return sortOrder.website;
+        }
+
+      } catch (e) {
+          // ignore url parsing errors for sorting
+      }
+      return sortOrder.other;
+    };
+
+    links.sort((a, b) => getSortValue(a.url) - getSortValue(b.url));
   }
-  
+
   return links;
 };
 
@@ -87,26 +126,62 @@ export const getResourceLinks = (resource) => {
  * @returns {String} A user-friendly label
  */
 export const getLinkLabel = (link) => {
+  if (!link || typeof link !== 'string') {
+      return 'Invalid Link';
+  }
   try {
+    // Handle potential mailto links gracefully
+    if (link.toLowerCase().startsWith('mailto:')) {
+        return link.substring(7); // Return email address
+    }
+
     const url = new URL(link);
-    const domain = url.hostname.replace('www.', '');
-    
-    if (domain.includes('amazon')) return 'Amazon';
-    if (domain.includes('youtube')) return 'YouTube';
-    if (domain.includes('spotify')) return 'Spotify';
-    if (domain.includes('apple')) {
-      if (url.pathname.includes('podcast')) return 'Apple Podcasts';
-      if (url.pathname.includes('app')) return 'App Store';
+    const domain = url.hostname.replace(/^www\./i, ''); // Case-insensitive www removal
+
+    // More specific checks
+    if (domain.includes('amazon.')) return 'Amazon';
+    if (domain === 'youtube.com' || domain.endsWith('.youtube.com')) return 'YouTube';
+    if (domain === 'spotify.com' || domain.endsWith('.spotify.com')) return 'Spotify';
+    // Check apple.com carefully
+    if (domain === 'apple.com' || domain.endsWith('.apple.com') || domain === 'podcasts.apple.com' || domain === 'apps.apple.com') {
+      if (url.pathname.includes('/podcast')) return 'Apple Podcasts';
+      if (url.pathname.includes('/app')) return 'App Store';
+      // Avoid generic 'Apple' if it's a specific subdomain like podcasts/apps
+      if (domain === 'podcasts.apple.com') return 'Apple Podcasts';
+      if (domain === 'apps.apple.com') return 'App Store';
       return 'Apple';
     }
-    if (domain.includes('google')) {
-      if (url.pathname.includes('play')) return 'Google Play';
+    // Check google.com carefully
+    if (domain.includes('google.')) {
+      if (domain === 'play.google.com' || domain.endsWith('.play.google.com')) return 'Google Play';
+      // Avoid generic 'Google' if it's play store
       return 'Google';
     }
-    
-    return domain.charAt(0).toUpperCase() + domain.slice(1);
+    if (domain.includes('substack.com')) return 'Substack';
+    if (domain.includes('medium.com')) return 'Medium';
+    if (domain.includes('patreon.com')) return 'Patreon';
+
+    // Generic domain label extraction
+    const parts = domain.split('.');
+    // Handle cases like 'co.uk', take the part before the TLD
+    let mainDomain = domain;
+    if (parts.length > 2 && parts[parts.length - 2].length <= 3 && parts[parts.length - 1].length <= 3) {
+        // Likely a complex TLD like co.uk, co.jp - take the part before that
+        mainDomain = parts[parts.length - 3];
+    } else if (parts.length > 1) {
+        mainDomain = parts[parts.length - 2];
+    } // else, it might be just 'localhost' or similar
+
+    return mainDomain.charAt(0).toUpperCase() + mainDomain.slice(1);
+
   } catch (e) {
-    return link.length > 30 ? link.substring(0, 30) + '...' : link;
+    // Fallback for invalid URLs or unexpected formats
+    console.warn(`Error creating link label for: ${link}`, e);
+    // Try to extract something meaningful if possible, otherwise truncate
+    const simpleMatch = link.match(/^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/i);
+    const fallbackDomain = simpleMatch && simpleMatch[1] ? simpleMatch[1] : link;
+    const cleanedFallback = fallbackDomain.split('/')[0]; // Remove path if any
+    return cleanedFallback.length > 30 ? cleanedFallback.substring(0, 27) + '...' : cleanedFallback;
   }
 };
 
@@ -119,18 +194,21 @@ export const getMetadataFields = (resourceType) => {
   // Normalize the resource type for consistent handling
   const normalizedType = normalizeResourceType(resourceType);
   const commonFields = [];
-  
+
+  // Helper function to format array values consistently
+  const formatArrayValue = (value) => {
+    // Ensure value is actually an array before joining
+    return Array.isArray(value) ? value.join(', ') : value;
+  };
+
   const typeSpecificFields = {
     book: [
       {
         label: 'Author',
-        value: (resource) => {
-          const authors = getResourceDetail(resource, 'book', 'author');
-          return Array.isArray(authors) ? authors.join(', ') : authors;
-        }
+        value: (resource) => formatArrayValue(getResourceDetail(resource, 'book', 'author'))
       },
       {
-        label: 'Year Published',
+        label: 'Year',
         value: (resource) => getResourceDetail(resource, 'book', 'yearPublished')
       },
       {
@@ -145,50 +223,37 @@ export const getMetadataFields = (resourceType) => {
     videoChannel: [
       {
         label: 'Creator',
-        value: (resource) => getResourceDetail(resource, 'videoChannel', 'creator')
+        value: (resource) => formatArrayValue(getResourceDetail(resource, 'videoChannel', 'creator'))
       },
       {
         label: 'Key Topics',
-        value: (resource) => {
-          const topics = getResourceDetail(resource, 'videoChannel', 'keyTopics');
-          return Array.isArray(topics) ? topics.join(', ') : topics;
-        }
+        value: (resource) => formatArrayValue(getResourceDetail(resource, 'videoChannel', 'keyTopics'))
       }
     ],
     website: [
       {
         label: 'Creator',
-        value: (resource) => getResourceDetail(resource, 'website', 'creator')
+        value: (resource) => formatArrayValue(getResourceDetail(resource, 'website', 'creator'))
       },
       {
         label: 'Content Types',
-        value: (resource) => {
-          const types = getResourceDetail(resource, 'website', 'primaryContentTypes');
-          return Array.isArray(types) ? types.join(', ') : types;
-        }
+        value: (resource) => formatArrayValue(getResourceDetail(resource, 'website', 'primaryContentTypes'))
       }
     ],
     blog: [
       {
         label: 'Author',
-        value: (resource) => getResourceDetail(resource, 'blog', 'author')
+        value: (resource) => formatArrayValue(getResourceDetail(resource, 'blog', 'author'))
       },
       {
         label: 'Frequency',
         value: (resource) => getResourceDetail(resource, 'blog', 'frequency')
-      },
-      {
-        label: 'Word Count',
-        value: (resource) => resource.wordCount
       }
     ],
     podcast: [
       {
         label: 'Hosts',
-        value: (resource) => {
-          const hosts = getResourceDetail(resource, 'podcast', 'hosts');
-          return Array.isArray(hosts) ? hosts.join(', ') : hosts;
-        }
+        value: (resource) => formatArrayValue(getResourceDetail(resource, 'podcast', 'hosts'))
       },
       {
         label: 'Active',
@@ -200,10 +265,7 @@ export const getMetadataFields = (resourceType) => {
       },
       {
         label: 'Notable Guests',
-        value: (resource) => {
-          const guests = getResourceDetail(resource, 'podcast', 'notableGuests');
-          return Array.isArray(guests) ? guests.join(', ') : guests;
-        }
+        value: (resource) => formatArrayValue(getResourceDetail(resource, 'podcast', 'notableGuests'))
       }
     ],
     retreatCenter: [
@@ -213,20 +275,21 @@ export const getMetadataFields = (resourceType) => {
       },
       {
         label: 'Retreat Types',
-        value: (resource) => {
-          const types = getResourceDetail(resource, 'retreatCenter', 'retreatTypes');
-          return Array.isArray(types) ? types.join(', ') : types;
-        }
+        value: (resource) => formatArrayValue(getResourceDetail(resource, 'retreatCenter', 'retreatTypes'))
       },
       {
         label: 'Upcoming Dates',
         value: (resource) => getResourceDetail(resource, 'retreatCenter', 'upcomingDates'),
-        isArray: true
+        isArray: true // Keep flag if used elsewhere
       }
     ],
     practice: [
       {
-        label: 'Source',
+        label: 'Originator', // Standardize field name if needed
+        value: (resource) => formatArrayValue(getResourceDetail(resource, 'practice', 'originator'))
+      },
+      {
+        label: 'Source', // Assuming 'source' is different from 'originator'
         value: (resource) => getResourceDetail(resource, 'practice', 'source')
       },
       {
@@ -241,14 +304,11 @@ export const getMetadataFields = (resourceType) => {
     app: [
       {
         label: 'Creator',
-        value: (resource) => getResourceDetail(resource, 'app', 'creator')
+        value: (resource) => formatArrayValue(getResourceDetail(resource, 'app', 'creator'))
       },
       {
         label: 'Platforms',
-        value: (resource) => {
-          const platforms = getResourceDetail(resource, 'app', 'platforms');
-          return Array.isArray(platforms) ? platforms.join(', ') : platforms;
-        }
+        value: (resource) => formatArrayValue(getResourceDetail(resource, 'app', 'platforms'))
       },
       {
         label: 'Price',
@@ -257,22 +317,14 @@ export const getMetadataFields = (resourceType) => {
       {
         label: 'Features',
         value: (resource) => getResourceDetail(resource, 'app', 'features'),
-        isArray: true
-      }
-    ],
-    video: [
-      {
-        label: 'Duration',
-        value: (resource) => getResourceDetail(resource, 'video', 'duration')
+        isArray: true // Keep flag if used elsewhere
       }
     ],
     article: [
-      {
-        label: 'Word Count',
-        value: (resource) => resource.wordCount
-      }
     ]
   };
-  
-  return [...(typeSpecificFields[normalizedType] || []), ...commonFields];
+
+  // Return only fields that have a value extractor defined for the normalized type
+  const fieldsForType = typeSpecificFields[normalizedType] || [];
+  return [...fieldsForType, ...commonFields];
 };

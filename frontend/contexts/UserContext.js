@@ -57,9 +57,9 @@ export const UserProvider = ({ children }) => {
           
           // Fetch user favorites
           await fetchFavorites();
-        } else {
         }
-      } catch (error) {
+      } catch (error) { 
+        // Intentionally empty catch block to fix syntax
       } finally {
         setLoading(false);
       }
@@ -75,7 +75,6 @@ export const UserProvider = ({ children }) => {
     try {
       const headers = await getAuthHeadersFunction();
       if (!headers) {
-        console.error('Failed to get auth headers for fetching favorites.');
         setLoading(false);
         return;
       }
@@ -91,9 +90,9 @@ export const UserProvider = ({ children }) => {
           teachers: [],
           traditions: []
         });
-      } else {
       }
     } catch (error) {
+      // Intentionally empty catch block to fix syntax
     } finally {
       setLoading(false);
     }
@@ -165,7 +164,6 @@ export const UserProvider = ({ children }) => {
 
       const headers = await getAuthHeadersFunction();
       if (!headers) {
-        console.error('Failed to get auth headers for updating favorite status.');
         return false;
       }
       headers['Content-Type'] = 'application/json'; // Ensure content type is set

@@ -18,14 +18,15 @@ export const normalizeResourceType = (type) => {
   switch (lowercaseType) {
     case 'books':
       return 'book';
-    case 'blogs':
+    case 'blog':
     case 'blogarticle':
     case 'blogarticles':
+    case 'blogs':
       return 'blog';
-    case 'videochannels':
-    case 'videochannel':
-    case 'videos':
     case 'video':
+    case 'videochannel':
+    case 'videochannels':
+    case 'videos':
     case 'video channel':
     case 'video channels':
       return 'videoChannel'; 
@@ -33,9 +34,9 @@ export const normalizeResourceType = (type) => {
       return 'podcast';
     case 'practices':
       return 'practice';
-    case 'retreatcenters':
-    case 'retreatcenter':
     case 'retreat':
+    case 'retreatcenter':
+    case 'retreatcenters':
     case 'retreats':
     case 'retreat center':
     case 'retreat centers':

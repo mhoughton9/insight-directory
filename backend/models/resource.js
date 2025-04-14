@@ -659,6 +659,15 @@ resourceSchema.index(
   }
 );
 
+// Indexes for query optimization
+resourceSchema.index({ processed: 1, createdAt: -1 });
+resourceSchema.index({ processed: 1, type: 1, createdAt: -1 });
+resourceSchema.index({ processed: 1, featured: 1, createdAt: -1 });
+resourceSchema.index({ processed: 1, teachers: 1, createdAt: -1 }); // Multikey
+resourceSchema.index({ processed: 1, traditions: 1, createdAt: -1 }); // Multikey
+resourceSchema.index({ processed: 1, tags: 1, createdAt: -1 }); // Multikey
+resourceSchema.index({ tags: 1 }); // For getResourceTags aggregation
+
 const Resource = mongoose.model('Resource', resourceSchema);
 
 module.exports = Resource;
