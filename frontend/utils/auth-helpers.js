@@ -25,8 +25,8 @@ export const useAuthHeaders = () => {
         headers['Authorization'] = `Bearer ${token}`;
       }
       
-      // Add Clerk user ID for backend identification
-      headers['x-clerk-user-id'] = user.id;
+      // Add Clerk user ID for backend identification - REMOVED as backend uses token only
+      // headers['x-clerk-user-id'] = user.id;
     }
     
     return headers;

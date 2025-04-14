@@ -1,4 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
+import ResourceForm from '../ResourceForm';
+import { useAuthHeaders } from '@/utils/auth-helpers';
 
 /**
  * Suggestion Detail Modal Component
@@ -9,7 +14,8 @@ import { useState } from 'react';
 const SuggestionDetailModal = ({ isOpen, onClose, suggestion, onUpdateStatus, onDelete }) => {
   const [status, setStatus] = useState(suggestion?.status || 'new');
   const [adminNotes, setAdminNotes] = useState(suggestion?.adminNotes || '');
-  
+  const { getHeaders: getAuthHeadersFunction } = useAuthHeaders();
+
   if (!isOpen || !suggestion) return null;
   
   // Format resource type for display
@@ -49,6 +55,7 @@ const SuggestionDetailModal = ({ isOpen, onClose, suggestion, onUpdateStatus, on
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Call the callback passed from the parent page
     onUpdateStatus(suggestion._id, status, adminNotes);
   };
   

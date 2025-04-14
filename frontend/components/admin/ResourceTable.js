@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { formatResourceType } from './utils/resource-type-utils';
+import { useAuthHeaders } from '@/utils/auth-helpers';
 
 /**
  * Resource Table Component
@@ -10,6 +11,7 @@ import { formatResourceType } from './utils/resource-type-utils';
  */
 const ResourceTable = () => {
   const { user } = useUser();
+  const { getHeaders: getAuthHeadersFunction } = useAuthHeaders();
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -63,21 +65,28 @@ const ResourceTable = () => {
 
   // Handle resource deletion
   const handleDeleteResource = async (resourceId) => {
-    if (!confirm('Are you sure you want to delete this resource? This action cannot be undone.')) {
+    if (!user) return;
+
+    if (!window.confirm('Are you sure you want to delete this resource? This action cannot be undone.')) {
       return;
     }
-    
+
+    const headers = await getAuthHeadersFunction();
+    if (!headers) {
+      alert('Authentication failed. Cannot delete resource.');
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/admin/resources/${resourceId}?clerkId=${user.id}`, {
+      const response = await fetch(`/api/admin/resources/${resourceId}`, {
         method: 'DELETE',
+        headers: headers,
       });
-      
-      const data = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to delete resource');
+        throw new Error(response.statusText);
       }
-      
+
       // Remove the deleted resource from the state
       setResources(resources.filter(resource => resource._id !== resourceId));
     } catch (err) {

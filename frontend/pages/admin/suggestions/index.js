@@ -5,6 +5,7 @@ import AdminProtected from '@/components/admin/AdminProtected';
 import SuggestionsList from '@/components/admin/suggestions/SuggestionsList';
 import SuggestionDetailModal from '@/components/admin/suggestions/SuggestionDetailModal';
 import { useUser } from '@clerk/nextjs';
+import { useAuthHeaders } from '@/utils/auth-helpers';
 
 /**
  * Admin Suggestions Page
@@ -13,6 +14,7 @@ import { useUser } from '@clerk/nextjs';
  */
 const AdminSuggestionsPage = () => {
   const { user } = useUser();
+  const { getHeaders: getAuthHeadersFunction } = useAuthHeaders();
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,26 +32,34 @@ const AdminSuggestionsPage = () => {
   // Fetch suggestions
   const fetchSuggestions = async () => {
     if (!user) return;
-    
+
+    const headers = await getAuthHeadersFunction();
+    if (!headers) {
+      console.error('Failed to get auth headers for fetching suggestions.');
+      setError('Authentication failed.');
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
-      
+
       // Build query parameters
       const queryParams = new URLSearchParams();
-      queryParams.append('clerkId', user.id);
       if (statusFilter !== 'all') {
         queryParams.append('status', statusFilter);
       }
-      
+
       // Fetch suggestions from API
-      const response = await fetch(`/api/admin/suggestions?${queryParams.toString()}`);
+      const apiUrl = `/api/admin/suggestions${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+      const response = await fetch(apiUrl, { headers });
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.message || 'Failed to fetch suggestions');
       }
-      
+
       setSuggestions(data.data);
     } catch (err) {
       console.error('Error fetching suggestions:', err);
@@ -62,15 +72,22 @@ const AdminSuggestionsPage = () => {
   // Fetch suggestion statistics
   const fetchStats = async () => {
     if (!user) return;
-    
+
+    const headers = await getAuthHeadersFunction();
+    if (!headers) {
+      console.error('Failed to get auth headers for fetching stats.');
+      // Optionally set an error state if stats failing is critical
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/admin/suggestions/stats?clerkId=${user.id}`);
+      const response = await fetch(`/api/admin/suggestions/stats`, { headers });
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.message || 'Failed to fetch suggestion statistics');
       }
-      
+
       setStats(data.data);
     } catch (err) {
       console.error('Error fetching suggestion statistics:', err);
@@ -105,26 +122,34 @@ const AdminSuggestionsPage = () => {
   // Handle suggestion status update
   const handleUpdateStatus = async (id, status, adminNotes) => {
     if (!user) return;
-    
+
+    const headers = await getAuthHeadersFunction();
+    if (!headers) {
+      console.error('Failed to get auth headers for updating suggestion.');
+      alert('Authentication failed. Cannot update suggestion.');
+      return;
+    }
+
+    // Add Content-Type to the headers object
+    headers['Content-Type'] = 'application/json';
+
     try {
-      const response = await fetch(`/api/admin/suggestions/${id}?clerkId=${user.id}`, {
+      const response = await fetch(`/api/admin/suggestions/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: headers,
         body: JSON.stringify({ status, adminNotes })
       });
-      
+
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.message || 'Failed to update suggestion');
       }
-      
+
       // Refresh suggestions and stats
       fetchSuggestions();
       fetchStats();
-      
+
       // Close the modal
       handleCloseModal();
     } catch (err) {
@@ -135,23 +160,36 @@ const AdminSuggestionsPage = () => {
 
   // Handle suggestion deletion
   const handleDeleteSuggestion = async (id) => {
-    if (!user || !confirm('Are you sure you want to delete this suggestion?')) return;
-    
+    if (!user) return;
+
+    const headers = await getAuthHeadersFunction();
+    if (!headers) {
+      console.error('Failed to get auth headers for deleting suggestion.');
+      alert('Authentication failed. Cannot delete suggestion.');
+      return;
+    }
+
+    // Confirmation dialog
+    if (!window.confirm('Are you sure you want to delete this suggestion permanently?')) {
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/admin/suggestions/${id}?clerkId=${user.id}`, {
-        method: 'DELETE'
+      const response = await fetch(`/api/admin/suggestions/${id}`, {
+        method: 'DELETE',
+        headers: headers
       });
-      
+
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.message || 'Failed to delete suggestion');
       }
-      
+
       // Refresh suggestions and stats
       fetchSuggestions();
       fetchStats();
-      
+
       // Close the modal if open
       handleCloseModal();
     } catch (err) {
@@ -167,13 +205,13 @@ const AdminSuggestionsPage = () => {
           <title>User Suggestions | Insight Directory Admin</title>
           <meta name="description" content="Manage user-submitted resource suggestions" />
         </Head>
-        
+
         <div className="space-y-6">
           {/* Page Header */}
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-semibold text-gray-800">User Suggestions</h1>
           </div>
-          
+
           {/* Statistics */}
           <div className="bg-white rounded-lg shadow p-4">
             <h2 className="text-lg font-medium mb-3">Suggestion Statistics</h2>
@@ -200,7 +238,7 @@ const AdminSuggestionsPage = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Status Filter */}
           <div className="bg-white rounded-lg shadow p-4">
             <h2 className="text-lg font-medium mb-3">Filter by Status</h2>
@@ -237,7 +275,7 @@ const AdminSuggestionsPage = () => {
               </button>
             </div>
           </div>
-          
+
           {/* Suggestions List */}
           <SuggestionsList
             suggestions={suggestions}
@@ -245,7 +283,7 @@ const AdminSuggestionsPage = () => {
             error={error}
             onSuggestionClick={handleSuggestionClick}
           />
-          
+
           {/* Suggestion Detail Modal */}
           {selectedSuggestion && (
             <SuggestionDetailModal

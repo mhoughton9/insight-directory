@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
 import ResourceTypeSelector from '@/components/admin/resource-processing/ResourceTypeSelector';
 import ResourceProcessingForm from '@/components/admin/resource-processing/ResourceProcessingForm';
 import { useUser } from '@clerk/nextjs';
+import { useAuthHeaders } from '@/utils/auth-helpers';
 
 const ResourceProcessor = () => {
   const { user } = useUser();
@@ -15,25 +16,33 @@ const ResourceProcessor = () => {
   const [progress, setProgress] = useState({ processed: 0, total: 0, remaining: 0, skipped: 0 });
   const [successMessage, setSuccessMessage] = useState('');
   const [typeCounts, setTypeCounts] = useState([]);
+  const { getHeaders: getAuthHeadersFunction } = useAuthHeaders();
 
   // Fetch the next unprocessed resource
-  const fetchNextResource = async (type = selectedType, currentResourceId = null) => { 
+  const fetchNextResource = useCallback(async (type = selectedType, currentResourceId = null) => { 
     if (!user) return;
     try {
       setLoading(true);
       setError(null);
       setSuccessMessage('');
       
+      const headers = await getAuthHeadersFunction();
+      if (!headers) {
+        setError('Authentication failed.');
+        setLoading(false);
+        return;
+      }
+      
       let url = type 
-        ? `/api/admin/process/next-unprocessed?type=${type}&clerkId=${user.id}` 
-        : `/api/admin/process/next-unprocessed?clerkId=${user.id}`;
+        ? `/api/admin/process/next-unprocessed?type=${type}` 
+        : `/api/admin/process/next-unprocessed`;
       
       // Add currentResourceId if provided to fetch the *next* one
       if (currentResourceId) {
         url += `&currentResourceId=${currentResourceId}`;
       }
       
-      const response = await fetch(url);
+      const response = await fetch(url, { headers });
       const data = await response.json();
       
       if (!response.ok) {
@@ -60,13 +69,20 @@ const ResourceProcessor = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedType, user]);
 
   // Fetch processing progress and type counts
-  const fetchProgress = async () => {
+  const fetchProgress = useCallback(async () => {
     if (!user) return;
     try {
-      const response = await fetch(`/api/admin/process/progress?clerkId=${user.id}`);
+      const headers = await getAuthHeadersFunction();
+      if (!headers) {
+        setProgressError('Authentication failed.');
+        setProgressLoading(false);
+        return;
+      }
+      
+      const response = await fetch(`/api/admin/process/progress`, { headers });
       const data = await response.json();
       
       if (!response.ok) {
@@ -79,7 +95,7 @@ const ResourceProcessor = () => {
       console.error('Error fetching progress:', err);
       // Don't set error state here to avoid disrupting the main flow
     }
-  };
+  }, [user]);
 
   // Handle resource type change
   const handleTypeChange = (type) => {

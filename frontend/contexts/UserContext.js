@@ -1,11 +1,13 @@
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { useUser, useAuth } from '@clerk/nextjs';
+import { useAuthHeaders } from '@/utils/auth-helpers';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const { isLoaded, isSignedIn, user } = useUser();
   const { getToken } = useAuth();
+  const { getHeaders: getAuthHeadersFunction } = useAuthHeaders();
   const [userProfile, setUserProfile] = useState(null);
   const [favorites, setFavorites] = useState({
     resources: [],
@@ -67,17 +69,19 @@ export const UserProvider = ({ children }) => {
   }, [isLoaded, isSignedIn, user, getToken]);
 
   // Fetch user favorites
-  const fetchFavorites = async () => {
+  const fetchFavorites = useCallback(async () => {
     if (!isSignedIn || !user) return;
 
     try {
-      // Get the Clerk JWT token
-      const token = await getToken();
+      const headers = await getAuthHeadersFunction();
+      if (!headers) {
+        console.error('Failed to get auth headers for fetching favorites.');
+        setLoading(false);
+        return;
+      }
       
-      const response = await fetch(`/api/users/favorites?clerkId=${user.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      const response = await fetch(`/api/users/favorites`, {
+        headers: headers
       });
       
       if (response.ok) {
@@ -90,8 +94,10 @@ export const UserProvider = ({ children }) => {
       } else {
       }
     } catch (error) {
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [isSignedIn, user, getAuthHeadersFunction]);
 
   // Add an item to favorites
   const addFavorite = async (type, id) => {
@@ -157,21 +163,22 @@ export const UserProvider = ({ children }) => {
       
       setFavorites(currentFavorites);
 
-      // Get the Clerk JWT token
-      const token = await getToken();
+      const headers = await getAuthHeadersFunction();
+      if (!headers) {
+        console.error('Failed to get auth headers for updating favorite status.');
+        return false;
+      }
+      headers['Content-Type'] = 'application/json'; // Ensure content type is set
       
       // Send to API
       const response = await fetch('/api/users/favorites', {
-        method: 'POST',
+        method: action === 'remove' ? 'DELETE' : 'POST', // Use correct method
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token ? `Bearer ${token}` : ''
+          ...headers,
         },
         body: JSON.stringify({
-          clerkId: user.id,
           type,
           id,
-          action
         })
       });
 
@@ -212,7 +219,7 @@ export const UserProvider = ({ children }) => {
         [toggleKey]: false
       }));
     }
-  }, [isSignedIn, user, favorites, getToken]);
+  }, [isSignedIn, user, favorites, getAuthHeadersFunction]);
 
   // Check if an item is favorited
   const isItemFavorited = useCallback((type, id) => {

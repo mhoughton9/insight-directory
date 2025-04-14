@@ -13,11 +13,12 @@ const router = express.Router();
 router.post('/sync', authMiddleware, userController.syncUser);
 
 // Profile routes
-router.get('/profile', userController.getUserProfile);
-router.post('/profile', userController.createOrUpdateUser);
+router.get('/profile', authMiddleware, userController.getUserProfile);
+router.post('/profile', authMiddleware, userController.createOrUpdateUser);
 
 // Favorites routes - using unified endpoint with authentication
 router.get('/favorites', authMiddleware, userController.getUserFavorites);
 router.post('/favorites', authMiddleware, userController.toggleFavorite);
+router.delete('/favorites', authMiddleware, userController.toggleFavorite); // Add DELETE method
 
 module.exports = router;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
+import { useAuthHeaders } from '../../utils/auth-helpers';
 
 /**
  * Admin Dashboard Component
@@ -9,6 +10,7 @@ import Link from 'next/link';
  */
 const Dashboard = () => {
   const { user } = useUser();
+  const { getHeaders: getAuthHeadersFunction } = useAuthHeaders();
   const [resourceStats, setResourceStats] = useState(null);
   const [teacherStats, setTeacherStats] = useState(null);
   const [traditionStats, setTraditionStats] = useState(null);
@@ -21,13 +23,21 @@ const Dashboard = () => {
     const fetchStats = async () => {
       if (!user) return;
       
+      const headers = await getAuthHeadersFunction();
+      if (!headers) {
+        console.error('Failed to get authentication headers.');
+        setError('Authentication failed. Please try logging in again.');
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
         
         // Fetch resource statistics from the API
         try {
-          const resourceResponse = await fetch(`/api/admin/resources/stats?clerkId=${user.id}`);
+          const resourceResponse = await fetch('/api/admin/resources/stats', { headers });
           const resourceData = await resourceResponse.json();
           
           if (!resourceResponse.ok) {
@@ -42,7 +52,7 @@ const Dashboard = () => {
         // Fetch teacher statistics
         try {
           console.log('Fetching teacher statistics...');
-          const teacherResponse = await fetch(`/api/admin/teachers/stats?clerkId=${user.id}`);
+          const teacherResponse = await fetch('/api/admin/teachers/stats', { headers });
           const teacherData = await teacherResponse.json();
           
           console.log('Teacher stats response:', teacherData);
@@ -65,7 +75,7 @@ const Dashboard = () => {
         // Fetch tradition statistics
         try {
           console.log('Fetching tradition statistics...');
-          const traditionResponse = await fetch(`/api/admin/traditions/stats?clerkId=${user.id}`);
+          const traditionResponse = await fetch('/api/admin/traditions/stats', { headers });
           const traditionData = await traditionResponse.json();
           
           console.log('Tradition stats response:', traditionData);
@@ -87,7 +97,7 @@ const Dashboard = () => {
 
         // Fetch suggestion statistics
         try {
-          const suggestionResponse = await fetch(`/api/admin/suggestions/stats?clerkId=${user.id}`);
+          const suggestionResponse = await fetch('/api/admin/suggestions/stats', { headers });
           const suggestionData = await suggestionResponse.json();
           
           if (!suggestionResponse.ok) {

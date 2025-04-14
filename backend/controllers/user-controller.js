@@ -12,8 +12,7 @@ const userController = {
    */
   getUserProfile: async (req, res) => {
     try {
-      // The user ID would come from the authenticated user via Clerk
-      const { clerkId } = req;
+      const clerkId = req.user?.id; // Get from auth middleware
       
       if (!clerkId) {
         return res.status(400).json(
@@ -62,9 +61,10 @@ const userController = {
    */
   createOrUpdateUser: async (req, res) => {
     try {
-      const userData = req.body;
+      const userData = { ...req.body }; // Copy body data
+      const clerkId = req.user?.id; // Get from auth middleware
       
-      if (!userData.clerkId) {
+      if (!clerkId) { // Check if userId exists
         return res.status(400).json(
           apiResponse.error({
             statusCode: 400,
@@ -73,13 +73,15 @@ const userController = {
         );
       }
       
+      userData.clerkId = clerkId; // Ensure clerkId is in the data to be saved/updated
+      
       // Check if user exists
-      let user = await User.findOne({ clerkId: userData.clerkId });
+      let user = await User.findOne({ clerkId });
       
       if (user) {
         // Update existing user
         user = await User.findOneAndUpdate(
-          { clerkId: userData.clerkId },
+          { clerkId },
           userData,
           { new: true, runValidators: true }
         );
@@ -121,8 +123,9 @@ const userController = {
   syncUser: async (req, res) => {
     try {
       const userData = req.body;
+      const clerkId = req.user?.id; // Get from auth middleware
       
-      if (!userData.clerkId) {
+      if (!clerkId) { // Check if userId exists from middleware
         return res.status(400).json(
           apiResponse.error({
             statusCode: 400,
@@ -132,12 +135,12 @@ const userController = {
       }
       
       // Check if user exists
-      let user = await User.findOne({ clerkId: userData.clerkId });
+      let user = await User.findOne({ clerkId }); // Use clerkId from middleware
       
       if (user) {
         // Update existing user with any new data
         user = await User.findOneAndUpdate(
-          { clerkId: userData.clerkId },
+          { clerkId }, // Use clerkId from middleware
           userData,
           { new: true, runValidators: true }
         );
@@ -177,7 +180,7 @@ const userController = {
    * @route GET /api/users/favorites
    */
   getUserFavorites: async (req, res) => {
-    const { clerkId } = req;
+    const clerkId = req.user?.id; // Get from auth middleware
     const result = await favoritesService.getUserFavorites(clerkId);
     
     return res.status(result.statusCode || (result.success ? 200 : 500)).json(
@@ -200,9 +203,19 @@ const userController = {
    * @route POST /api/users/favorites
    */
   toggleFavorite: async (req, res) => {
-    const { clerkId, type, id, action } = req.body;
+    const clerkId = req.user?.id; // Get from auth middleware
+    const { type, id } = req.body; // Get type and id from body
+    const action = req.method === 'DELETE' ? 'remove' : 'add'; // Determine action from HTTP method
     
-    console.log('Toggle favorite request:', { clerkId, type, id, action });
+    console.log('Toggle favorite request:', { clerkId, type, id, action, method: req.method });
+    
+    if (!clerkId) {
+      return res.status(401).json(apiResponse.error({ statusCode: 401, message: 'Authentication required' }));
+    }
+    
+    if (!type || !id) {
+      return res.status(400).json(apiResponse.error({ statusCode: 400, message: 'Type and ID are required' }));
+    }
     
     const result = await favoritesService.toggleFavorite({ clerkId, type, id, action });
     

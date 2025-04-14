@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useUser, UserProfile } from '@clerk/nextjs';
 import Head from 'next/head';
-import { useUser } from '@clerk/nextjs';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { useUserContext } from '@/contexts/UserContext';
 import { Heading, Text } from '@/components/ui/Typography';
+import { formatResourceType } from '@/utils/resource-utils';
+import Link from 'next/link';
 
 const ProfilePage = () => {
   const { user } = useUser();
@@ -99,24 +101,18 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="border-b border-neutral-200 mb-6">
-            <nav className="-mb-px flex space-x-8">
+          {/* Tab Navigation */}
+          <div className="border-b border-neutral-200">
+            <nav className="-mb-px flex space-x-8" aria-label="Tabs">
               <button
                 onClick={() => setActiveTab('favorites')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'favorites' ? 'border-neutral-800 text-neutral-800' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'}`}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'favorites' ? 'border-accent text-accent' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'}`}
               >
                 Favorites
               </button>
               <button
-                onClick={() => setActiveTab('comments')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'comments' ? 'border-neutral-800 text-neutral-800' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'}`}
-              >
-                Comments
-              </button>
-              <button
                 onClick={() => setActiveTab('settings')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'settings' ? 'border-neutral-800 text-neutral-800' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'}`}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'settings' ? 'border-accent text-accent' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'}`}
               >
                 Settings
               </button>
@@ -124,79 +120,76 @@ const ProfilePage = () => {
           </div>
 
           {/* Tab Content */}
-          {activeTab === 'favorites' && (
-            <div>
-              {loading ? (
-                <div className="text-center py-8">
-                  <div className="animate-pulse inline-block h-8 w-8 rounded-full bg-neutral-200"></div>
-                  <Text className="mt-2 text-neutral-500">Loading your favorites...</Text>
-                </div>
-              ) : (
-                <div>
-                  {/* Resources */}
-                  <div className="mb-8">
-                    <Heading as="h2" size="xl" className="mb-4">Favorite Resources</Heading>
-                    {favoriteResources.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {favoriteResources.map(resource => (
-                          <div key={resource._id} className="bg-white p-4 rounded-lg shadow-sm">
-                            <Heading as="h3" size="md">{resource.title}</Heading>
-                            <Text size="sm" className="text-neutral-500 mt-1">{resource.type}</Text>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <Text className="text-neutral-500">You haven't favorited any resources yet.</Text>
-                    )}
+          <div className="mt-8">
+            {activeTab === 'favorites' && (
+              <div>
+                {loading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-pulse inline-block h-8 w-8 rounded-full bg-neutral-200"></div>
+                    <Text className="mt-2 text-neutral-500">Loading your favorites...</Text>
                   </div>
-
-                  {/* Teachers */}
-                  <div className="mb-8">
-                    <Heading as="h2" size="xl" className="mb-4">Favorite Teachers</Heading>
-                    {favoriteTeachers.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {favoriteTeachers.map(teacher => (
-                          <div key={teacher._id} className="bg-white p-4 rounded-lg shadow-sm">
-                            <Heading as="h3" size="md">{teacher.name}</Heading>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <Text className="text-neutral-500">You haven't favorited any teachers yet.</Text>
-                    )}
-                  </div>
-
-                  {/* Traditions */}
+                ) : (
                   <div>
-                    <Heading as="h2" size="xl" className="mb-4">Favorite Traditions</Heading>
-                    {favoriteTraditions.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {favoriteTraditions.map(tradition => (
-                          <div key={tradition._id} className="bg-white p-4 rounded-lg shadow-sm">
-                            <Heading as="h3" size="md">{tradition.name}</Heading>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <Text className="text-neutral-500">You haven't favorited any traditions yet.</Text>
-                    )}
+                    {/* Resources */}
+                    <div className="mb-8">
+                      <Heading as="h2" size="xl" className="mb-4">Favorite Resources</Heading>
+                      {favoriteResources.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {favoriteResources.map(resource => (
+                            <div key={resource._id} className="bg-white p-4 rounded-lg shadow-sm">
+                              <Heading as="h3" size="md">{resource.title}</Heading>
+                              <Text size="sm" className="text-neutral-500 mt-1">{formatResourceType(resource.type)}</Text>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <Text className="text-neutral-500">You haven't favorited any resources yet.</Text>
+                      )}
+                    </div>
+
+                    {/* Teachers */}
+                    <div className="mb-8">
+                      <Heading as="h2" size="xl" className="mb-4">Favorite Teachers</Heading>
+                      {favoriteTeachers.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {favoriteTeachers.map(teacher => (
+                            <div key={teacher._id} className="bg-white p-4 rounded-lg shadow-sm">
+                              <Heading as="h3" size="md">{teacher.name}</Heading>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <Text className="text-neutral-500">You haven't favorited any teachers yet.</Text>
+                      )}
+                    </div>
+
+                    {/* Traditions */}
+                    <div>
+                      <Heading as="h2" size="xl" className="mb-4">Favorite Traditions</Heading>
+                      {favoriteTraditions.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {favoriteTraditions.map(tradition => (
+                            <div key={tradition._id} className="bg-white p-4 rounded-lg shadow-sm">
+                              <Heading as="h3" size="md">{tradition.name}</Heading>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <Text className="text-neutral-500">You haven't favorited any traditions yet.</Text>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
 
-          {activeTab === 'comments' && (
-            <div className="py-4">
-              <Text className="text-neutral-500 text-center">Comments feature coming soon.</Text>
-            </div>
-          )}
-
-          {activeTab === 'settings' && (
-            <div className="py-4">
-              <Text className="text-neutral-500 text-center">Settings feature coming soon.</Text>
-            </div>
-          )}
+            {activeTab === 'settings' && (
+              <div className="py-4">
+                {/* Embed the Clerk UserProfile component */}
+                <UserProfile routing="hash" /> {/* Removed path prop */}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </ProtectedRoute>

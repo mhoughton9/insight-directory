@@ -9,6 +9,7 @@
     "seed": "node utils/seed-data.js"
   },
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^4.13.23",
     "aws4": "^1.13.2",
     "cloudinary": "^2.6.0",
     "cors": "^2.8.5",
