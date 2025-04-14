@@ -9,18 +9,18 @@
     "seed": "node utils/seed-data.js"
   },
   "dependencies": {
-    "amazon-paapi": "^1.0.7",
     "aws4": "^1.13.2",
     "cloudinary": "^2.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.18.2",
+    "express-rate-limit": "^7.5.0",
     "form-data": "^4.0.2",
+    "helmet": "^8.1.0",
     "mongoose": "^7.0.3",
     "morgan": "^1.10.0",
     "node-fetch": "^2.7.0",
     "openai": "^4.91.1",
-    "paapi5-nodejs-sdk": "^1.1.0",
     "slugify": "^1.6.6"
   },
   "devDependencies": {

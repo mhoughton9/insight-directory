@@ -3,13 +3,21 @@ node_modules/
 .pnp
 .pnp.js
 
+# Yarn PnP
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # Testing
 /coverage
 
-# Next.js
-.next/
-out/
-build/
+# Next.js (Frontend specific)
+frontend/.next/
+frontend/out/
+frontend/build/
 
 # Environment variables
 .env
