@@ -53,10 +53,6 @@ const resourceSchema = new mongoose.Schema(
       lowercase: true,
       trim: true
     },
-    teachers: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Teacher'
-    }],
     traditions: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Tradition'
@@ -663,7 +659,6 @@ resourceSchema.index(
 resourceSchema.index({ processed: 1, createdAt: -1 });
 resourceSchema.index({ processed: 1, type: 1, createdAt: -1 });
 resourceSchema.index({ processed: 1, featured: 1, createdAt: -1 });
-resourceSchema.index({ processed: 1, teachers: 1, createdAt: -1 }); // Multikey
 resourceSchema.index({ processed: 1, traditions: 1, createdAt: -1 }); // Multikey
 resourceSchema.index({ processed: 1, tags: 1, createdAt: -1 }); // Multikey
 resourceSchema.index({ tags: 1 }); // For getResourceTags aggregation

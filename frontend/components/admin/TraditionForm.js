@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { TRADITION_SECTIONS, DEFAULT_TRADITION_FORM_DATA, prepareTraditionForForm, validateTraditionForm, getTraditionImageContainerStyles } from '../../utils/tradition-utils';
+import { fetchWithAuth, createApiUrl } from '@/utils/api-auth';
 
 /**
  * Tradition Form Component
@@ -9,7 +10,7 @@ import { TRADITION_SECTIONS, DEFAULT_TRADITION_FORM_DATA, prepareTraditionForFor
  * Supports collapsible sections and relationship fields
  */
 const TraditionForm = ({ tradition = null, onSave, onCancel }) => {
-  const { user } = useUser();
+  const { getToken } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [aiGenerating, setAiGenerating] = useState(false);
@@ -118,35 +119,34 @@ const TraditionForm = ({ tradition = null, onSave, onCancel }) => {
 
   // Generate content with AI
   const generateWithAI = async () => {
-    if (!formData.name) {
-      setAiError('Please enter a tradition name first');
+    if (!getToken) {
+      setAiError('Authentication required.');
       return;
     }
-    
-    // Make sure we have a tradition ID (can only generate for existing traditions)
-    if (!tradition?._id) {
-      setAiError('Tradition must be saved before generating descriptions');
-      return;
-    }
-    
-    setAiGenerating(true);
-    setAiError(null);
-    
     try {
+      // Clear any previous errors
+      setAiError(null);
+      setAiGenerating(true);
+      
+      // Make sure we have a tradition ID
+      if (!tradition?._id) {
+        throw new Error('Tradition must be saved before generating descriptions');
+      }
+      
       // Get the section keys to generate
       const sectionKeys = TRADITION_SECTIONS.map(section => section.key);
-      
-      // Call the API to generate descriptions
-      const response = await fetch(`/api/admin/traditions/${tradition._id}/generate-descriptions`, {
+
+      // Construct the API URL
+      const apiUrl = createApiUrl(`/admin/traditions/${tradition._id}/generate-descriptions`);
+
+      // Call the API using fetchWithAuth
+      const response = await fetchWithAuth(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          sectionKeys,
-          clerkId: user.id // Add the clerkId for authentication
-        }),
-      });
+        body: JSON.stringify({ sectionKeys }),
+      }, getToken);
       
       if (!response.ok) {
         const errorData = await response.json();

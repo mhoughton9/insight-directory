@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { TEACHER_SECTIONS, DEFAULT_TEACHER_FORM_DATA, prepareTeacherForForm, validateTeacherForm, getTeacherImageContainerStyles } from '../../utils/teacher-utils';
+import { fetchWithAuth, createApiUrl } from '@/utils/api-auth';
 
 /**
  * Teacher Form Component
@@ -9,7 +10,7 @@ import { TEACHER_SECTIONS, DEFAULT_TEACHER_FORM_DATA, prepareTeacherForForm, val
  * Supports collapsible sections and relationship fields
  */
 const TeacherForm = ({ teacher = null, onSave, onCancel }) => {
-  const { user } = useUser();
+  const { getToken } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [aiGenerating, setAiGenerating] = useState(false);
@@ -105,6 +106,10 @@ const TeacherForm = ({ teacher = null, onSave, onCancel }) => {
 
   // Handle AI generation for description sections
   const handleGenerateWithAI = async () => {
+    if (!getToken) {
+      setAiError('Authentication required.');
+      return;
+    }
     try {
       // Clear any previous errors
       setAiError(null);
@@ -118,17 +123,19 @@ const TeacherForm = ({ teacher = null, onSave, onCancel }) => {
       // Get the section keys to generate
       const sectionKeys = TEACHER_SECTIONS.map(section => section.key);
       
-      // Call the API to generate descriptions
-      const response = await fetch(`/api/admin/teachers/${teacher._id}/generate-descriptions`, {
+      // Construct the API URL
+      const apiUrl = createApiUrl(`/admin/teachers/${teacher._id}/generate-descriptions`);
+      
+      // Call the API using fetchWithAuth
+      const response = await fetchWithAuth(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          sectionKeys,
-          clerkId: user.id // Add the clerkId for authentication
+          sectionKeys
         }),
-      });
+      }, getToken);
       
       if (!response.ok) {
         const errorData = await response.json();
@@ -409,7 +416,7 @@ const TeacherForm = ({ teacher = null, onSave, onCancel }) => {
                   onClick={handleAddLink}
                   className="text-indigo-600 hover:text-indigo-900 text-sm flex items-center"
                 >
-                  <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                   Add Link

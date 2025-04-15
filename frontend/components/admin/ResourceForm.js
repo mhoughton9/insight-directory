@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { RESOURCE_TYPES, formatResourceType, getResourceTypeConfig, getTitleLabel } from './utils/resource-type-utils';
 import { RESOURCE_SECTIONS, normalizeResourceTypeForSections } from '@/utils/resource-section-config';
+import { fetchWithAuth, createApiUrl } from '@/utils/api-auth';
 
 /**
  * Resource Form Component
@@ -10,7 +11,7 @@ import { RESOURCE_SECTIONS, normalizeResourceTypeForSections } from '@/utils/res
  * Supports collapsible sections and type-specific fields
  */
 const ResourceForm = ({ resource = null, onSave, onCancel }) => {
-  const { user } = useUser();
+  const { getToken } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showDescriptionSections, setShowDescriptionSections] = useState(!!resource?.descriptionSections);
@@ -148,6 +149,10 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
 
   // Handle AI generation for description sections
   const handleGenerateWithAI = async () => {
+    if (!getToken) {
+      setAiError('Authentication required.');
+      return;
+    }
     try {
       // Clear any previous errors
       setAiError(null);
@@ -157,17 +162,19 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
       const sections = getDescriptionSectionsForType();
       const sectionKeys = sections.map(section => section.key);
       
-      // Call the API
-      const response = await fetch(`/api/admin/resources/${resource._id}/generate-descriptions`, {
+      // Define the API URL using createApiUrl
+      const apiUrl = createApiUrl(`/admin/resources/${resource._id}/generate-descriptions`);
+
+      // Call the API using fetchWithAuth
+      const response = await fetchWithAuth(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          sectionKeys,
-          clerkId: user.id // Add the clerkId for authentication
+          sectionKeys // Remove clerkId
         }),
-      });
+      }, getToken);
       
       const data = await response.json();
       
@@ -203,7 +210,12 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
       alert('Descriptions generated successfully!');
     } catch (err) {
       console.error('Error generating descriptions:', err);
-      setAiError(err.message || 'Failed to generate descriptions');
+      // Check if the error is from fetchWithAuth regarding authentication
+      if (err.message === 'Authentication token not available' || err.message.includes('401') || err.message.includes('403')) {
+        setAiError('Authentication required. Please ensure you are logged in.');
+      } else {
+        setAiError(err.message || 'Failed to generate descriptions');
+      }
     } finally {
       setAiGenerating(false);
     }
@@ -490,7 +502,7 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
                   onClick={handleAddLink}
                   className="text-indigo-600 hover:text-indigo-900 text-sm flex items-center"
                 >
-                  <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                   Add Link
@@ -632,7 +644,7 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
                   </>
                 ) : (
                   <>
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                     Generate with AI

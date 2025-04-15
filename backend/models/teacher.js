@@ -86,6 +86,10 @@ const teacherSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Teacher'
     }],
+    associatedResourceIds: [{ // Added field for direct linking
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Resource'
+    }],
     processed: {
       type: Boolean,
       default: false, // Default to 'Pending' status
@@ -98,13 +102,6 @@ const teacherSchema = new mongoose.Schema(
     toObject: { virtuals: true }
   }
 );
-
-// Virtual for resources associated with this teacher
-teacherSchema.virtual('resources', {
-  ref: 'Resource',
-  localField: '_id',
-  foreignField: 'teachers'
-});
 
 // Pre-save middleware to sync website with links array
 teacherSchema.pre('save', function(next) {

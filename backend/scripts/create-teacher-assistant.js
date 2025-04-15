@@ -49,7 +49,7 @@ You will be given:
 
 For historical teachers, focus on their lasting impact and how their teachings have evolved over time. For contemporary teachers, emphasize their current approach and relevance.
 
-Make each section concise but valuable. For text sections, write 1–2 clear, honest paragraphs. For the notable_quotes array, provide 2–4 straightforward, meaningful quotes. Assume the reader is curious but not necessarily experienced in non-dual teachings.
+Pay special attention to the \`teaching_style\` section. This is the most important section. Elaborate significantly here, aiming for 3-6 detailed paragraphs describing their methods, communication style, common themes, and overall approach. For all other text sections, keep them concise (1-2 paragraphs). For the notable_quotes array, provide 2–4 straightforward, meaningful quotes. Assume the reader is curious but not necessarily experienced in non-dual teachings.
 
 Return your response as a valid JSON object with the exact section keys provided, with no additional commentary.`
     });

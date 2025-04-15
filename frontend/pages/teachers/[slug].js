@@ -138,67 +138,49 @@ const TeacherDetailPage = () => {
           </div>
           
           <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
-            {/* Teacher image (if available) */}
-            {teacher.imageUrl && (
-              <div 
-                className="rounded-lg overflow-hidden relative flex-shrink-0 border border-neutral-200 dark:border-neutral-700 shadow-sm transition-transform hover:scale-105"
-                style={getTeacherImageContainerStyles()}
-              >
-                <Image 
-                  src={teacher.imageUrl} 
-                  alt={teacher.name}
-                  fill
-                  sizes="(max-width: 640px) 96px, (max-width: 768px) 112px, 128px"
-                  className="object-cover"
-                />
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8">
+              <div className="flex items-center space-x-4">
+                {teacher.imageUrl && (
+                  <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden border border-neutral-100 dark:border-neutral-800 shadow-sm flex-shrink-0">
+                    <Image
+                      src={teacher.imageUrl}
+                      alt={`${teacher.name} Portrait`}
+                      layout="fill"
+                      objectFit="cover"
+                      onError={(e) => { e.target.style.display = 'none'; }} // Hide if image fails to load
+                    />
+                  </div>
+                )}
+                <h1 className={Typography.pageTitle}>
+                  {teacher.name}
+                </h1>
+              </div>
+            </div>
+            
+            {/* Removed birth/death year display as it's already shown in the sidebar */}
+            
+            {teacher.traditions && teacher.traditions.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2 max-w-full overflow-hidden">
+                {teacher.traditions.map((tradition, index) => (
+                  <Link 
+                    key={index}
+                    href={`/traditions/${tradition.slug || tradition}`}
+                    className={Typography.tagPill}
+                  >
+                    {tradition.name || tradition}
+                  </Link>
+                ))}
               </div>
             )}
-            
-            <div className="flex-1">
-              <h1 className={Typography.pageTitle}>
-                {teacher.name}
-              </h1>
-              
-              {(teacher.birthYear || teacher.deathYear) && (
-                <p className={Typography.metadataText}>
-                  {teacher.birthYear || '?'} - {teacher.deathYear || 'Present'}
-                </p>
-              )}
-              
-              {teacher.traditions && teacher.traditions.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2 max-w-full overflow-hidden">
-                  {teacher.traditions.map((tradition, index) => (
-                    <Link 
-                      key={index}
-                      href={`/traditions/${tradition.slug || tradition}`}
-                      className={Typography.tagPill}
-                    >
-                      {tradition.name || tradition}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </header>
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-0 md:py-1 -mt-2">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
           <div className="w-full lg:w-2/3">
             {/* Teacher Detail Content */}
             <TeacherDetailContent teacher={teacher} />
-            
-            <div className={Typography.cardContainer}>
-              <h2 className={Typography.sectionHeading}>
-                Resources by {teacher.name}
-              </h2>
-              
-              {/* Resources section temporarily disabled until API endpoint is implemented */}
-              <p className={Typography.emptyStateText}>
-                Resources for this teacher will be available soon.
-              </p>
-            </div>
           </div>
           
           <div className="w-full lg:w-1/3">
