@@ -35,7 +35,7 @@ const ResourceGrid = React.memo(function ResourceGrid({ resources = [], isLoadin
   }
   
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
       {resources.map(resource => (
         <ResourceCard 
           key={resource._id || resource.slug} 
@@ -55,7 +55,7 @@ export default ResourceGrid;
  */
 function ResourceCardSkeleton() {
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full animate-pulse">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700 max-w-xs mx-auto">
       {/* Card Header with Image */}
       <div className="h-48 bg-neutral-200 dark:bg-neutral-700"></div>
       

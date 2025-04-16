@@ -66,7 +66,7 @@ export default function ResourceCard({ resource, searchTerm = '' }) {
   
   return (
     <Link href={`/resources/${slug}`} className="block h-full">
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700 max-w-xs mx-auto">
         {/* Card Header with Image */}
         <div 
           className="relative bg-neutral-100 dark:bg-neutral-800 w-full overflow-hidden"
@@ -78,9 +78,11 @@ export default function ResourceCard({ resource, searchTerm = '' }) {
                 src={imageUrl} 
                 alt={title} 
                 fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                priority={false}
-                className="object-contain"
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                loading="lazy"
+                placeholder="blur"
+                blurDataURL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3C/svg%3E"
+                className="object-contain transition-opacity duration-300"
                 style={{ objectFit: 'contain' }}
               />
             </div>
