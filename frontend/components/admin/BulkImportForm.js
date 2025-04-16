@@ -19,25 +19,15 @@ const BulkImportForm = () => {
   // Example JSON structures for reference
   const resourceExampleJson = [
     {
-      "title": "Example Book",
-      "description": "A sample book about non-duality",
+      "title": "Example Book Title",
+      "description": "A thorough exploration of non-duality and spiritual awakening",
       "type": "book",
-      "creator": ["John Doe"],
-      "publishedDate": "2023-01-01",
-      "processed": false,
-      "bookDetails": {
-        "author": ["John Doe"],
-        "publisher": "Awakening Press",
-        "isbn": "978-1234567890",
-        "pages": 250,
-        "yearPublished": 2023,
-        "links": [
-          {
-            "url": "https://www.amazon.com/example-book",
-            "label": "Amazon"
-          }
-        ]
-      }
+      "author": ["John Smith"],
+      "yearPublished": 2023,
+      "pages": 320,
+      "publisher": "Awakening Press",
+      "isbn": "978-1234567890",
+      "processed": false
     },
     {
       "title": "Example Video Channel",
@@ -124,6 +114,7 @@ const BulkImportForm = () => {
       author: ["Eckhart Tolle"],
       yearPublished: 1997,
       pages: 236,
+      publisher: "New World Library",
       processed: false
     },
     videoChannel: {
@@ -184,7 +175,7 @@ const BulkImportForm = () => {
       description: "A peaceful center for silent retreats and self-inquiry",
       type: "retreatCenter",
       name: "Mountain Stream Retreat",
-      retreatTypes: ["Silent retreats", "Self-inquiry workshops", "Meditation sessions"],
+      location: "Nevada City, California",
       processed: false
     }
   };

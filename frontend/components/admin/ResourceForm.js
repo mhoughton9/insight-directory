@@ -406,16 +406,44 @@ const ResourceForm = ({ resource = null, onSave, onCancel }) => {
             {/* Publication Date */}
             <div>
               <label htmlFor="publishedDate" className="block text-sm font-medium text-gray-700 mb-1">
-                Publication Date
+                {formData.type === 'book' ? 'Publication Year' : 'Publication Date'}
               </label>
-              <input
-                type="date"
-                id="publishedDate"
-                name="publishedDate"
-                value={formData.publishedDate ? new Date(formData.publishedDate).toISOString().split('T')[0] : ''}
-                onChange={handleInputChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              />
+              {formData.type === 'book' ? (
+                <input
+                  type="number"
+                  id="yearPublished"
+                  name="yearPublished"
+                  placeholder="YYYY"
+                  min="1000"
+                  max="2099"
+                  value={formData.bookDetails?.yearPublished || (formData.publishedDate ? new Date(formData.publishedDate).getFullYear() : '')}
+                  onChange={(e) => {
+                    const year = parseInt(e.target.value);
+                    if (!isNaN(year)) {
+                      // Update both bookDetails.yearPublished and the publishedDate
+                      const publishedDate = new Date(year, 0, 1); // January 1st of the year
+                      setFormData({
+                        ...formData,
+                        publishedDate,
+                        bookDetails: {
+                          ...formData.bookDetails,
+                          yearPublished: year
+                        }
+                      });
+                    }
+                  }}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                />
+              ) : (
+                <input
+                  type="date"
+                  id="publishedDate"
+                  name="publishedDate"
+                  value={formData.publishedDate ? new Date(formData.publishedDate).toISOString().split('T')[0] : ''}
+                  onChange={handleInputChange}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                />
+              )}
             </div>
             
             {/* Status */}
