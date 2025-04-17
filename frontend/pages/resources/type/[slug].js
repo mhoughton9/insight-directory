@@ -7,6 +7,7 @@ import { Heading, Text } from '../../../components/ui/Typography';
 
 // Components
 import ResourceGrid from '../../../components/resources/ResourceGrid';
+import BookListLayout from '../../../components/resources/BookListLayout';
 import Pagination from '../../../components/ui/Pagination';
 
 /**
@@ -116,7 +117,11 @@ export default function ResourceTypePage() {
           </div>
         ) : (
           <>
-            <ResourceGrid resources={resources} isLoading={isLoading} />
+            {type === 'book' ? (
+              <BookListLayout resources={resources} isLoading={isLoading} />
+            ) : (
+              <ResourceGrid resources={resources} isLoading={isLoading} />
+            )}
             
             {/* Pagination controls */}
             {totalPages > 1 && (
