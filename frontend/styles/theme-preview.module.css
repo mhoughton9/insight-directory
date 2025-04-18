@@ -1,0 +1,24 @@
+/* Dark theme preview styles */
+
+.darkTheme {
+  --bg-primary: #0E1217;
+  --bg-secondary: #161B22;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --accent: #6366F1; /* Indigo-600 */
+  --border: #2D3748;
+}
+
+.darkTheme :global(.card) {
+  background-color: var(--bg-secondary);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+.darkTheme :global(.card-title) {
+  color: var(--text-primary);
+}
+
+.darkTheme :global(.card-subtitle) {
+  color: var(--text-secondary);
+}
