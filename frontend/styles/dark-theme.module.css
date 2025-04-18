@@ -1,0 +1,292 @@
+/* Dark Theme Color System for Insight Directory (CSS Module) */
+
+.darkTheme {
+  /* Simplified gradient variables using just two colors from the logo */
+  --simplified-gradient: linear-gradient(90deg, 
+    #1E90FF, /* Blue */
+    #9370DB  /* Purple */
+  );
+  --simplified-gradient-hover: linear-gradient(90deg, 
+    #4BA5FF, /* Lighter Blue */
+    #A385E0  /* Lighter Purple */
+  );
+  
+  /* Keep the full rainbow gradient for reference but don't use it */
+  --rainbow-gradient: linear-gradient(90deg, 
+    #1E90FF, /* Blue */
+    #9370DB, /* Purple */
+    #3CB371, /* Green */
+    #FF8C00, /* Orange */
+    #FF6347  /* Red */
+  );
+  
+  /* Base palette & surfaces */
+  --dark-bg-primary: #0F2A47;      /* Primary background (navy blue like IndieHackers) */
+  --dark-bg-deeper: #0A1F36;       /* Deeper background for contrast */
+  --dark-surface: #1E3A59;         /* Card and input surface */
+  --dark-surface-hover: #2A4A6A;   /* Lighter surface for hover states */
+  --dark-overlay: #2D5275;         /* Overlay backgrounds */
+  --dark-shadow: rgba(0, 0, 0, 0.35); /* Shadows for elevation */
+  
+  /* Typography */
+  --dark-text-heading: #E8E0CE;    /* Light beige for headings (mirrors logo) */
+  --dark-text-body: #F5F6F8;       /* Soft white for body text */
+  --dark-text-muted: #6C6F7B;      /* Desaturated gray for secondary text */
+  
+  /* Accent colors from logo gradient */
+  --accent-blue: #1E90FF;          /* Extracted from logo */
+  --accent-purple: #9370DB;        /* Extracted from logo */
+  --accent-green: #3CB371;         /* Extracted from logo */
+  --accent-orange: #FF8C00;        /* Extracted from logo */
+  --accent-red: #FF6347;           /* Extracted from logo */
+  --accent-indigo: #6610f2;        /* For links and interactive elements */
+  
+  /* Interactive states */
+  --dark-hover: #192030;           /* Hover state for cards/elements */
+  --dark-active: #232D40;          /* Active/pressed state */
+  --dark-focus-ring: rgba(99, 102, 241, 0.6); /* Focus indicator */
+  
+  /* Border radii */
+  --border-radius-sm: 4px;         /* Small rounded corners */
+  --border-radius-md: 6px;         /* Medium rounded corners */
+  
+  /* Borders */
+  --dark-border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+  
+  /* Apply base styles */
+  background-color: var(--dark-bg-primary);
+  color: var(--dark-text-body);
+  min-height: 100vh;
+}
+
+/* Dark theme gradient for buttons and accents */
+.gradient {
+  background: var(--simplified-gradient);
+  transition: all 0.3s ease;
+}
+
+/* Dark theme gradient text (for links and special elements) */
+.gradientText {
+  background: var(--simplified-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+/* Link styles */
+.link {
+  color: #A8B3CF; /* Lighter blue-gray color for better readability */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  color: white;
+}
+
+/* Dark theme specific utility classes */
+.card {
+  background-color: var(--dark-surface);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  background-color: var(--dark-surface-hover);
+}
+
+.card:hover svg {
+  opacity: 1;
+}
+
+.card svg {
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+/* Card with gradient border */
+.cardGradientBorder {
+  position: relative;
+  background-color: var(--dark-surface);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 4px 6px var(--dark-shadow);
+  z-index: 1;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.cardGradientBorder:hover {
+  background-color: var(--dark-surface-hover);
+}
+
+.cardGradientBorder:hover svg {
+  opacity: 1;
+}
+
+.cardGradientBorder svg {
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.input {
+  background-color: var(--dark-surface);
+  border: var(--dark-border);
+  border-radius: var(--border-radius-sm);
+  color: var(--dark-text-body);
+}
+
+.input:focus {
+  box-shadow: 0 0 0 2px var(--dark-focus-ring);
+  outline: none;
+}
+
+.button {
+  background-color: var(--dark-surface);
+  border-radius: var(--border-radius-sm);
+  color: var(--dark-text-body);
+  border: var(--dark-border);
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  display: inline-block;
+  text-align: center;
+}
+
+.primaryButton {
+  background: var(--simplified-gradient);
+  color: white;
+  border-radius: var(--border-radius-sm);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  display: inline-block;
+  text-align: center;
+}
+
+.nav {
+  background-color: var(--dark-bg-deeper);
+  border-bottom: var(--dark-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Navigation active link */
+.activeLink {
+  color: white;
+  font-weight: 600;
+}
+
+.section {
+  background-color: var(--dark-bg-primary);
+  position: relative;
+  border-top: 1px solid #1A2130;
+  border-bottom: 1px solid #1A2130;
+}
+
+.sectionAlt {
+  background-color: var(--dark-bg-deeper);
+  border-top: var(--dark-border);
+  position: relative;
+}
+
+/* Hero section */
+.heroSection {
+  background-color: var(--dark-bg-primary);
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid #1A2130;
+  border-bottom: 1px solid #1A2130;
+}
+
+/* Category icon styles */
+.categoryIcon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  background: rgba(30, 144, 255, 0.1);
+  color: var(--accent-blue);
+}
+
+.heading {
+  color: var(--dark-text-heading);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.bodyText {
+  color: var(--dark-text-body);
+  line-height: 1.6;
+}
+
+.mutedText {
+  color: #9CA3B0; /* Mid-grey for secondary text */
+  font-size: 0.875rem;
+}
+
+.categoryDescription {
+  color: #A8B3CF; /* Lighter blue-gray for better readability */
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* Badge styles */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: rgba(99, 102, 241, 0.1);
+  color: var(--accent-indigo);
+  margin-right: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.badge:hover {
+  background-color: rgba(99, 102, 241, 0.2);
+}
+
+/* Input styles */
+.input {
+  background-color: var(--dark-surface);
+  border: var(--dark-border);
+  border-radius: var(--border-radius-sm);
+  color: var(--dark-text-body);
+  padding: 0.5rem 1rem;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent-indigo);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.input::placeholder {
+  color: var(--dark-text-muted);
+  opacity: 0.7;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--dark-border);
+  margin: 1.5rem 0;
+  width: 100%;
+}
+
+/* Logo container */
+.logoContainer {
+  position: relative;
+  display: inline-block;
+}
