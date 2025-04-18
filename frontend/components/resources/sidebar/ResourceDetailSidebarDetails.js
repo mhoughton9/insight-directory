@@ -44,7 +44,8 @@ const ResourceDetailSidebarDetails = ({ resource }) => {
       {creators.length > 0 && renderDetailItem(creatorLabel, creators)}
       
       {/* Common fields for all resource types */}
-      {renderDetailItem('Published', resource.formattedDate)}
+      {/* Only show 'Published' for non-books */}
+      {resource.type !== 'book' && renderDetailItem('Published', resource.formattedDate)}
       
       {/* Type-specific details */}
       {resource.type === 'book' && (

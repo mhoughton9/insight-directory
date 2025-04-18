@@ -60,8 +60,8 @@ const TraditionDetailSidebarLinks = ({ tradition }) => {
     return formatUrlForDisplay(url);
   };
   
-  // Get icon for link based on URL
-  const getLinkIcon = (url) => {
+  // Get icon for link based on URL and label
+  const getLinkIcon = (url, label) => {
     try {
       const hostname = new URL(url).hostname.toLowerCase();
       
@@ -123,6 +123,17 @@ const TraditionDetailSidebarLinks = ({ tradition }) => {
         );
       }
       
+      // Website icon with more color and style for links labeled 'Website'
+      if (label === 'Website') {
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" fill="#6366F1" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <line x1="2" y1="12" x2="22" y2="12" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        );
+      }
+      
       // Default external link icon with enhanced styling
       return (
         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="#6B7280" strokeWidth="2">
@@ -149,7 +160,7 @@ const TraditionDetailSidebarLinks = ({ tradition }) => {
         if (!url) return null;
         
         const label = getLinkLabel(link);
-        const icon = getLinkIcon(url);
+        const icon = getLinkIcon(url, label);
         
         return (
           <a

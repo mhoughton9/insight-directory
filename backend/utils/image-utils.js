@@ -21,32 +21,47 @@ const getTransformationForEntityType = (entityType) => {
   // Normalize the entity type
   const normalizedType = entityType.toLowerCase().trim();
   
+  // Base transformations that apply to all images
+  // f_auto: automatically select the best file format (WebP for supported browsers)
+  // q_auto:good: better quality/size balance
+  const baseTransformations = 'f_auto,q_auto:good';
+  
+  let specificTransformations;
+  
   switch (normalizedType) {
     case 'book':
-      return 'c_fill,w_500,h_750,q_auto'; // 2:3 aspect ratio for books
+      specificTransformations = 'c_fill,w_500,h_750'; // 2:3 aspect ratio for books
+      break;
     
     case 'podcast':
     case 'audio':
     case 'app':
-      return 'c_fill,w_500,h_500,q_auto'; // 1:1 aspect ratio (square)
+      specificTransformations = 'c_fill,w_500,h_500'; // 1:1 aspect ratio (square)
+      break;
     
     case 'video':
     case 'videochannel':
-      return 'c_fill,w_500,h_281,q_auto'; // 16:9 aspect ratio
+      specificTransformations = 'c_fill,w_500,h_281'; // 16:9 aspect ratio
+      break;
     
     case 'teacher':
-      return 'c_fill,w_500,h_500,q_auto'; // 1:1 aspect ratio (square)
+      specificTransformations = 'c_fill,w_500,h_500'; // 1:1 aspect ratio (square)
+      break;
     
     case 'tradition':
-      return 'c_fill,w_500,h_500,q_auto'; // 1:1 aspect ratio (square)
+      specificTransformations = 'c_fill,w_500,h_500'; // 1:1 aspect ratio (square)
+      break;
     
     case 'practice':
     case 'retreatcenter':
     case 'website':
     case 'blog':
     default:
-      return 'c_fill,w_500,h_375,q_auto'; // 4:3 aspect ratio (default)
+      specificTransformations = 'c_fill,w_500,h_375'; // 4:3 aspect ratio (default)
+      break;
   }
+  
+  return `${baseTransformations},${specificTransformations}`;
 };
 
 /**
@@ -57,6 +72,8 @@ const getTransformationForEntityType = (entityType) => {
 const getFolderForEntityType = (entityType) => {
   // Normalize the entity type
   const normalizedType = entityType.toLowerCase().trim();
+  
+  console.log(`getFolderForEntityType called with: '${entityType}', normalized to: '${normalizedType}'`)
   
   switch (normalizedType) {
     case 'book':
@@ -136,11 +153,19 @@ const uploadImageToCloudinary = async (imageUrl, entityType, slug) => {
       imageBuffer = await imageResponse.buffer();
       console.log(`Successfully downloaded image (${imageBuffer.length} bytes)`);
       
-      // Convert to data URL
-      imageUrl = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
-      console.log('Converted external URL to data URL format');
+      // Log the content type for debugging
+      const contentType = imageResponse.headers.get('content-type') || 'image/jpeg';
+      console.log(`Image content type: ${contentType}`);
+      
+      // We'll use the raw buffer directly when creating the form data
+      // No need to convert to base64 which can cause issues with Cloudinary
+      console.log('Using raw image buffer for upload');
     } else {
-      console.log('Image is already in data URL format');
+      console.log('Image is already in data URL format - converting to buffer');
+      // Convert data URL to buffer for consistent handling
+      const base64Data = imageUrl.split(',')[1];
+      imageBuffer = Buffer.from(base64Data, 'base64');
+      console.log(`Converted data URL to buffer (${imageBuffer.length} bytes)`);
     }
     
     // Get appropriate transformation and folder
@@ -175,13 +200,26 @@ const uploadImageToCloudinary = async (imageUrl, entityType, slug) => {
     
     // Create form data for upload
     const formData = new FormData();
-    formData.append('file', imageUrl.split(',')[1], { filename: `${fileName}.jpg` });
+    
+    // For Cloudinary's upload API, we need to use the raw buffer instead of base64
+    // This approach is more reliable across different image types
+    formData.append('file', imageBuffer, { filename: `${fileName}.jpg` });
     formData.append('api_key', API_KEY);
     formData.append('timestamp', timestamp.toString());
     formData.append('signature', signature);
     formData.append('public_id', publicId);
     formData.append('transformation', transformation);
     formData.append('folder', folder);
+    
+    // Log the form data for debugging
+    console.log('Cloudinary upload form data:', {
+      api_key: 'REDACTED',
+      timestamp: timestamp.toString(),
+      public_id: publicId,
+      transformation,
+      folder,
+      // Don't log the file content or signature for security reasons
+    });
     
     // Make the API request to Cloudinary
     console.log('Making API request to Cloudinary...');
@@ -208,7 +246,10 @@ const uploadImageToCloudinary = async (imageUrl, entityType, slug) => {
       format: uploadResult.format,
       version: uploadResult.version,
       url: uploadResult.url,
-      secureUrl: uploadResult.secure_url
+      secureUrl: uploadResult.secure_url,
+      folder: uploadResult.folder || 'No folder in response',
+      asset_folder: uploadResult.asset_folder || 'No asset_folder in response',
+      path: uploadResult.path || 'No path in response'
     });
     
     // Return the secure URL

@@ -228,7 +228,7 @@ export const CommentIcon = ({ size = 24, className = '' }) => (
 );
 
 /**
- * Globe/website icon
+ * Globe/website icon with color
  */
 export const GlobeIcon = ({ size = 24, className = '' }) => (
   <svg 
@@ -236,16 +236,11 @@ export const GlobeIcon = ({ size = 24, className = '' }) => (
     width={size} 
     height={size} 
     viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round"
     className={className}
   >
-    <circle cx="12" cy="12" r="10"></circle>
-    <line x1="2" y1="12" x2="22" y2="12"></line>
-    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+    <circle cx="12" cy="12" r="10" fill="#6366F1"></circle>
+    <line x1="2" y1="12" x2="22" y2="12" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></line>
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
   </svg>
 );
 

@@ -6,6 +6,7 @@ const userRoutes = require('./user-routes');
 const commentRoutes = require('./comment-routes');
 const adminRoutes = require('./admin-routes');
 const suggestionRoutes = require('./suggestion-routes');
+const cacheMiddleware = require('../middleware/cache-middleware');
 
 const router = express.Router();
 
@@ -14,14 +15,14 @@ const router = express.Router();
  * Base path: /api
  */
 
-// Mount resource routes
-router.use('/resources', resourceRoutes);
+// Mount resource routes with 5-minute caching for improved performance
+router.use('/resources', cacheMiddleware(300), resourceRoutes);
 
-// Mount teacher routes
-router.use('/teachers', teacherRoutes);
+// Mount teacher routes with 10-minute caching
+router.use('/teachers', cacheMiddleware(600), teacherRoutes);
 
-// Mount tradition routes
-router.use('/traditions', traditionRoutes);
+// Mount tradition routes with 10-minute caching
+router.use('/traditions', cacheMiddleware(600), traditionRoutes);
 
 // Mount user routes
 router.use('/users', userRoutes);

@@ -7,6 +7,9 @@ import { Heading, Text } from '../components/ui/Typography';
 import traditionsService from '../services/api/traditions';
 import teachersService from '../services/api/teachers';
 
+// Import dark theme styles as CSS module
+import styles from '../styles/dark-theme.module.css';
+
 // Configure the Inter font
 const inter = {
   variable: '--font-inter',
@@ -118,6 +121,7 @@ export default function DarkThemePreview() {
 
   // Fetch data from API with improved error handling and caching
   useEffect(() => {
+    // Fetch traditions and teachers data
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -132,8 +136,8 @@ export default function DarkThemePreview() {
         const traditionsData = traditionsResponse?.traditions || traditionsResponse || [];
         const teachersData = teachersResponse?.teachers || teachersResponse || [];
         
-        setTraditions(traditionsData);
-        setTeachers(teachersData);
+        setTraditions(traditionsData.slice(0, 3));
+        setTeachers(teachersData.slice(0, 3));
         setLoading(false);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -156,7 +160,7 @@ export default function DarkThemePreview() {
   // Handle error state
   if (error) {
     return (
-      <div className={`${inter.variable} font-sans bg-[#0F1A2A] text-white min-h-screen`}>
+      <div className={`${inter.variable} font-sans ${styles.darkTheme}`}>
         <div className="w-full max-w-5xl mx-auto p-8 text-center bg-red-900/20 rounded-lg">
           <p className="text-xl text-red-400">{error}</p>
           <button 
@@ -171,141 +175,131 @@ export default function DarkThemePreview() {
   }
 
   return (
-    <div className={`${inter.variable} font-sans bg-[#0F1A2A] text-white min-h-screen`}>
+    <div className={`${inter.variable} font-sans ${styles.darkTheme}`}>
       <Head>
         <title>Dark Theme Preview | Insight Directory</title>
         <meta name="description" content="Preview of the dark theme for Insight Directory" />
       </Head>
 
       {/* Navigation Bar */}
-      <nav className="border-b border-gray-800 bg-[#162436]">
+      <nav className={styles.nav}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              {/* Logo */}
-              <Link href="/dark-theme-preview" className="flex-shrink-0">
-                <Image 
-                  src="/images/Logo3.PNG" 
-                  alt="Insight Directory" 
-                  width={180} 
-                  height={40} 
-                  className="h-10 w-auto" 
-                />
+            <div className="flex items-center space-x-2">
+              <Link href="/" className={styles.logoContainer}>
+                <div className="flex items-center">
+                  <Image
+                    src="/images/logo.png"
+                    alt="Insight Directory Logo"
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 object-contain"
+                  />
+                  <div className="ml-2">
+                    <Image
+                      src="/images/Logo4_Words_no_bg.png"
+                      alt="Insight Directory"
+                      width={120}
+                      height={30}
+                      className="h-6 w-auto"
+                    />
+                  </div>
+                </div>
               </Link>
-              
-              {/* Main Navigation */}
-              <div className="hidden md:ml-10 md:flex md:space-x-8">
-                <Link href="/dark-theme-preview" className="text-white hover:text-indigo-400 px-3 py-2 text-sm font-medium">
-                  Home
-                </Link>
-                <Link href="#" className="text-gray-300 hover:text-indigo-400 px-3 py-2 text-sm font-medium">
-                  Resources
-                </Link>
-                <Link href="#" className="text-gray-300 hover:text-indigo-400 px-3 py-2 text-sm font-medium">
-                  Teachers
-                </Link>
-                <Link href="#" className="text-gray-300 hover:text-indigo-400 px-3 py-2 text-sm font-medium">
-                  Traditions
-                </Link>
-              </div>
             </div>
-            
-            {/* Right Navigation */}
-            <div className="flex items-center">
-              <Link href="#" className="text-gray-300 hover:text-indigo-400 px-3 py-2 text-sm font-medium">
-                Sign In
-              </Link>
-              <Link href="#" className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white">
-                Sign Up
-              </Link>
+            <div className="flex items-center space-x-6">
+              <Link href="/teachers" className={styles.link}>Teachers</Link>
+              <Link href="/traditions" className={styles.link}>Traditions</Link>
+              <Link href="/about" className={styles.link}>About</Link>
+              <Link href="/suggest" className={`px-4 py-1 border border-gray-600 rounded-md text-sm font-medium ${styles.link} hover:border-gray-400`}>Suggest a Resource</Link>
+              <Link href="/signin" className={styles.link}>Sign in</Link>
+              <Link href="/signup" className={`px-4 py-1 ${styles.primaryButton} text-sm font-medium`}>Sign up</Link>
             </div>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="py-6 md:py-10 px-4 max-w-7xl mx-auto bg-[#0F1A2A]">
-        <div 
-          className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 md:gap-12 rounded-xl p-6 relative overflow-hidden"
-        >
+      <section className={`py-12 md:py-20 px-4 max-w-7xl mx-auto ${styles.heroSection}`}>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-12 md:gap-16">
           {/* Logo Display - left side */}
-          <div className="relative z-10 w-64 h-64 md:w-[28rem] md:h-[28rem] hover:scale-105 transition-transform duration-500 flex-shrink-0">
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0F1A2A] z-10"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0F1A2A] z-10"></div>
+          <div className="w-80 h-80 md:w-96 md:h-96 flex-shrink-0 relative">
             <Image 
-              src="/images/Logo3.PNG" 
+              src="/images/logo.png" 
               alt="Insight Directory Logo" 
-              fill
-              className="object-contain z-0"
+              width={384}
+              height={384}
               priority
+              className="object-contain"
             />
           </div>
-          
           {/* Content Side */}
-          <div className="relative z-10 flex flex-col flex-1 justify-center md:justify-start items-center md:items-start md:pt-8">
+          <div className="flex flex-col flex-1 justify-center items-center md:items-start">
             {/* Logo Words */}
-            <div className="relative w-full h-24 md:h-48 mb-8">
-              <h1 className="text-4xl md:text-6xl font-bold text-white">INSIGHT <span className="block">DIRECTORY</span></h1>
+            <div className="mb-6">
+              <Image
+                src="/images/Logo4_Words_no_bg.png"
+                alt="Insight Directory"
+                width={400}
+                height={100}
+                className="h-auto w-full max-w-md mx-auto md:mx-0"
+                priority
+              />
             </div>
             
-            <div className="w-full flex flex-col items-center md:items-start space-y-6">
-              {/* Description Text */}
-              <div className="w-full text-center md:text-left">
-                <Heading 
-                  as="h2"
-                  size="3xl"
-                  className="text-white max-w-xl mb-0 leading-relaxed font-semibold text-[1.2em]"
-                >
-                  A comprehensive collection of resources for those interested in spiritual awakening, non-duality, and self-inquiry.
-                </Heading>
-              </div>
-              
-              {/* Call to Action */}
-              <div className="flex justify-center md:justify-start items-center w-full">
-                <Link 
-                  href="/sign-up" 
-                  className="px-8 py-3 text-lg text-white rounded-md hover:shadow-md transition-all duration-300 font-bold inline-block transform hover:translate-y-[-2px] bg-indigo-600 hover:bg-indigo-700"
-                >
-                  Sign up for free
-                </Link>
-              </div>
-              
-              {/* Subtitle text */}
-              <div className="text-center md:text-left w-full">
-                <Text 
-                  size="md" 
-                  className="text-gray-300 max-w-xl leading-relaxed"
-                >
-                  Create an account to save your favorite resources and help others on their spiritual journey.
-                </Text>
-              </div>
+            {/* Description Text */}
+            <div className="w-full text-center md:text-left mb-6">
+              <p className={`${styles.heading} text-xl md:text-2xl mb-2`}>
+                A comprehensive collection of resources for those interested in spiritual awakening, non-duality, and self-inquiry.
+              </p>
             </div>
-
-            {/* Subtle color accents */}
-            <div className="hidden md:block absolute -z-10 top-[30%] right-[10%] w-24 h-24 rounded-full bg-indigo-600 opacity-10"></div>
-            <div className="hidden md:block absolute -z-10 bottom-[20%] left-[20%] w-32 h-32 rounded-full bg-indigo-400 opacity-10"></div>
+            
+            {/* Call to Action */}
+            <div className="flex justify-center md:justify-start items-center w-full mb-6">
+              <Link 
+                href="/resources" 
+                className={styles.primaryButton}
+              >
+                Explore Resources
+              </Link>
+              <Link 
+                href="/about" 
+                className={`ml-4 ${styles.button}`}
+              >
+                Learn More
+              </Link>
+            </div>
+            
+            {/* Subtitle text */}
+            <div className="text-center md:text-left w-full">
+              <Text 
+                size="sm" 
+                className={styles.mutedText}
+              >
+                Join thousands of seekers on the journey to self-realization.
+              </Text>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Resource Categories Section */}
-      <section className="py-12 px-4 bg-[#162436] border-t border-gray-800">
+      <section className={`py-12 px-4 ${styles.sectionAlt}`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <Heading as="h2" size="3xl" className="text-white mb-4">
+            <Heading as="h2" size="3xl" className={`mb-4 ${styles.heading}`}>
               Resource Categories
             </Heading>
-            <Text size="xl" className="text-gray-300 max-w-3xl mx-auto">
+            <Text size="xl" className={styles.mutedText}>
               Explore our collection of resources by category
             </Text>
           </div>
-          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {resourceTypes.map((resourceType, index) => (
               <Link 
                 key={resourceType.type} 
                 href={`/resources/type/${resourceType.type.toLowerCase().replace(' ', '-')}`}
-                className="flex flex-col items-center p-6 bg-[#0F1A2A] border border-gray-800 rounded-lg hover:border-indigo-500 transition-all duration-300 hover:shadow-md hover:shadow-indigo-900/20"
+                className={`flex flex-col items-center p-6 transition-all duration-300 ${styles.cardGradientBorder}`}
               >
                 <div 
                   className="w-12 h-12 flex items-center justify-center rounded-full mb-4"
@@ -329,17 +323,22 @@ export default function DarkThemePreview() {
       </section>
 
       {/* Traditions and Teachers Section */}
-      <section className="py-12 px-4 bg-[#0F1A2A]">
+      <section className={`py-12 px-4 ${styles.section}`}>
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Traditions */}
             <div>
-              <Heading as="h2" size="2xl" className="text-white mb-6">
-                Traditions
-              </Heading>
+              <div className="text-center mb-6">
+                <Heading as="h2" size="2xl" className={`mb-4 ${styles.heading}`}>
+                  Traditions
+                </Heading>
+                <Text size="lg" className={styles.mutedText}>
+                  Explore spiritual traditions from around the world
+                </Text>
+              </div>
               <div className="space-y-4">
                 {loading ? (
-                  <div className="animate-pulse space-y-4">
+                  <div className="space-y-4">
                     {[...Array(3)].map((_, i) => (
                       <div key={i} className="h-24 bg-gray-800 rounded-lg"></div>
                     ))}
@@ -349,7 +348,7 @@ export default function DarkThemePreview() {
                     <Link 
                       key={tradition._id} 
                       href={`/traditions/${tradition.slug}`}
-                      className="block p-4 bg-[#162436] border border-gray-800 rounded-lg hover:border-indigo-500 transition-all duration-300"
+                      className={`block p-4 transition-all duration-300 ${styles.card}`}
                     >
                       <Heading as="h3" size="lg" className="text-white mb-2">
                         {tradition.name}
@@ -377,15 +376,19 @@ export default function DarkThemePreview() {
                 </Link>
               </div>
             </div>
-            
             {/* Teachers */}
             <div>
-              <Heading as="h2" size="2xl" className="text-white mb-6">
-                Teachers
-              </Heading>
+              <div className="text-center mb-6">
+                <Heading as="h2" size="2xl" className={`mb-4 ${styles.heading}`}>
+                  Teachers
+                </Heading>
+                <Text size="lg" className={styles.mutedText}>
+                  Learn from awakened masters and guides
+                </Text>
+              </div>
               <div className="space-y-4">
                 {loading ? (
-                  <div className="animate-pulse space-y-4">
+                  <div className="space-y-4">
                     {[...Array(3)].map((_, i) => (
                       <div key={i} className="h-24 bg-gray-800 rounded-lg"></div>
                     ))}
@@ -395,7 +398,7 @@ export default function DarkThemePreview() {
                     <Link 
                       key={teacher._id} 
                       href={`/teachers/${teacher.slug}`}
-                      className="block p-4 bg-[#162436] border border-gray-800 rounded-lg hover:border-indigo-500 transition-all duration-300"
+                      className={`block p-4 transition-all duration-300 ${styles.card}`}
                     >
                       <Heading as="h3" size="lg" className="text-white mb-2">
                         {teacher.name}
@@ -428,35 +431,36 @@ export default function DarkThemePreview() {
       </section>
 
       {/* About Section */}
-      <section className="py-12 px-4 bg-[#162436] border-t border-gray-800">
-        <div className="max-w-3xl mx-auto text-center">
-          <Heading as="h2" size="2xl" className="text-white mb-6">
+      <section className={`py-16 ${styles.sectionAlt}`}>
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <h2 className={`text-3xl font-bold mb-6 ${styles.heading}`}>
             About Insight Directory
-          </Heading>
-          <Text size="lg" className="text-gray-300 mb-8">
-            Insight Directory is a curated collection of resources for those interested in spiritual awakening, non-duality, and self-inquiry. Our mission is to connect seekers with high-quality resources that support their journey of self-discovery.
-          </Text>
+          </h2>
+          <p className={`text-lg mb-6 ${styles.mutedText}`}>
+            Discover the most comprehensive collection of spiritual awakening resources, curated for
+            seekers on the path to self-realization.
+          </p>
+          
+          <p className={`mb-8 ${styles.mutedText}`}>
+            Insight Directory is a curated collection of resources for those interested in spiritual awakening, non-duality, and self-inquiry.
+            Our mission is to connect seekers with high-quality resources that support their journey of self-discovery.
+          </p>
+          
           <div className="flex justify-center space-x-4">
-            <Link 
-              href="/about" 
-              className="px-6 py-2 bg-[#0F1A2A] border border-gray-800 text-white rounded-md hover:border-indigo-500 transition-all duration-300"
-            >
-              Learn More
+            <Link href="/resources" className={styles.primaryButton}>
+              Explore Resources
             </Link>
-            <Link 
-              href="/contact" 
-              className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-all duration-300"
-            >
-              Contact Us
+            <Link href="/about" className={styles.button}>
+              Learn More
             </Link>
           </div>
         </div>
       </section>
 
       {/* Preview Notice */}
-      <div className="fixed bottom-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-md shadow-lg z-50">
+      <div className={`fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg z-50 ${styles.primaryButton}`}>
         <p className="text-sm font-medium">Dark Theme Preview</p>
-        <Link href="/" className="text-xs text-indigo-200 hover:text-white">Return to Current Site</Link>
+        <Link href="/" className={`text-xs text-indigo-200 hover:text-white ${styles.link}`}>Return to Current Site</Link>
       </div>
     </div>
   );

@@ -87,8 +87,8 @@ const ResourceDetailSidebarLinks = ({ resource }) => {
     return formatUrlForDisplay(url);
   };
   
-  // Get icon for link based on URL
-  const getLinkIcon = (url) => {
+  // Get icon for link based on URL and label
+  const getLinkIcon = (url, label) => {
     try {
       const hostname = new URL(url).hostname.toLowerCase();
       
@@ -100,11 +100,13 @@ const ResourceDetailSidebarLinks = ({ resource }) => {
         );
       }
       
-      if (hostname.includes('amazon')) {
+      // Show a book icon for Amazon links (by label or URL)
+      if ((hostname && hostname.includes('amazon')) || (label && label.toLowerCase().includes('amazon'))) {
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="#E47911" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="#E47911" strokeWidth="2">
+            <rect x="5" y="3" width="14" height="18" rx="2" fill="#fff"/>
+            <path d="M8 6h8M8 10h8M8 14h6" stroke="#E47911" strokeWidth="1.5" strokeLinecap="round"/>
+            <rect x="5" y="3" width="14" height="18" rx="2" stroke="#E47911" strokeWidth="2"/>
           </svg>
         );
       }
@@ -142,6 +144,17 @@ const ResourceDetailSidebarLinks = ({ resource }) => {
         );
       }
       
+      // Website icon with more color and style - simpler version without gradients
+      if (label === 'Website') {
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" fill="#6366F1" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <line x1="2" y1="12" x2="22" y2="12" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        );
+      }
+      
       // Default external link icon with enhanced styling
       return (
         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="#6B7280" strokeWidth="2">
@@ -168,7 +181,7 @@ const ResourceDetailSidebarLinks = ({ resource }) => {
         if (!url) return null;
         
         const label = getLinkLabel(link);
-        const icon = getLinkIcon(url);
+        const icon = getLinkIcon(url, label);
         
         return (
           <a

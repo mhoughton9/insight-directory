@@ -37,8 +37,11 @@ export default function TeacherCard({ teacher }) {
               src={imageUrl} 
               alt={name} 
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              loading="lazy"
+              placeholder="blur"
+              blurDataURL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3C/svg%3E"
+              className="object-cover transition-opacity duration-300"
               priority={false}
             />
           ) : (
