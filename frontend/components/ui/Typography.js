@@ -37,7 +37,7 @@ export const Heading = ({
 
   return (
     <Component
-      className={`font-poppins font-bold text-neutral-900 dark:text-white ${sizeClasses[size] || 'text-xl'} ${className}`}
+      className={`font-poppins font-bold ${sizeClasses[size] || 'text-xl'} ${className}`}
       {...rest}
     >
       {children}
@@ -106,7 +106,7 @@ export const Text = ({
 
   return (
     <Component
-      className={`font-nunito text-neutral-700 dark:text-neutral-300 ${sizeClasses[size] || 'text-base'} ${className}`}
+      className={`font-nunito ${sizeClasses[size] || 'text-base'} ${className}`}
       {...rest}
     >
       {children}

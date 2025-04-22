@@ -76,3 +76,34 @@ p {
 .font-nunito {
   font-family: var(--font-secondary);
 }
+
+/* NEW: Navy Theme Variables (Scoped) */
+.navy-theme {
+  /* Base palette & surfaces */
+  --theme-bg-primary: #0F2A47;      /* Primary background (Navy Blue) */
+  --theme-bg-secondary: #0A1F36;    /* Deeper background for contrast areas */
+  --theme-surface-primary: #1E3A59; /* Card and input surface */
+  --theme-surface-hover: #2A4A6A;   /* Lighter surface for hover states */
+  --theme-border-subtle: rgba(255, 255, 255, 0.1); /* Subtle white border */
+  --theme-border-divider: #1A2130; /* Divider border */
+  --theme-shadow: rgba(0, 0, 0, 0.35); /* Shadows for elevation */
+
+  /* Typography */
+  --theme-text-primary: #F5F6F8;   /* Primary text (Soft White) */
+  --theme-text-secondary: #9CA3B0; /* Secondary text (Light Gray) */
+  --theme-text-logo: #E8E0CE;      /* Logo text only (Beige) */
+
+  /* Accent colors */
+  --theme-accent-blue: #1E90FF;
+  --theme-accent-purple: #9370DB;
+  /* Add other accents if needed */
+
+  /* Button Gradients */
+  --theme-gradient-button: linear-gradient(90deg, #1E90FF, #9370DB);
+  --theme-gradient-button-hover: linear-gradient(90deg, #4BA5FF, #A385E0);
+
+  /* Interactive states */
+  --theme-focus-ring: rgba(99, 102, 241, 0.6); /* Focus indicator */
+  background-color: var(--theme-bg-primary);
+  color: var(--theme-text-primary);
+}
