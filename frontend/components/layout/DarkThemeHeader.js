@@ -28,11 +28,12 @@ export default function DarkThemeHeader() {
               />
               <div className="relative w-auto" style={{ top: '2px' }}>
                 <Image
-                  src="/images/Logo4_Words_no_bg.png"
+                  src="/images/Logo4_Words.PNG"
                   alt="Insight Directory"
-                  width={130}
-                  height={30}
-                  className="h-auto w-auto max-w-[130px]"
+                  width={140}
+                  height={32}
+                  className="h-auto w-auto max-w-[140px]"
+                  priority
                 />
               </div>
             </div>

@@ -28,13 +28,15 @@ const HeroSection = () => {
         {/* Content Side */}
         <div className="relative z-10 flex flex-col flex-1 justify-center md:justify-start items-center md:items-start md:pt-8">
           {/* Logo Words - top of right side (2x bigger) */}
-          <div className="relative w-full h-24 md:h-48 mb-8">
+          {/* Apply negative margin only on medium screens and up to shift left */}
+          <div className="relative w-full h-24 md:h-48 mb-8 md:-ml-4">
             <Image 
-              src="/images/Logo4_Words_no_bg.png" 
+              src="/images/Logo4_Words.PNG" 
               alt="Insight Directory" 
               fill
               className="object-contain object-left"
               priority
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
           </div>
           
