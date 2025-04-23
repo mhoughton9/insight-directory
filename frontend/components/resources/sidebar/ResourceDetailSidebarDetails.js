@@ -19,8 +19,8 @@ const ResourceDetailSidebarDetails = ({ resource }) => {
       
     return (
       <div className="mb-3 last:mb-0">
-        <p className="font-inter text-neutral-800 dark:text-neutral-200">
-          <span className="font-inter text-neutral-500 dark:text-neutral-400">{label}: </span>
+        <p className="font-inter" style={{ color: 'var(--text-primary)' }}>
+          <span className="font-inter" style={{ color: 'var(--text-secondary)' }}>{label}: </span>
           {displayValue}
         </p>
       </div>

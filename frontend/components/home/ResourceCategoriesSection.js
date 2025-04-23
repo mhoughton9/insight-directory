@@ -31,13 +31,15 @@ const getPluralResourceType = (type) => {
  */
 const ResourceCategoriesSection = ({ resourceTypes, brandColors }) => {
   return (
-    <section className="py-12 my-8 mx-auto max-w-7xl bg-white rounded-xl shadow-md">
+    // Outer section: Apply background and vertical padding/margin, make it full width
+    <section className="py-12 my-8 bg-[var(--theme-bg-deep)]">
+      {/* Inner container: Constrain content width and center it */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <Heading as="h2" size="3xl" className="mb-6 text-center">
             Resource Categories
           </Heading>
-          <Text size="xl" className="text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto">
+          <Text size="xl" className="text-caption-color max-w-3xl mx-auto">
             Explore our collection of resources by category
           </Text>
         </div>
@@ -54,7 +56,7 @@ const ResourceCategoriesSection = ({ resourceTypes, brandColors }) => {
                 href={`/resources/type/${normalizedType}`} 
                 className="block h-full"
               >
-                <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-lg hover:border-neutral-300 dark:hover:border-neutral-700 hover:translate-y-[-4px]">
+                <div className="bg-[var(--theme-surface-primary)] border border-[var(--theme-border-subtle)] rounded-xl overflow-hidden h-full transition-all duration-300 hover:bg-[var(--theme-surface-hover)]">
                   {/* Card Content */}
                   <div className="p-6 flex flex-col items-center text-center">
                     <div className="w-16 h-16 mb-4 flex items-center justify-center relative z-10">
@@ -68,10 +70,10 @@ const ResourceCategoriesSection = ({ resourceTypes, brandColors }) => {
                         })}
                       </div>
                     </div>
-                    <Heading as="h3" size="lg" className="text-neutral-900 dark:text-white mb-2">
+                    <Heading as="h3" size="lg" className="mb-2">
                       {getPluralResourceType(type.type)}
                     </Heading>
-                    <Text size="sm" className="text-neutral-700 dark:text-neutral-300">
+                    <Text size="sm" className="text-caption-color">
                       {type.description}
                     </Text>
                   </div>

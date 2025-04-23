@@ -71,7 +71,7 @@ export const Subheading = ({
 
   return (
     <Component
-      className={`font-poppins font-semibold text-neutral-800 dark:text-neutral-200 ${sizeClasses[size] || 'text-lg'} ${className}`}
+      className={`font-poppins font-semibold ${sizeClasses[size] || 'text-lg'} ${className}`}
       {...rest}
     >
       {children}
@@ -130,7 +130,7 @@ export const Caption = ({
 }) => {
   return (
     <Component
-      className={`font-nunito text-xs text-neutral-500 dark:text-neutral-400 ${className}`}
+      className={`font-nunito text-xs text-caption-color ${className}`}
       {...rest}
     >
       {children}

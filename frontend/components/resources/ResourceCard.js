@@ -15,24 +15,24 @@ function getImageContainerStyles(type) {
     case 'book':
       return {
         aspectRatio: '2/3',
-        background: 'linear-gradient(to bottom, #f3f4f6, #e5e7eb)',
+        backgroundColor: 'var(--surface)',
       };
     case 'video':
     case 'video-channel':
       return {
         aspectRatio: '16/9',
-        background: 'linear-gradient(to bottom, #f3f4f6, #e5e7eb)',
+        backgroundColor: 'var(--surface)',
       };
     case 'podcast':
     case 'audio':
       return {
-        aspectRatio: '1/1', // Square for podcast artwork
-        background: 'linear-gradient(to bottom, #f3f4f6, #e5e7eb)',
+        aspectRatio: '1/1',
+        backgroundColor: 'var(--surface)',
       };
     default:
       return {
-        aspectRatio: '4/3', // Default aspect ratio
-        background: 'linear-gradient(to bottom, #f3f4f6, #e5e7eb)',
+        aspectRatio: '4/3',
+        backgroundColor: 'var(--surface)',
       };
   }
 }
@@ -66,10 +66,16 @@ export default function ResourceCard({ resource, searchTerm = '' }) {
   
   return (
     <Link href={`/resources/${slug}`} className="block h-full">
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700 max-w-xs mx-auto">
+      <div 
+        className="resource-card-item border rounded-lg overflow-hidden h-full transition-colors duration-200" 
+        style={{ 
+          backgroundColor: 'var(--surface)', 
+          borderColor: 'var(--border-color)'  
+        }}
+      >
         {/* Card Header with Image */}
         <div 
-          className="relative bg-neutral-100 dark:bg-neutral-800 w-full overflow-hidden"
+          className="relative w-full overflow-hidden"
           style={imageContainerStyles}
         >
           {imageUrl ? (
@@ -88,7 +94,7 @@ export default function ResourceCard({ resource, searchTerm = '' }) {
             </div>
           ) : (
             <div className="flex items-center justify-center h-full">
-              <ResourceTypeIcon type={type} size={48} className="text-neutral-400 dark:text-neutral-600" />
+              <ResourceTypeIcon type={type} size={48} className="text-text-muted" />
             </div>
           )}
         </div>
@@ -106,7 +112,7 @@ export default function ResourceCard({ resource, searchTerm = '' }) {
           {subtitle && subtitle.length > 0 && (
             <Text 
               size="sm" 
-              className="text-neutral-600 dark:text-neutral-400 mb-2"
+              className="text-text-muted mb-2"
             >
               {subtitle}
             </Text>
@@ -115,6 +121,7 @@ export default function ResourceCard({ resource, searchTerm = '' }) {
           {description && (
             <Text 
               size="sm"
+              className="text-text-muted line-clamp-3"
             >
               {searchTerm ? highlightSearchTerms(truncatedDescription, searchTerm) : truncatedDescription}
             </Text>

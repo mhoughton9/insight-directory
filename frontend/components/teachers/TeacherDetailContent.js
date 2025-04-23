@@ -17,7 +17,7 @@ const TeacherDetailContent = ({ teacher }) => {
     Object.keys(teacher.descriptionSections).length > 0;
   
   return (
-    <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800 p-4 sm:p-6 mb-6 md:mb-8">
+    <div className="rounded-lg shadow-sm border p-4 sm:p-6 mb-6 md:mb-8" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)' }}>
       {/* Basic biography section - show if no detailed sections are available */}
       {!hasDescriptionSections && (
         <div className="mb-6 md:mb-8">
@@ -35,7 +35,7 @@ const TeacherDetailContent = ({ teacher }) => {
                 <Text key={index} className="mb-4 last:mb-0">{paragraph}</Text>
               ))
             ) : (
-              <Text className="text-neutral-600 dark:text-neutral-400 italic">
+              <Text className="text-text-secondary italic">
                 No detailed biography available for this teacher.
               </Text>
             )}

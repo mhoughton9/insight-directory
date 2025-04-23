@@ -35,10 +35,23 @@ export default function BookListItem({ resource, searchTerm = '' }) {
   
   return (
     <Link href={`/resources/${slug}`} className="block w-full">
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
+      {/* Use inline styles with CSS variables for base, custom class for hover */}
+      <div 
+        className="book-list-item-card border rounded-lg overflow-hidden h-full transition-colors duration-200" 
+        style={{
+          backgroundColor: 'var(--surface)', // Use root variable --surface for card background
+          borderColor: 'var(--border-color)' // Use root variable for card border
+        }}
+      >
         <div className="flex flex-col md:flex-row">
           {/* Book Cover (left side on desktop, top on mobile) */}
-          <div className="w-full md:w-48 flex-shrink-0 bg-neutral-100 dark:bg-neutral-800">
+          {/* Use bg-surface for the image container background */}
+          <div 
+            className="w-full md:w-48 flex-shrink-0"
+            style={{ 
+              backgroundColor: 'var(--surface)' // Use root variable --surface for card background
+            }}
+          >
             <div className="relative aspect-[2/3] w-full h-full">
               {imageUrl ? (
                 <Image 
@@ -54,7 +67,8 @@ export default function BookListItem({ resource, searchTerm = '' }) {
                 />
               ) : (
                 <div className="flex items-center justify-center h-full">
-                  <ResourceTypeIcon type="book" size={48} className="text-neutral-400 dark:text-neutral-600" />
+                  {/* Use text-text-muted for placeholder icon */}
+                  <ResourceTypeIcon type="book" size={48} className="text-text-muted" />
                 </div>
               )}
             </div>
@@ -65,7 +79,7 @@ export default function BookListItem({ resource, searchTerm = '' }) {
             <Heading 
               as="h3" 
               size="lg" 
-              className="mb-1"
+              className="mb-1 text-text-heading" // Explicitly use text-heading
             >
               {searchTerm ? highlightSearchTerms(title, searchTerm) : title}
             </Heading>
@@ -73,7 +87,7 @@ export default function BookListItem({ resource, searchTerm = '' }) {
             {subtitle && subtitle.length > 0 && (
               <Text 
                 size="sm" 
-                className="text-neutral-600 dark:text-neutral-400 mb-1"
+                className="text-text-muted mb-1" // Use text-text-muted
               >
                 {subtitle}
               </Text>
@@ -82,18 +96,22 @@ export default function BookListItem({ resource, searchTerm = '' }) {
             {/* Additional book metadata */}
             <div className="flex flex-wrap items-center gap-x-4 mb-3">
               {pages && (
-                <Text size="xs" className="text-neutral-500 dark:text-neutral-500">
+                <Text size="xs" className="text-text-muted"> {/* Use text-text-muted */}
                   {pages} pages
                 </Text>
               )}
             </div>
             
-            {/* Subtle divider */}
-            <div className="h-px w-full bg-neutral-200 dark:bg-neutral-800 mb-3"></div>
+            {/* Brighter divider for better visibility */}
+            <div 
+              className="h-px w-full mb-3" 
+              style={{ backgroundColor: 'rgba(255, 255, 255, 0.25)' }} // Lighter color for better visibility
+            ></div>
             
             {description && (
               <Text 
-                size="sm"
+                size="md"
+                className="text-text-body" // Use text-text-body for main description
               >
                 {searchTerm ? highlightSearchTerms(truncatedDescription, searchTerm) : truncatedDescription}
               </Text>

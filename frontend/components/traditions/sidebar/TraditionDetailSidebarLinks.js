@@ -1,4 +1,5 @@
 import React from 'react';
+import { Globe } from 'lucide-react';
 
 /**
  * TraditionDetailSidebarLinks component
@@ -54,15 +55,38 @@ const TraditionDetailSidebarLinks = ({ tradition }) => {
   const getLinkLabel = (link) => {
     // If link has a label property, use it
     if (link.label) return link.label;
+    if (link.title) return link.title;
+    
+    // Check if hostname is the main website and return 'Website' as label
+    try {
+      const url = getLinkUrl(link);
+      const hostname = new URL(url).hostname.toLowerCase();
+      if (hostname.startsWith('www.') || !hostname.includes('.')) {
+        return 'Website';
+      }
+    } catch (e) {
+      // Ignore errors in URL parsing
+    }
     
     // Otherwise, format the URL for display
     const url = getLinkUrl(link);
     return formatUrlForDisplay(url);
   };
   
-  // Get icon for link based on URL
-  const getLinkIcon = (url) => {
+  // Get icon for link based on URL and label
+  const getLinkIcon = (url, label) => {
     try {
+      // Check for Website label first - highest priority
+      if (label && label.toLowerCase() === 'website') {
+        return (
+          <Globe 
+            className="w-5 h-5 mr-2 flex-shrink-0" 
+            strokeWidth={1.5} 
+            stroke="var(--accent-blue)" 
+          />
+        );
+      }
+      
       const hostname = new URL(url).hostname.toLowerCase();
       
       if (hostname.includes('youtube')) {
@@ -73,11 +97,20 @@ const TraditionDetailSidebarLinks = ({ tradition }) => {
         );
       }
       
-      if (hostname.includes('amazon')) {
+      if (hostname.includes('amazon') || hostname.includes('amzn.to')) {
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="#E47911" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            className="w-5 h-5 mr-2 flex-shrink-0" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="#E47911" 
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+          >
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20v2.5A2.5 2.5 0 0 1 17.5 22H6.5A2.5 2.5 0 0 1 4 19.5z" /> 
+            <path d="M6.5 2H20v15H6.5A2.5 2.5 0 0 1 4 14.5v-10A2.5 2.5 0 0 1 6.5 2z" />
           </svg>
         );
       }
@@ -118,10 +151,11 @@ const TraditionDetailSidebarLinks = ({ tradition }) => {
       if (hostname.includes('wikipedia.org')) {
         return (
           <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 flex-shrink-0" viewBox="0 0 24 24" fill="#000000">
-            <path d="M12.09 13.119c-.936 1.932-2.217 4.548-2.853 5.728-.616 1.074-1.127.931-1.532.029-1.406-3.321-4.293-9.144-5.651-12.409-.251-.601-.441-.987-.619-1.139-.181-.15-.554-.24-1.122-.271-.329-.026-.494-.078-.494-.348 0-.32.039-.415.889-.415h5.014c.742 0 .92.084.92.499 0 .34-.168.433-.572.493-.775.071-1.023.321-.549 1.269.288.562 1.315 2.92 2.892 6.122l2.15-4.504c.397-.813.652-1.393.674-1.729.033-.36-.006-.697-.328-.92-.334-.222-.668-.256-1.275-.256-.19 0-.298-.021-.298-.341 0-.354.298-.388.651-.388h3.61c.694 0 .845.149.845.488 0 .311-.274.441-.98.503-.7.044-.842.199-1.398 1.205-.303.552-1.46 3.053-2.809 6.017l3.248-3.643c.856-.948 1.195-1.278 1.195-1.623 0-.331-.215-.523-.644-.573-.645-.075-.743-.125-.743-.443 0-.251.078-.311.582-.311h3.353c.494 0 .692.069.692.406 0 .27-.166.362-.595.487-.545.158-.752.311-2.054 1.812-1.213 1.414-3.029 3.387-4.716 5.287l.436.895c.901 1.887 1.337 2.778 1.902 2.778.35 0 .758-.404 1.195-1.104.474-.771.556-.845.865-.845.245 0 .413.284.413.706 0 .762-.798 2.222-1.838 2.222-.861 0-1.811-1.381-2.905-4.082l-.437-.908-1.564 1.779c-.857.973-1.24 1.549-1.24 1.864 0 .21.239.361.572.361.493 0 .685.053.685.334 0 .282-.18.388-.621.388h-3.361c-.342 0-.477-.055-.477-.387 0-.275.154-.372.693-.404.708-.044 1.121-.309 2.054-1.383.444-.513.813-.934.992-1.139l-2.432-5.012c-.701 1.515-1.549 3.279-2.342 4.853-.743 1.469-1.32 2.034-2.045 2.034-.696 0-1.097-.517-1.097-1.415 0-.665.302-.864.835-.864.215 0 .41.049.41.251 0 .176-.035.233-.035.364 0 .216.105.33.316.33.245 0 .631-.303 1.152-1.146.742-1.169 1.941-3.805 3.687-8.126l.369-.877z"/>
+            <path d="M12.09 13.119c-.936 1.932-2.217 4.548-2.853 5.728-.616 1.074-1.127.931-1.532.029-1.406-3.321-4.293-9.144-5.651-12.409-.251-.601-.441-.987-.619-1.139-.181-.15-.554-.24-1.122-.271-.329-.026-.494-.078-.494-.348 0-.32.039-.415.889-.415h5.014c.742 0 .92.084.92.499 0 .34-.168.433-.572.493-.775.071-1.023.321-.549 1.269.288.562 1.315 2.92 2.892 6.122l2.15-4.504c.397-.813.652-1.393.674-1.729.033-.36-.006-.697-.328-.92-.334-.222-.668-.256-1.275-.256-.19 0-.298-.021-.298-.341 0-.354.298-.388.651-.388h3.61c.694 0 .845.149.845.488 0 .311-.274.441-.98.503-.7.044-.842.199-1.398 1.205-.303.552-1.46 3.053-2.809 6.017l3.248-3.643c.856-.948 1.195-1.278 1.195-1.623 0-.331-.215-.523-.644-.573-.645-.075-.743-.125-.743-.443 0-.251.078-.311.582-.311h3.353c.494 0 .692.069.692.406 0 .27-.166.362-.595.487-.545.158-.752.311-2.054 1.812-1.213 1.414-3.029 3.387-4.716 5.287l.436.895c.901 1.887 1.337 2.778 1.902 2.778.35 0 .758-.404 1.195-1.104.474-.771.556-.845.865-.845.245 0 .413.284.413.706 0 .762-.798 2.222-1.838 2.222-.861 0-1.811-1.381-2.905-4.082l-.437-.908-1.564 1.779c-.857.973-1.24 1.549-1.24 1.864 0 .21.239.361.572.361.493 0 .685.053.685.334 0 .282-.18.388-.621.388h-3.361c-.342 0-.477-.055-.477-.387 0-.275.154-.372.693-.404.708-.044 1.121-.309 2.054-1.383.444-.513.813-.934.992-1.139l-2.432-5.012c-.701 1.515-1.549 3.279-2.342 4.853-.743 1.469-1.32 2.034-2.045 2.034-.696 0-1.097-.517-1.097-1.415 0-.665.302-.864.835-.864.215 0 .41.049.41.251 0 .176-.035.233-.035.364 0 .216.105.33.316.33.245 0 .631-.303 1.152-1.146.742-1.169 1.941-3.805 3.687-8.126l.369-.877z" />
           </svg>
         );
       }
+      
       
       // Default external link icon with enhanced styling
       return (
@@ -149,7 +183,7 @@ const TraditionDetailSidebarLinks = ({ tradition }) => {
         if (!url) return null;
         
         const label = getLinkLabel(link);
-        const icon = getLinkIcon(url);
+        const icon = getLinkIcon(url, label);
         
         return (
           <a
@@ -157,9 +191,16 @@ const TraditionDetailSidebarLinks = ({ tradition }) => {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-2 rounded-md transition-all duration-200 group"
+            className="flex items-center px-3 py-2 rounded-md transition-all duration-200 group hover:!bg-[var(--dark-surface-hover)]"
+            style={{ 
+              backgroundColor: 'var(--surface)', 
+              color: 'var(--text-primary)',
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              borderColor: 'rgba(255, 255, 255, 0.2)' 
+            }}
           >
-            <span className="text-gray-600 group-hover:scale-110 transition-transform duration-200">
+            <span className="group-hover:scale-110 transition-transform duration-200">
               {icon}
             </span>
             <span className="font-inter truncate">{label}</span>

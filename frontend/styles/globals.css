@@ -81,6 +81,7 @@ p {
 .navy-theme {
   /* Base palette & surfaces */
   --theme-bg-primary: #0F2A47;      /* Primary background (Navy Blue) */
+  --theme-bg-deep: #0A1F36;        /* Deeper background for contrast areas */
   --theme-bg-secondary: #0A1F36;    /* Deeper background for contrast areas */
   --theme-surface-primary: #1E3A59; /* Card and input surface */
   --theme-surface-hover: #2A4A6A;   /* Lighter surface for hover states */
@@ -106,4 +107,106 @@ p {
   --theme-focus-ring: rgba(99, 102, 241, 0.6); /* Focus indicator */
   background-color: var(--theme-bg-primary);
   color: var(--theme-text-primary);
+}
+
+/* NEW: Apply base background and text colors within the .navy-theme scope */
+.navy-theme {
+  background-color: var(--theme-bg-primary);
+  color: var(--theme-text-primary);
+}
+
+/* Example: Style headings within the dark theme */
+.navy-theme h1,
+.navy-theme h2,
+.navy-theme h3,
+.navy-theme h4,
+.navy-theme h5,
+.navy-theme h6 {
+  color: var(--theme-text-primary);
+}
+
+/* Ensure links inherit the primary text color unless specified otherwise */
+.navy-theme a {
+  color: inherit; /* Start by inheriting the parent color */
+}
+
+/* Specific link styling for dark theme if needed */
+/* .navy-theme a:hover {
+  color: var(--button-gradient-start); 
+} */
+
+.gradient-text {
+  background: linear-gradient(to right, var(--button-gradient-start), var(--button-gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Custom scrollbar styles (optional) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--theme-surface-primary, var(--background)); /* Use surface or default bg */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--theme-border-primary, #888); /* Use border or default gray */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--theme-text-secondary, #555); /* Use secondary text or darker gray */
+}
+
+/* Default light theme text color for captions */
+.text-caption-color {
+  color: #6B7280; /* Tailwind gray-500 */
+}
+
+/* Dark theme override for caption text */
+.navy-theme .text-caption-color {
+  color: var(--theme-text-secondary);
+}
+
+/* Hover effect for Book List Item Card */
+.book-list-item-card:hover {
+  background-color: var(--surface-hover) !important; /* Directly set background, force override */
+}
+
+/* Hover effect for Resource Card Item */
+.resource-card-item:hover {
+  background-color: var(--surface-hover) !important; /* Directly set background, force override */
+}
+
+/* Hover effect for Teacher Card Item */
+.teacher-card-item:hover {
+  background-color: var(--surface-hover) !important; /* Directly set background, force override */
+}
+
+/* Hover effect for Tradition Card Item */
+.tradition-card-item:hover {
+  background-color: var(--surface-hover) !important; /* Directly set background, force override */
+}
+
+/* NEW: Force black text color for Admin Layout */
+.admin-layout-container {
+  color: #000000; /* Set default text color to black for admin */
+}
+
+.admin-layout-container p,
+.admin-layout-container div,
+.admin-layout-container span,
+.admin-layout-container li {
+  color: #000000; /* Ensure common text elements are black */
+}
+
+.admin-layout-container h1,
+.admin-layout-container h2,
+.admin-layout-container h3,
+.admin-layout-container h4,
+.admin-layout-container h5,
+.admin-layout-container h6 {
+  color: #111827; /* Use a dark gray (like Tailwind gray-900) for headings */
 }

@@ -48,7 +48,7 @@ const resourceController = {
         filter.type = type;
       }
       if (tradition) filter.traditions = tradition;
-      if (teacher) filter.teachers = teacher;
+      // Teacher filtering removed - Resource model doesn't have a teachers field
       if (tag) filter.tags = { $in: [tag.toLowerCase()] };
       if (featured === 'true') filter.featured = true;
       
@@ -59,7 +59,7 @@ const resourceController = {
         type: 1,
         imageUrl: 1,
         slug: 1,
-        teachers: 1,
+
         traditions: 1,
         tags: 1,
         featured: 1,
@@ -81,14 +81,14 @@ const resourceController = {
       let resources;
       if (ids) {
         resources = await Resource.find(filter, projection)
-          .populate('teachers', 'name slug imageUrl')
+          
           .populate('traditions', 'name slug')
           .sort({ createdAt: -1 })
           .lean(); // Use lean for better performance
       } else {
         // Execute query with pagination and optimization
         resources = await Resource.find(filter, projection)
-          .populate('teachers', 'name slug imageUrl')
+          
           .populate('traditions', 'name slug')
           .sort({ createdAt: -1 })
           .skip(skip)
@@ -153,7 +153,7 @@ const resourceController = {
       
       // Find resource by ID or slug
       const resource = await Resource.findOne(query)
-        .populate('teachers', 'name slug imageUrl bio')
+
         .populate('traditions', 'name slug description');
       
       // Check if resource was found
@@ -321,7 +321,7 @@ const resourceController = {
         type: 1,
         imageUrl: 1,
         slug: 1,
-        teachers: 1,
+
         traditions: 1,
         tags: 1,
         score: { $meta: 'textScore' }
@@ -329,7 +329,7 @@ const resourceController = {
       
       // Execute search with pagination and optimization
       const resources = await Resource.find(searchQuery, projection)
-        .populate('teachers', 'name slug imageUrl')
+        
         .populate('traditions', 'name slug')
         .sort({ score: { $meta: 'textScore' } })
         .skip(skip)
@@ -390,7 +390,7 @@ const resourceController = {
         type: 1,
         imageUrl: 1,
         slug: 1,
-        teachers: 1,
+
         traditions: 1,
         tags: 1,
         createdAt: 1
@@ -398,7 +398,7 @@ const resourceController = {
       
       // Find resources by type with optimization
       const resources = await Resource.find(query, projection)
-        .populate('teachers', 'name slug imageUrl')
+        
         .populate('traditions', 'name slug')
         .sort({ createdAt: -1 })
         .skip(skip)
@@ -448,13 +448,13 @@ const resourceController = {
           type: 1,
           imageUrl: 1,
           slug: 1,
-          teachers: 1,
+  
           traditions: 1,
           tags: 1,
           url: 1
         }
       )
-      .populate('teachers', 'name slug')
+      
       .populate('traditions', 'name slug')
       .sort({ createdAt: -1 })
       .limit(parseInt(limit))

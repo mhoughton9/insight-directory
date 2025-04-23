@@ -67,21 +67,21 @@ const ResourceDetailSidebar = ({ resource }) => {
   return (
     <div className="space-y-6 md:space-y-8">
       {/* Resource Details */}
-      <div className={Typography.cardContainer}>
+      <div className={Typography.cardContainer} style={Typography.cardContainerStyle}>
         <h2 className={Typography.sidebarHeading}>Details</h2>
         <ResourceDetailSidebarDetails resource={resource} />
       </div>
       
       {/* Resource Links */}
       {hasLinks() && (
-        <div className={Typography.cardContainer}>
+        <div className={Typography.cardContainer} style={Typography.cardContainerStyle}>
           <h2 className={Typography.sidebarHeading}>Links</h2>
           <ResourceDetailSidebarLinks resource={resource} />
         </div>
       )}
       
       {/* Actions */}
-      <div className={Typography.cardContainer}>
+      <div className={Typography.cardContainer} style={Typography.cardContainerStyle}>
         <h2 className={Typography.sidebarHeading}>Actions</h2>
         <ResourceDetailSidebarActions resource={resource} />
       </div>

@@ -29,7 +29,13 @@ export default function TeacherCard({ teacher }) {
   
   return (
     <Link href={`/teachers/${teacherSlug}`} className="block h-full">
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
+      <div 
+        className="teacher-card-item border rounded-lg shadow-sm overflow-hidden h-full transition-all duration-200 hover:shadow-md" 
+        style={{ 
+          backgroundColor: 'var(--surface)', 
+          borderColor: 'var(--border-color)'
+        }}
+      >
         {/* Card Header with Image */}
         <div className="relative aspect-square w-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
           {imageUrl ? (

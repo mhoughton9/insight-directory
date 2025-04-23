@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
  * @param {string} [props.size='default'] - Size of the button (small, default, large)
  * @param {boolean} [props.showText=false] - Whether to show text next to the icon
  * @param {string} [props.className=''] - Additional CSS classes
+ * @param {Object} [props.style={}] - Additional inline styles
  * @param {Function} [props.onError] - Optional callback for error handling
  */
 const FavoriteButton = ({ 
@@ -19,6 +20,7 @@ const FavoriteButton = ({
   size = 'default', 
   showText = false, 
   className = '',
+  style = {},
   onError
  }) => {
   const { isSignedIn, isItemFavorited, toggleFavorite, isItemPending, favorites } = useUserContext();
@@ -85,18 +87,21 @@ const FavoriteButton = ({
     inline-flex items-center justify-center
     ${isPending ? 'opacity-70 cursor-wait' : 'cursor-pointer'}
     ${error ? 'ring-2 ring-red-300' : ''}
-    transition-colors duration-200 ease-in-out focus:outline-none
+    transition-colors duration-150 ease-in-out
+    hover:!bg-[var(--dark-surface-hover)]
+    focus:outline-none
     ${className}
   `;
 
   // Determine icon color based on favorited state
-  const iconColor = isFavorited ? 'text-red-500' : 'text-gray-700';
+  const iconColor = isFavorited ? 'text-red-500' : 'text-text-primary';
 
   return (
     <div className="relative">
       <button
         onClick={handleToggleFavorite}
         className={buttonClasses}
+        style={style}
         disabled={isPending}
         aria-label={isFavorited ? `Remove from favorites` : `Add to favorites`}
         title={!isSignedIn ? 'Sign in to add to favorites' : (isFavorited ? 'Remove from favorites' : 'Add to favorites')}
@@ -113,7 +118,10 @@ const FavoriteButton = ({
           />
         )}
         {showText && (
-          <span className={`ml-2 text-sm sm:text-base font-medium ${isFavorited ? 'text-red-500' : 'text-gray-700'}`}>
+          <span 
+            className={`ml-2 text-sm sm:text-base font-medium ${isFavorited ? 'text-red-500' : ''}`}
+            style={isFavorited ? {} : { color: 'var(--text-primary)' }}
+          >
             {isFavorited ? 'Favorited' : 'Favorite'}
           </span>
         )}

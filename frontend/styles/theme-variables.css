@@ -1,0 +1,76 @@
+/* Insight Directory Theme Variables */
+
+:root {
+  /* Light theme variables (current default) */
+  --light-bg-primary: #FFFFFF;
+  --light-bg-secondary: #F5F6F8;
+  --light-surface: #FFFFFF;
+  --light-surface-hover: #F5F6F8;
+  --light-border-color: #E5E7EB;
+  --light-text-heading: #111827;
+  --light-text-body: #374151;
+  --light-text-muted: #6B7280;
+  
+  /* Dark theme variables */
+  --dark-bg-primary: #0F2A47;      /* Primary background (navy blue) */
+  --dark-bg-deeper: #0A1F36;       /* Deeper background for contrast */
+  --dark-surface: #1E3A59;         /* Card and input surface */
+  --dark-surface-hover: #2A4A6A;   /* Lighter surface for hover states */
+  --dark-overlay: #2D5275;         /* Overlay backgrounds */
+  --dark-shadow: rgba(0, 0, 0, 0.35); /* Shadows for elevation */
+  --dark-border: rgba(255, 255, 255, 0.1); /* Subtle border */
+  
+  /* Typography */
+  --dark-text-heading: #F5F6F8;    /* Soft white for headings */
+  --dark-text-body: #F5F6F8;       /* Soft white for body text */
+  --dark-text-secondary: #D1D5DB;  /* Light silver for secondary text with better contrast */
+  --dark-text-muted: #9CA3B0;      /* Light gray for secondary text */
+  --dark-text-logo: #E8E0CE;       /* Light beige ONLY for logo text */
+  
+  /* Accent colors from logo gradient */
+  --accent-blue: #1E90FF;          /* Extracted from logo */
+  --accent-purple: #9370DB;        /* Extracted from logo */
+  --accent-indigo: #6610f2;        /* For links and interactive elements */
+  
+  /* Gradients */
+  --simplified-gradient: linear-gradient(90deg, #1E90FF, #9370DB);
+  --simplified-gradient-hover: linear-gradient(90deg, #4BA5FF, #A385E0);
+  
+  /* Border radii */
+  --border-radius-sm: 4px;         /* Small rounded corners */
+  --border-radius-md: 8px;         /* Medium rounded corners */
+}
+
+/* Apply dark theme variables as default */
+:root {
+  /* Base colors */
+  --bg-primary: var(--dark-bg-primary);
+  --bg-deeper: var(--dark-bg-deeper);
+  --surface: var(--dark-surface);
+  --surface-hover: var(--dark-surface-hover);
+  --overlay: var(--dark-overlay);
+  --border-color: var(--dark-border);
+  
+  /* Typography */
+  --text-heading: var(--dark-text-heading);
+  --text-body: var(--dark-text-body);
+  --text-secondary: var(--dark-text-secondary);
+  --text-muted: var(--dark-text-muted);
+  
+  /* Gradients */
+  --gradient: var(--simplified-gradient);
+  --gradient-hover: var(--simplified-gradient-hover);
+}
+
+/* Admin pages will use the light theme */
+.admin-layout {
+  --bg-primary: var(--light-bg-primary);
+  --bg-deeper: var(--light-bg-secondary);
+  --surface: var(--light-surface);
+  --surface-hover: var(--light-surface-hover);
+  --border-color: var(--light-border-color);
+  
+  --text-heading: var(--light-text-heading);
+  --text-body: var(--light-text-body);
+  --text-muted: var(--light-text-muted);
+}

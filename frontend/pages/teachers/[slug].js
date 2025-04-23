@@ -118,21 +118,21 @@ const TeacherDetailPage = () => {
         />
       </Head>
       
-      <header className="w-full bg-gradient-to-r from-brand-start via-brand-mid to-brand-end bg-opacity-10 dark:bg-opacity-5 py-6 md:py-10 lg:py-12">
+      <header className="w-full bg-bg-primary py-6 md:py-10 lg:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400 mb-4 font-inter overflow-x-auto pb-1 scrollbar-hide">
-            <Link href="/" className={Typography.breadcrumbItem}>
+          <div className="flex items-center gap-2 text-sm mb-4 font-inter overflow-x-auto pb-1 scrollbar-hide" style={{ color: 'var(--text-secondary)' }}>
+            <Link href="/" className="hover:text-brand-purple transition-colors whitespace-nowrap">
               Home
             </Link>
             <span>/</span>
             <Link 
               href="/teachers"
-              className={Typography.breadcrumbItem}
+              className="hover:text-brand-purple transition-colors whitespace-nowrap"
             >
               Teachers
             </Link>
             <span>/</span>
-            <span className={Typography.breadcrumbText}>
+            <span className="truncate max-w-[120px] sm:max-w-[150px] md:max-w-xs whitespace-nowrap" style={{ opacity: 0.8 }}>
               {teacher.name}
             </span>
           </div>
@@ -184,33 +184,33 @@ const TeacherDetailPage = () => {
           </div>
           
           <div className="w-full lg:w-1/3">
-            <div className={Typography.cardContainer}>
+            <div className="mb-6 md:mb-8 p-4 sm:p-6 rounded-lg shadow-sm border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)' }}>
               <h2 className={Typography.sidebarHeading}>
                 Details
               </h2>
               
               {(teacher.birthYear || teacher.deathYear) && (
-                <div className="mb-3 font-inter">
-                  <p className={Typography.detailValue}>
-                    <span className={Typography.detailLabel}>Years: </span>
+                <div className="mb-3 font-inter text-text-primary">
+                  <p className="text-text-primary">
+                    <span className="text-text-secondary font-medium">Years: </span>
                     {teacher.birthYear || '?'} - {teacher.deathYear || 'Present'}
                   </p>
                 </div>
               )}
               
               {teacher.country && (
-                <div className="mb-3 font-inter">
-                  <p className={Typography.detailValue}>
-                    <span className={Typography.detailLabel}>Location: </span>
+                <div className="mb-3 font-inter text-text-primary">
+                  <p className="text-text-primary">
+                    <span className="text-text-secondary font-medium">Location: </span>
                     {teacher.country}
                   </p>
                 </div>
               )}
               
               {teacher.notableTeachings && (
-                <div className="mb-3 font-inter">
-                  <p className={Typography.detailValue}>
-                    <span className={Typography.detailLabel}>Notable Teachings: </span>
+                <div className="mb-3 font-inter text-text-primary">
+                  <p className="text-text-primary">
+                    <span className="text-text-secondary font-medium">Notable Teachings: </span>
                     {Array.isArray(teacher.notableTeachings) 
                       ? teacher.notableTeachings.join(', ') 
                       : teacher.notableTeachings}
@@ -219,9 +219,9 @@ const TeacherDetailPage = () => {
               )}
               
               {teacher.influences && (
-                <div className="mb-3 font-inter">
-                  <p className={Typography.detailValue}>
-                    <span className={Typography.detailLabel}>Influences: </span>
+                <div className="mb-3 font-inter text-text-primary">
+                  <p className="text-text-primary">
+                    <span className="text-text-secondary font-medium">Influences: </span>
                     {Array.isArray(teacher.influences) 
                       ? teacher.influences.join(', ') 
                       : teacher.influences}
@@ -231,7 +231,7 @@ const TeacherDetailPage = () => {
             </div>
             
             {teacher.links && teacher.links.length > 0 && (
-              <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
+              <div className="mb-6 md:mb-8 p-4 sm:p-6 rounded-lg shadow-sm border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)' }}>
                 <h2 className={Typography.sidebarHeading}>
                   Links
                 </h2>
@@ -241,20 +241,25 @@ const TeacherDetailPage = () => {
               </div>
             )}
             
-            <div className={Typography.cardContainer}>
+            <div className="mb-6 md:mb-8 p-4 sm:p-6 rounded-lg shadow-sm border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)' }}>
               <h2 className={Typography.sidebarHeading}>
                 Actions
               </h2>
               <div className="space-y-3">
-                <button className="w-full py-2 px-4 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors flex items-center justify-center font-inter">
-                  <FavoriteButton 
-                    type="teacher" 
-                    id={teacher._id} 
-                    size="default"
-                    showText={true}
-                    className="flex items-center justify-center w-full"
-                  />
-                </button>
+                <FavoriteButton 
+                  type="teacher" 
+                  id={teacher._id} 
+                  size="default"
+                  showText={true}
+                  className="flex items-center justify-center w-full py-2 px-4 rounded-md transition-colors font-inter hover:!bg-[var(--dark-surface-hover)]"
+                  style={{ 
+                    backgroundColor: 'var(--surface)', 
+                    color: 'var(--text-primary)',
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
+                    borderColor: 'rgba(255, 255, 255, 0.2)'
+                  }}
+                />
               </div>
             </div>
           </div>

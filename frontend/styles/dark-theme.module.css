@@ -29,9 +29,9 @@
   --dark-shadow: rgba(0, 0, 0, 0.35); /* Shadows for elevation */
   
   /* Typography */
-  --dark-text-heading: #E8E0CE;    /* Light beige for headings (mirrors logo) */
+  --dark-text-heading: #F5F6F8;    /* Soft white for headings (Matches body text) */
   --dark-text-body: #F5F6F8;       /* Soft white for body text */
-  --dark-text-muted: #6C6F7B;      /* Desaturated gray for secondary text */
+  --dark-text-muted: #9CA3B0;      /* Lighter gray for secondary text */
   
   /* Accent colors from logo gradient */
   --accent-blue: #1E90FF;          /* Extracted from logo */
@@ -144,10 +144,10 @@
 }
 
 .button {
-  background-color: var(--dark-surface);
+  background-color: transparent; /* Secondary button: transparent */
   border-radius: var(--border-radius-sm);
-  color: var(--dark-text-body);
-  border: var(--dark-border);
+  color: var(--dark-text-body); /* Text color should be body text */
+  border: 1px solid var(--dark-text-body); /* White border using body text color */
   padding: 0.5rem 1rem;
   font-weight: 500;
   display: inline-block;

@@ -144,19 +144,19 @@ const TraditionDetailPage = () => {
         />
       </Head>
       
-      <header className="w-full bg-gradient-to-r from-brand-start via-brand-mid to-brand-end bg-opacity-10 dark:bg-opacity-5 py-6 md:py-10 lg:py-12">
+      <header className="w-full bg-bg-primary py-6 md:py-10 lg:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb navigation */}
-          <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400 mb-4 font-inter overflow-x-auto pb-1 scrollbar-hide">
-            <Link href="/" className={Typography.breadcrumbItem}>
+          <div className="flex items-center gap-2 text-sm mb-4 font-inter overflow-x-auto pb-1 scrollbar-hide" style={{ color: 'var(--text-secondary)' }}>
+            <Link href="/" className="hover:text-brand-purple transition-colors whitespace-nowrap">
               Home
             </Link>
             <span>/</span>
-            <Link href="/traditions" className={Typography.breadcrumbItem}>
+            <Link href="/traditions" className="hover:text-brand-purple transition-colors whitespace-nowrap">
               Traditions
             </Link>
             <span>/</span>
-            <span className={Typography.breadcrumbText}>
+            <span className="truncate max-w-[120px] sm:max-w-[150px] md:max-w-xs whitespace-nowrap" style={{ opacity: 0.8 }}>
               {tradition.name}
             </span>
           </div>
@@ -198,7 +198,7 @@ const TraditionDetailPage = () => {
           </div>
           
           <div className="w-full lg:w-1/3">
-            <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
+            <div className="mb-6 md:mb-8 p-4 sm:p-6 rounded-lg shadow-sm border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)' }}>
               <h2 className={Typography.sidebarHeading}>
                 Details
               </h2>
@@ -222,7 +222,7 @@ const TraditionDetailPage = () => {
             
             {/* Links Section */}
             {tradition.links && tradition.links.length > 0 && (
-              <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
+              <div className="mb-6 md:mb-8 p-4 sm:p-6 rounded-lg shadow-sm border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)' }}>
                 <h2 className={Typography.sidebarHeading}>
                   Links
                 </h2>
@@ -232,7 +232,7 @@ const TraditionDetailPage = () => {
               </div>
             )}
             
-            <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
+            <div className="mb-6 md:mb-8 p-4 sm:p-6 rounded-lg shadow-sm border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)' }}>
               <h2 className={Typography.sidebarHeading}>
                 Actions
               </h2>
@@ -242,13 +242,20 @@ const TraditionDetailPage = () => {
                   id={tradition._id} 
                   size="default"
                   showText={true}
-                  className="flex items-center justify-center w-full py-2 px-4 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors font-inter"
+                  className="flex items-center justify-center w-full py-2 px-4 rounded-md transition-colors font-inter hover:!bg-[var(--dark-surface-hover)]"
+                  style={{ 
+                    backgroundColor: 'var(--surface)', 
+                    color: 'var(--text-primary)',
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
+                    borderColor: 'rgba(255, 255, 255, 0.2)'
+                  }}
                 />
               </div>
             </div>
             
             {tradition.relatedTraditions && tradition.relatedTraditions.length > 0 && (
-              <div className="mb-6 md:mb-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800">
+              <div className="mb-6 md:mb-8 p-4 sm:p-6 rounded-lg shadow-sm border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)' }}>
                 <h2 className={Typography.sidebarHeading}>
                   Related Traditions
                 </h2>
@@ -262,7 +269,7 @@ const TraditionDetailPage = () => {
                       <Link 
                         key={index}
                         href={`/traditions/${traditionSlug}`}
-                        className="px-2.5 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-md text-xs hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                        className="px-2.5 py-1 bg-surface text-text-secondary rounded-md text-xs hover:bg-surface-hover transition-colors"
                       >
                         {traditionName}
                       </Link>

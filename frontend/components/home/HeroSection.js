@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Heading, Text } from '../ui/Typography';
 import { getTypographyClasses } from '../../utils/fontUtils';
+import Button from '../ui/Button';
 
 /**
  * Hero section component for the home page
@@ -29,7 +30,7 @@ const HeroSection = () => {
           {/* Logo Words - top of right side (2x bigger) */}
           <div className="relative w-full h-24 md:h-48 mb-8">
             <Image 
-              src="/images/Logo_words.PNG" 
+              src="/images/Logo4_Words_no_bg.png" 
               alt="Insight Directory" 
               fill
               className="object-contain object-left"
@@ -40,25 +41,21 @@ const HeroSection = () => {
           <div className="w-full flex flex-col items-center md:items-start space-y-6">
             {/* Description Text - larger with improved line spacing */}
             <div className="w-full text-center md:text-left">
-              <Heading 
-                as="h2"
-                size="3xl"
-                className={`text-neutral-800 max-w-xl mb-0 leading-relaxed font-semibold text-[1.2em] ${getTypographyClasses({ type: 'body', weight: 'SEMIBOLD' })}`}
-              >
+              <p className="text-lg md:text-xl mb-2 max-w-xl font-nunito">
                 A comprehensive collection of resources for those interested in spiritual awakening, non-duality, and self-inquiry.
-              </Heading>
+              </p>
             </div>
             
             {/* Call to Action - Single button */}
             <div className="flex justify-center md:justify-start items-center w-full">
-              <Link 
-                href="/sign-up" 
-                className={`px-8 py-3 text-lg text-white rounded-md hover:shadow-md transition-all duration-300 font-bold inline-block transform hover:translate-y-[-2px] hover:bg-brand-blue ${getTypographyClasses({ type: 'heading', weight: 'BOLD' })}`}
-                style={{ 
-                  backgroundColor: 'var(--brand-deep-blue)'
-                }}
-              >
-                Sign up for free
+              <Link href="/sign-up" passHref>
+                <Button 
+                  variant="primary" 
+                  size="lg"
+                  className={`font-bold ${getTypographyClasses({ type: 'heading', weight: 'BOLD' })}`} 
+                >
+                  Sign up for free
+                </Button>
               </Link>
             </div>
             
@@ -66,7 +63,7 @@ const HeroSection = () => {
             <div className="text-center md:text-left w-full">
               <Text 
                 size="md" 
-                className={`text-neutral-600 max-w-xl leading-relaxed ${getTypographyClasses({ type: 'body' })}`}
+                className="opacity-80 max-w-xl font-nunito"
               >
                 Create an account to save your favorite resources and help others on their spiritual journey.
               </Text>

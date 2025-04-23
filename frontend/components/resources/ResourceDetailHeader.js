@@ -62,7 +62,7 @@ const ResourceDetailHeader = ({ resource }) => {
     <header className="w-full bg-gradient-to-r from-brand-start via-brand-mid to-brand-end bg-opacity-10 dark:bg-opacity-5 py-6 md:py-10 lg:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb navigation */}
-        <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400 mb-4 font-inter overflow-x-auto pb-1 scrollbar-hide">
+        <div className="flex items-center gap-2 text-sm mb-4 font-inter overflow-x-auto pb-1 scrollbar-hide" style={{ color: 'var(--text-secondary)' }}>
           <Link href="/" className="hover:text-brand-purple transition-colors whitespace-nowrap">
             Home
           </Link>
@@ -74,7 +74,7 @@ const ResourceDetailHeader = ({ resource }) => {
             {formatResourceType(resource.type)}s
           </Link>
           <span>/</span>
-          <span className="text-neutral-500 dark:text-neutral-500 truncate max-w-[120px] sm:max-w-[150px] md:max-w-xs whitespace-nowrap">
+          <span className="truncate max-w-[120px] sm:max-w-[150px] md:max-w-xs whitespace-nowrap" style={{ opacity: 0.8 }}>
             {resource.title}
           </span>
         </div>

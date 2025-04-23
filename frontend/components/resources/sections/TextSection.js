@@ -28,9 +28,9 @@ const TextSection = ({ content }) => {
   }
   
   return (
-    <div className="prose prose-neutral dark:prose-invert max-w-none">
+    <div className="prose prose-neutral dark:prose-invert max-w-none text-text-primary">
       {textContent.split('\n').map((paragraph, index) => (
-        <Text key={index} className="mb-4 last:mb-0">{paragraph}</Text>
+        <Text key={index} className="mb-4 last:mb-0 text-text-primary">{paragraph}</Text>
       ))}
     </div>
   );

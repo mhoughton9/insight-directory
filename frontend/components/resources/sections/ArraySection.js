@@ -13,7 +13,7 @@ const ArraySection = ({ content }) => {
   return (
     <ul className="list-disc pl-5 space-y-2">
       {content.map((item, index) => (
-        <li key={index} className="text-neutral-800 dark:text-neutral-200">
+        <li key={index} style={{ color: 'var(--text-primary)' }}>
           <Text>{item}</Text>
         </li>
       ))}

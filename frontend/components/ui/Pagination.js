@@ -45,17 +45,23 @@ const Pagination = ({
   
   return (
     <nav className="flex justify-center my-4" aria-label="Pagination">
-      <ul className="inline-flex items-center -space-x-px">
+      <ul className="inline-flex items-center gap-1 rounded-lg p-1" style={{
+        backgroundColor: 'rgba(30, 58, 89, 0.5)'
+      }}>
         {/* Previous page button */}
         <li>
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`flex items-center justify-center w-8 h-8 rounded-md transition-all duration-200 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-opacity-80 hover:scale-105'}`}
+            style={{
+              backgroundColor: 'var(--theme-surface-primary, #1E3A59)',
+              color: 'var(--theme-text-secondary, #9CA3B0)'
+            }}
             aria-label="Previous page"
           >
             <span className="sr-only">Previous</span>
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
             </svg>
           </button>
@@ -67,14 +73,23 @@ const Pagination = ({
             <li>
               <button
                 onClick={() => onPageChange(1)}
-                className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                className="flex items-center justify-center w-8 h-8 rounded-md transition-all duration-200 hover:bg-opacity-80 hover:scale-105"
+                style={{
+                  backgroundColor: 'var(--theme-surface-primary, #1E3A59)',
+                  color: 'var(--theme-text-secondary, #9CA3B0)'
+                }}
               >
                 1
               </button>
             </li>
             {pageNumbers[0] > 2 && (
               <li>
-                <span className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300">
+                <span className="flex items-center justify-center w-8 h-8 rounded-md"
+                  style={{
+                    backgroundColor: 'var(--theme-surface-primary, #1E3A59)',
+                    color: 'var(--theme-text-secondary, #9CA3B0)'
+                  }}
+                >
                   ...
                 </span>
               </li>
@@ -87,7 +102,11 @@ const Pagination = ({
           <li key={number}>
             <button
               onClick={() => onPageChange(number)}
-              className={`px-3 py-2 leading-tight border ${currentPage === number ? 'text-blue-600 border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700' : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-100 hover:text-gray-700'}`}
+              className={`flex items-center justify-center w-8 h-8 rounded-md transition-all duration-200 ${currentPage !== number ? 'hover:bg-opacity-80 hover:scale-105' : ''}`}
+              style={{
+                backgroundColor: currentPage === number ? 'var(--theme-accent-blue, #1E90FF)' : 'var(--theme-surface-primary, #1E3A59)',
+                color: currentPage === number ? 'var(--theme-text-primary, #F5F6F8)' : 'var(--theme-text-secondary, #9CA3B0)'
+              }}
               aria-current={currentPage === number ? 'page' : undefined}
             >
               {number}
@@ -100,7 +119,12 @@ const Pagination = ({
           <>
             {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
               <li>
-                <span className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300">
+                <span className="flex items-center justify-center w-8 h-8 rounded-md"
+                  style={{
+                    backgroundColor: 'var(--theme-surface-primary, #1E3A59)',
+                    color: 'var(--theme-text-secondary, #9CA3B0)'
+                  }}
+                >
                   ...
                 </span>
               </li>
@@ -108,7 +132,11 @@ const Pagination = ({
             <li>
               <button
                 onClick={() => onPageChange(totalPages)}
-                className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                className="flex items-center justify-center w-8 h-8 rounded-md transition-all duration-200 hover:bg-opacity-80 hover:scale-105"
+                style={{
+                  backgroundColor: 'var(--theme-surface-primary, #1E3A59)',
+                  color: 'var(--theme-text-secondary, #9CA3B0)'
+                }}
               >
                 {totalPages}
               </button>
@@ -121,7 +149,11 @@ const Pagination = ({
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`flex items-center justify-center w-8 h-8 rounded-md transition-all duration-200 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-opacity-80 hover:scale-105'}`}
+            style={{
+              backgroundColor: 'var(--theme-surface-primary, #1E3A59)',
+              color: 'var(--theme-text-secondary, #9CA3B0)'
+            }}
             aria-label="Next page"
           >
             <span className="sr-only">Next</span>

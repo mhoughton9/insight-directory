@@ -2,6 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Heading, Text } from '../components/ui/Typography';
+import Button from '../components/ui/Button'; // Import Button component
 
 /**
  * About page component
@@ -16,7 +17,7 @@ export default function AboutPage() {
       </Head>
 
       <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <Heading as="h1" size="4xl" className="mb-8 text-center">
+        <Heading as="h1" size="4xl" className="mb-8 text-center text-text-primary">
           About This Directory
         </Heading>
 
@@ -37,23 +38,18 @@ export default function AboutPage() {
             Each individual resonates with different teaching styles and approaches. What speaks deeply to one person might not connect with another. This directory aims to help you explore various approaches to find what works best for you, whether you're new to these concepts or have been exploring them for years.
           </Text>
 
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-sm p-6 mt-8 mb-6 transition-all duration-200 hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-700">
-            <Heading as="h2" size="2xl" className="mb-4 text-center">
+          <div className="rounded-xl shadow-sm p-6 mt-8 mb-6 transition-all duration-200 hover:shadow-md" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)', borderWidth: '1px', borderStyle: 'solid' }}>
+            <Heading as="h2" size="2xl" className="mb-4 text-center text-text-primary">
               Have a Resource to Suggest?
             </Heading>
-            <Text className="mb-4 text-center">
+            <Text className="mb-4 text-center text-text-primary">
               Know of a valuable resource that should be included in this directory? I welcome suggestions for books, teachers, podcasts, and other materials that align with the focus of this site.
             </Text>
             <div className="flex justify-center">
-              <Link 
-                href="/suggest" 
-                className="inline-block px-6 py-3 rounded-md text-neutral-800 dark:text-white transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-md"
-                style={{ 
-                  background: 'var(--background)',
-                  border: '2px solid var(--brand-deep-blue)'
-                }}
-              >
-                Suggest a Resource
+              <Link href="/suggest">
+                <Button variant="secondary" size="lg">
+                  Suggest a Resource
+                </Button>
               </Link>
             </div>
           </div>

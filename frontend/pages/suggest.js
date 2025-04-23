@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useUser, useAuth } from '@clerk/nextjs';
 import { Heading, Text } from '../components/ui/Typography';
 import { SignInButton } from '@clerk/nextjs';
+import Button from '../components/ui/Button'; // Import Button component
 
 /**
  * Resource suggestion form component
@@ -155,7 +156,7 @@ export default function SuggestResourcePage() {
           <meta name="description" content="Suggest a resource to be added to the Insight Directory." />
         </Head>
 
-        <div className="max-w-3xl mx-auto px-4 py-12 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-3xl mx-auto px-4 py-12 sm:px-6 lg:px-8 text-center text-text-primary">
           <Heading as="h1" size="4xl" className="mb-8">
             Suggest a Resource
           </Heading>
@@ -164,8 +165,8 @@ export default function SuggestResourcePage() {
             To suggest a resource, please sign in with your account first.
           </Text>
           
-          <div className="bg-white dark:bg-neutral-800 p-8 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 text-center">
-            <Text className="mb-6">
+          <div className="p-8 rounded-lg shadow-sm text-center" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)', borderWidth: '1px', borderStyle: 'solid' }}>
+            <Text className="mb-6 text-text-primary">
               Sign in to suggest resources for the Insight Directory.
             </Text>
             
@@ -188,26 +189,26 @@ export default function SuggestResourcePage() {
       </Head>
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <Heading as="h1" size="4xl" className="mb-8 text-center">
+        <Heading as="h1" size="4xl" className="mb-8 text-center text-text-primary">
           Suggest a Resource
         </Heading>
         
-        <Text size="lg" className="mb-8 text-center">
+        <Text size="lg" className="mb-8 text-center text-text-primary">
           Know of a valuable resource for spiritual awakening, non-duality, or self-inquiry? 
           Please share it with us, and we'll consider adding it to the directory.
         </Text>
 
         {submitStatus.submitted && (
-          <div className={`p-4 mb-8 rounded-md ${submitStatus.success ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200' : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200'}`}>
+          <div className={`p-4 mb-8 rounded-md ${submitStatus.success ? 'bg-green-100 bg-opacity-20 text-green-400' : 'bg-red-100 bg-opacity-20 text-red-400'}`} style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: submitStatus.success ? 'rgba(74, 222, 128, 0.2)' : 'rgba(248, 113, 113, 0.2)' }}>
             <Text className="text-center">{submitStatus.message}</Text>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-neutral-800 p-6 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700">
+        <form onSubmit={handleSubmit} className="p-6 rounded-lg shadow-sm" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)', borderWidth: '1px', borderStyle: 'solid' }}>
           <div className="grid grid-cols-1 gap-6">
             {/* Resource Title */}
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+              <label htmlFor="title" className="block text-sm font-medium text-text-primary mb-1">
                 Resource Title *
               </label>
               <input
@@ -223,7 +224,7 @@ export default function SuggestResourcePage() {
 
             {/* Resource Type */}
             <div>
-              <label htmlFor="type" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+              <label htmlFor="type" className="block text-sm font-medium text-text-primary mb-1">
                 Resource Type *
               </label>
               <select
@@ -245,7 +246,7 @@ export default function SuggestResourcePage() {
 
             {/* Resource Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+              <label htmlFor="description" className="block text-sm font-medium text-text-primary mb-1">
                 Description *
               </label>
               <textarea
@@ -261,7 +262,7 @@ export default function SuggestResourcePage() {
 
             {/* Resource Link */}
             <div>
-              <label htmlFor="link" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+              <label htmlFor="link" className="block text-sm font-medium text-text-primary mb-1">
                 Link (if available)
               </label>
               <input
@@ -276,7 +277,7 @@ export default function SuggestResourcePage() {
 
             {/* Creator/Author */}
             <div>
-              <label htmlFor="creator" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+              <label htmlFor="creator" className="block text-sm font-medium text-text-primary mb-1">
                 Creator/Author
               </label>
               <input
@@ -291,7 +292,7 @@ export default function SuggestResourcePage() {
 
             {/* Additional Information */}
             <div>
-              <label htmlFor="additionalInfo" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+              <label htmlFor="additionalInfo" className="block text-sm font-medium text-text-primary mb-1">
                 Additional Information
               </label>
               <textarea
@@ -302,17 +303,19 @@ export default function SuggestResourcePage() {
                 rows="3"
                 className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-500 focus:border-transparent"
               ></textarea>
-              <p className="text-sm text-neutral-500 mt-1">
+              <p className="text-sm text-text-secondary mt-1">
                 Any other details that might be helpful (e.g., why you recommend this resource)
               </p>
             </div>
 
             {/* Submit Button */}
             <div className="mt-2">
-              <button
+              <Button
                 type="submit"
+                variant="secondary"
+                size="lg"
+                className="w-full disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={submitStatus.isSubmitting}
-                className="w-full px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
               >
                 {submitStatus.isSubmitting ? (
                   <>
@@ -322,7 +325,7 @@ export default function SuggestResourcePage() {
                 ) : (
                   'Submit Suggestion'
                 )}
-              </button>
+              </Button>
             </div>
           </div>
         </form>

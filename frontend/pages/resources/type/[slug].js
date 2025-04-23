@@ -99,7 +99,11 @@ export default function ResourceTypePage() {
             Browse this comprehensive collection of {pluralTypeName.toLowerCase()} about awakening, non-duality, and self-inquiry.
           </Text>
           {totalResources > 0 && (
-            <Text size="md" className="mt-2 text-gray-600 dark:text-gray-400">
+            <Text 
+              size="md" 
+              className="mt-2" 
+              style={{ color: 'var(--text-secondary)' }} 
+            >
               Showing {resources.length} of {totalResources} {totalResources === 1 ? formattedTypeName.toLowerCase() : pluralTypeName.toLowerCase()}
             </Text>
           )}

@@ -57,7 +57,11 @@ export default function TeachersPage() {
           <Heading as="h1" size="2xl" className="mb-4">
             Teachers
           </Heading>
-          <Text size="lg" className="text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto">
+          <Text 
+            size="lg" 
+            className="max-w-3xl mx-auto" 
+            style={{ color: 'var(--text-secondary)' }} 
+          >
             Explore spiritual teachers from various traditions who offer guidance on the path to awakening.
           </Text>
         </header>

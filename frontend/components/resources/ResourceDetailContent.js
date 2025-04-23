@@ -22,7 +22,7 @@ const ResourceDetailContent = ({ resource }) => {
     Object.keys(resource.descriptionSections).length > 0;
   
   return (
-    <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-100 dark:border-neutral-800 p-4 sm:p-6 mb-6 md:mb-8">
+    <div className="rounded-lg shadow-sm border p-4 sm:p-6 mb-6 md:mb-8" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)' }}>
       {/* Basic description section - show if no detailed sections are available */}
       {!hasDescriptionSections && (
         <div className="mb-6 md:mb-8">
