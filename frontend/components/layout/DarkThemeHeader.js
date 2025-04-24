@@ -40,8 +40,10 @@ export default function DarkThemeHeader() {
           </Link>
         </div>
         
-        <div className="flex items-center">
-          <nav className="hidden md:flex items-center space-x-6 mr-6">
+        {/* Right Side: Use flex-grow to push content apart */}
+        <div className="flex items-center space-x-4">
+          {/* Desktop Core Navigation */}
+          <nav className="hidden md:flex items-center space-x-6">
             <Link href="/teachers" className="text-[var(--theme-text-primary)] opacity-80 hover:opacity-100 font-medium" style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', fontSize: '1.05rem' }}>
               Teachers
             </Link>
@@ -50,6 +52,9 @@ export default function DarkThemeHeader() {
             </Link>
             <Link href="/about" className="text-[var(--theme-text-primary)] opacity-80 hover:opacity-100 font-medium" style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', fontSize: '1.05rem' }}>
               About
+            </Link>
+            <Link href="/contact" className="text-[var(--theme-text-primary)] opacity-80 hover:opacity-100 font-medium" style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', fontSize: '1.05rem' }}>
+              Contact
             </Link>
             <Link 
               href="/suggest" 
@@ -60,7 +65,8 @@ export default function DarkThemeHeader() {
             </Link>
           </nav>
           
-          <div className="flex items-center">
+          {/* Desktop User Controls */}
+          <div className="hidden md:flex items-center ml-auto">
             <SignedIn>
               <div className="flex items-center space-x-4">
                 {isAdmin && (
@@ -113,15 +119,16 @@ export default function DarkThemeHeader() {
                 </Link>
               </div>
             </SignedOut>
-            
-            <button 
-              aria-label="Menu" 
-              className="p-2 md:hidden text-[var(--theme-text-primary)] opacity-80 hover:opacity-100" 
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <MenuIcon size={24} />
-            </button>
           </div>
+          
+          {/* Mobile Menu Button - outside desktop user controls div */}
+          <button 
+            aria-label="Menu" 
+            className="p-2 md:hidden text-[var(--theme-text-primary)] opacity-80 hover:opacity-100" 
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <MenuIcon size={24} />
+          </button>
         </div>
       </div>
       
@@ -136,6 +143,9 @@ export default function DarkThemeHeader() {
             </Link>
             <Link href="/about" className="text-[var(--theme-text-primary)] opacity-80 hover:opacity-100 font-medium" style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', fontSize: '1.05rem' }}>
               About
+            </Link>
+            <Link href="/contact" className="text-[var(--theme-text-primary)] opacity-80 hover:opacity-100 font-medium" style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', fontSize: '1.05rem' }}>
+              Contact
             </Link>
             <Link 
               href="/suggest" 

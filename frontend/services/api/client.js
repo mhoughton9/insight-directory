@@ -173,31 +173,47 @@ const apiClient = {
    */
   get: async function(endpoint, options = {}) {
     const url = getFullUrl(endpoint);
-    const cacheKey = generateCacheKey(endpoint, options);
-    const useCache = options.cache !== false && DEFAULT_CLIENT_CONFIG.cache;
+    // Check if our custom cache flag is set to false
+    const useInternalCache = options.cache !== false; 
+    const cacheKey = useInternalCache ? generateCacheKey(endpoint, options) : null;
     
-    // Return cached response if available and valid
-    if (useCache && isCacheValid(cacheKey)) {
+    // Prepare options for createRequest, removing our custom cache flag
+    const requestOptions = { ...options };
+    delete requestOptions.cache; // Remove our custom flag
+
+    // Check internal cache only if useInternalCache is true
+    if (useInternalCache && cacheKey && this.isCacheValid(cacheKey)) {
       const cachedResponse = cache.get(cacheKey);
+      logApiError(
+        { message: `Cache hit for ${endpoint}`, data: { key: cacheKey } },
+        'Cache',
+        LogLevels.DEBUG
+      );
       return { ...cachedResponse.data, cached: true };
     }
     
     try {
       // Define the request function
       const requestFn = async () => {
-        const response = await createRequest(url, 'GET', options);
+        // Pass the cleaned requestOptions without the boolean cache flag
+        const response = await createRequest(url, 'GET', requestOptions);
         return await processApiResponse(response, endpoint, 'GET');
       };
       
       // Execute with retry logic
-      const data = await executeWithRetry(requestFn, endpoint, 'GET', options);
+      const data = await executeWithRetry(requestFn, endpoint, 'GET', requestOptions);
       
-      // Cache the successful response
-      if (useCache) {
+      // Store in internal cache only if useInternalCache is true
+      if (useInternalCache && cacheKey) {
         cache.set(cacheKey, {
           data,
           timestamp: Date.now(),
         });
+        logApiError(
+          { message: `Cache set for ${endpoint}`, data: { key: cacheKey } },
+          'Cache',
+          LogLevels.DEBUG
+        );
       }
       
       return { ...data, cached: false };
@@ -205,7 +221,7 @@ const apiClient = {
       return Promise.reject(error);
     }
   },
-
+  
   /**
    * Make a POST request to the API
    * @param {string} endpoint - API endpoint

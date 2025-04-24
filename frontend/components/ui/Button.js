@@ -1,8 +1,11 @@
+import Link from 'next/link';
+
 export default function Button({ 
   children, 
   variant = 'primary', 
   size = 'md', 
   className = '', 
+  href, // Add href to destructured props
   ...props 
 }) {
   const baseClasses = "rounded font-medium transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2";
@@ -20,10 +23,21 @@ export default function Button({
   };
 
   const buttonStyle = variant === 'primary' ? { background: 'var(--theme-gradient-button)' } : {};
+  const combinedClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
   
+  // If href is provided, render a Link component
+  if (href) {
+    return (
+      <Link href={href} className={combinedClasses} style={buttonStyle} {...props}>
+        {children}
+      </Link>
+    );
+  }
+  
+  // Otherwise, render a regular button
   return (
     <button
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      className={combinedClasses}
       style={buttonStyle}
       {...props}
     >

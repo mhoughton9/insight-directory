@@ -7,23 +7,47 @@ import apiClient from './client';
 
 const resourcesService = {
   /**
-   * Get all resources with optional filtering
-   * @param {Object} filters - Query parameters for filtering
-   * @param {Object} options - Additional request options
-   * @returns {Promise<{resources: Array, total: number, cached: boolean}>} - Resources data with cache status
+   * Get all resources, optionally filtered and sorted.
+   * Handles routing to the correct backend endpoint based on filters.
+   * @param {object} filters - Filtering options (e.g., { type: 'book', featured: true })
+   * @param {object} options - API client options (e.g., { cache: false, sort: 'title_asc' })
+   * @returns {Promise<object>} API response
    */
   getAll: async function(filters = {}, options = {}) {
-    // Convert filters object to query string
+    let endpoint;
     const queryParams = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) queryParams.append(key, value);
-    });
-    
+
+    // Special handling: If 'type' is the main filter, use the dedicated endpoint
+    // This allows us to hit the controller that doesn't paginate by default for simple type listings.
+    if (filters.type && Object.keys(filters).length === 1) {
+      endpoint = `resources/types/${encodeURIComponent(filters.type)}`;
+      // Type is now part of the path, remove it from potential query params
+      // (We'll add other potential options like 'sort' back below)
+    } else {
+      // For general filtering (or no filters), use the base endpoint
+      endpoint = 'resources';
+      // Add all filters to the query params
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          queryParams.append(key, value);
+        }
+      });
+    }
+
+    // Add other options (like sort) to the query parameters
+    if (options.sort) {
+      queryParams.append('sort', options.sort);
+    }
+
     const queryString = queryParams.toString();
-    const endpoint = `resources${queryString ? `?${queryString}` : ''}`;
-    
-    // Use apiClient with standard options
-    return apiClient.get(endpoint, options);
+    endpoint += queryString ? `?${queryString}` : '';
+
+    // Prepare options for apiClient, removing 'sort' as it's now in the query string
+    const clientOptions = { ...options };
+    delete clientOptions.sort; 
+
+    // Use apiClient with the constructed endpoint and remaining options
+    return apiClient.get(endpoint, clientOptions);
   },
   
   /**

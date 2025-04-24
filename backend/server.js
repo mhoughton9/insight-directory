@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const connectDB = require('./config/db');
 const apiRoutes = require('./routes');
+const contactRoutes = require('./routes/contactRoutes'); // Import contact routes
 const { errorHandler, notFound } = require('./middleware/error-middleware');
 
 // Initialize Express app
@@ -27,6 +28,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 // API Routes
 app.use('/api', apiRoutes);
+app.use('/api/contact', contactRoutes); // Register contact routes
 
 // Welcome route
 app.get('/', (req, res) => {

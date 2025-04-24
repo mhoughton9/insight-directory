@@ -5,14 +5,14 @@ const { Teacher, Resource } = require('../models');
  */
 const teacherController = {
   /**
-   * Get all teachers with optional filtering and pagination
+   * Get all teachers with optional filtering and sorting
    * @route GET /api/teachers
    * @access Public
    */
   getAllTeachers: async (req, res) => {
     try {
-      const { page = 1, limit = 10, tradition, featured, ids } = req.query;
-      const skip = (page - 1) * limit;
+      // Default sort: name ascending. Accept 'sort' query param.
+      const { tradition, featured, ids, sort = 'name_asc' } = req.query;
       
       // Build filter object based on query parameters
       const filter = { processed: true }; // Only show processed (posted) teachers on public site
@@ -23,7 +23,7 @@ const teacherController = {
           const idArray = ids.split(',').map(id => id.trim());
           console.log('Fetching teachers with IDs:', idArray);
           filter._id = { $in: idArray };
-          // When fetching by IDs, ignore pagination limits
+          // When fetching by IDs, pagination/limits are inherently ignored
         } catch (error) {
           console.error('Error processing IDs parameter:', error);
         }
@@ -42,36 +42,32 @@ const teacherController = {
         featured: 1,
         websites: 1,
         quotes: 1,
-        createdAt: 1
+        createdAt: 1 // Keep createdAt for potential future sorting
       };
-      
-      // If we're fetching by IDs, use a different query flow without pagination
-      let teachers;
-      if (ids) {
-        teachers = await Teacher.find(filter, projection)
-          .populate('traditions', 'name slug')
-          .sort({ name: 1 })
-          .lean(); // Use lean for better performance
-      } else {
-        // Execute query with pagination and optimization
-        teachers = await Teacher.find(filter, projection)
-          .populate('traditions', 'name slug')
-          .sort({ name: 1 })
-          .skip(skip)
-          .limit(parseInt(limit))
-          .lean(); // Use lean for better performance
+
+      // Determine sort order
+      let sortOptions = {};
+      switch (sort) {
+        case 'name_desc':
+          sortOptions = { name: -1 };
+          break;
+        case 'name_asc': // Default
+        default:
+          sortOptions = { name: 1 };
+          break;
       }
       
-      // Get total count for pagination
-      const total = await Teacher.countDocuments(filter);
+      // Execute query without pagination, with sorting
+      const teachers = await Teacher.find(filter, projection)
+        .populate('traditions', 'name slug')
+        .sort(sortOptions) // Apply dynamic sorting
+        .lean(); // Use lean for better performance
       
+      // Simplified response without pagination details
       res.status(200).json({
         success: true,
         count: teachers.length,
-        total,
-        totalPages: Math.ceil(total / limit),
-        currentPage: parseInt(page),
-        teachers
+        teachers // Return all matching teachers
       });
     } catch (error) {
       console.error('Error getting teachers:', error);

@@ -2,6 +2,7 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Inter } from 'next/font/google';
 import traditionsService from '../services/api/traditions';
 import teachersService from '../services/api/teachers';
+import Link from 'next/link';
 
 // Configure the Inter font
 const inter = {

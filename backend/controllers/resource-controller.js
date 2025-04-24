@@ -365,59 +365,73 @@ const resourceController = {
   getResourcesByType: async (req, res) => {
     try {
       const { type } = req.params;
-      const { page = 1, limit = 10, sortBy = 'title', sortOrder = 'asc' } = req.query;
-      const skip = (page - 1) * limit;
-      
-      // Validate type parameter
+      // Default sort: title ascending. Accept 'sort' query param.
+      const { sort = 'title_asc' } = req.query;
+
+      // Validate type
       if (!type) {
-        return res.status(400).json({
-          success: false,
-          message: 'Resource type is required'
-        });
+        return res.status(400).json({ success: false, message: 'Resource type is required.' });
       }
-      
+
       // Build query
       const query = {
-        type,
+        type: type,
         // Only return processed resources for public site
         processed: true
       };
-      
-      // Define projection to select only needed fields
+
+      // Define projection to select needed fields
       const projection = {
         title: 1,
         description: 1,
-        type: 1,
         imageUrl: 1,
         slug: 1,
-
-        traditions: 1,
+        type: 1,
         tags: 1,
-        createdAt: 1
+        featured: 1,
+        creator: 1, // Include creator (author names for display/search)
+        bookDetails: 1, // Include book details (like pages)
+        createdAt: 1 // Include createdAt for potential sorting
       };
-      
-      // Find resources by type with optimization
+
+      // Determine sort order based on query parameter
+      let sortOptions = {};
+      switch (sort) {
+        case 'title_desc':
+          sortOptions = { title: -1 };
+          break;
+        case 'createdAt_asc':
+          sortOptions = { createdAt: 1 };
+          break;
+        case 'createdAt_desc':
+          sortOptions = { createdAt: -1 };
+          break;
+        case 'author_asc': // Add author sorting if needed
+          sortOptions = { creator: 1 };
+          break;
+        case 'author_desc':
+          sortOptions = { creator: -1 };
+          break;
+        case 'title_asc': // Default
+        default:
+          sortOptions = { title: 1 };
+          break;
+      }
+
+      // Execute query without pagination, with sorting
       const resources = await Resource.find(query, projection)
-        
         .populate('traditions', 'name slug')
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(parseInt(limit))
-        .lean(); // Use lean for better performance
-      
-      // Get total count for pagination
-      const total = await Resource.countDocuments(query);
-      
+        .sort(sortOptions) // Apply dynamic sorting
+        .lean(); // Use lean for performance
+
+      // Simplified response without pagination details
       res.status(200).json({
         success: true,
         count: resources.length,
-        total,
-        totalPages: Math.ceil(total / limit),
-        currentPage: parseInt(page),
-        resources
+        resources // Return all matching resources
       });
     } catch (error) {
-      console.error('Error in getResourcesByType:', error);
+      console.error(`Error getting resources of type ${req.params.type}:`, error);
       res.status(500).json({
         success: false,
         message: 'Server Error',

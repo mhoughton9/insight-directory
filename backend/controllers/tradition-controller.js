@@ -5,14 +5,14 @@ const { Tradition, Teacher, Resource } = require('../models');
  */
 const traditionController = {
   /**
-   * Get all traditions with optional filtering and pagination
+   * Get all traditions with optional filtering and sorting
    * @route GET /api/traditions
    * @access Public
    */
   getAllTraditions: async (req, res) => {
     try {
-      const { page = 1, limit = 20, featured, ids } = req.query;
-      const skip = (page - 1) * limit;
+      // Default sort: name ascending. Accept 'sort' query param.
+      const { featured, ids, sort = 'name_asc' } = req.query;
       
       // Build filter object based on query parameters
       const filter = { processed: true }; // Only show processed (posted) traditions on public site
@@ -23,7 +23,7 @@ const traditionController = {
           const idArray = ids.split(',').map(id => id.trim());
           console.log('Fetching traditions with IDs:', idArray);
           filter._id = { $in: idArray };
-          // When fetching by IDs, ignore pagination limits
+          // When fetching by IDs, pagination/limits are inherently ignored
         } catch (error) {
           console.error('Error processing IDs parameter:', error);
         }
@@ -38,34 +38,31 @@ const traditionController = {
         imageUrl: 1,
         slug: 1,
         featured: 1,
-        createdAt: 1
+        createdAt: 1 // Keep createdAt for potential future sorting
       };
-      
-      // If we're fetching by IDs, use a different query flow without pagination
-      let traditions;
-      if (ids) {
-        traditions = await Tradition.find(filter, projection)
-          .sort({ name: 1 })
-          .lean(); // Use lean for better performance
-      } else {
-        // Execute query with pagination and optimization
-        traditions = await Tradition.find(filter, projection)
-          .sort({ name: 1 })
-          .skip(skip)
-          .limit(parseInt(limit))
-          .lean(); // Use lean for better performance
+
+      // Determine sort order
+      let sortOptions = {};
+      switch (sort) {
+        case 'name_desc':
+          sortOptions = { name: -1 };
+          break;
+        case 'name_asc': // Default
+        default:
+          sortOptions = { name: 1 };
+          break;
       }
       
-      // Get total count for pagination
-      const total = await Tradition.countDocuments(filter);
+      // Execute query without pagination, with sorting
+      const traditions = await Tradition.find(filter, projection)
+        .sort(sortOptions) // Apply dynamic sorting
+        .lean(); // Use lean for better performance
       
+      // Simplified response without pagination details
       res.status(200).json({
         success: true,
         count: traditions.length,
-        total,
-        totalPages: Math.ceil(total / limit),
-        currentPage: parseInt(page),
-        traditions
+        traditions // Return all matching traditions
       });
     } catch (error) {
       console.error('Error getting traditions:', error);

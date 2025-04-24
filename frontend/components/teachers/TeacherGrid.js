@@ -19,12 +19,12 @@ const TeacherGrid = React.memo(function TeacherGrid({ teachers = [], isLoading =
   
   if (!teachers.length && !isLoading) {
     return (
-      <div className="py-12 text-center bg-neutral-50 dark:bg-neutral-800/50 rounded-lg">
-        <Heading as="h3" size="md" className="mb-2">
+      <div className="py-12 text-center bg-card-bg border border-card-border rounded-lg">
+        <Heading as="h3" size="md" className="mb-2 text-text-heading">
           No teachers found
         </Heading>
-        <Text>
-          Check back later for updates
+        <Text size="md" className="text-text-muted">
+          Try adjusting your search terms.
         </Text>
       </div>
     );
