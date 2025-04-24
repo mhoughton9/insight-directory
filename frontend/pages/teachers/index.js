@@ -106,7 +106,7 @@ export default function TeachersPage() {
     <>
       <Head>
         <title>Teachers | Insight Directory</title>
-        <meta name="description" content="Explore spiritual teachers and their teachings" />
+        <meta name="description" content="Explore teachers and their teachings" />
       </Head>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -119,7 +119,7 @@ export default function TeachersPage() {
             className="max-w-3xl mx-auto"
             style={{ color: 'var(--text-secondary)' }}
           >
-            Explore spiritual teachers from various traditions who offer guidance on the path to awakening.
+            Explore teachers from various traditions who offer guidance on the path to awakening.
           </Text>
         </header>
 

@@ -17,7 +17,7 @@ const AboutSection = () => {
           About This Directory
         </Heading>
         <Text size="lg" className="text-caption-color mb-8 leading-relaxed">
-          This directory aims to be a comprehensive collection of resources for those interested in spiritual awakening, 
+          This directory aims to be a comprehensive collection of resources for those interested in awakening, 
           non-duality, and self-inquiry. Whether you're new to these topics or have been exploring them for years, 
           you'll find valuable resources to support your journey.
         </Text>

@@ -106,7 +106,7 @@ export default function TraditionsPage() {
     <>
       <Head>
         <title>Traditions | Insight Directory</title>
-        <meta name="description" content="Explore spiritual traditions and paths to awakening" />
+        <meta name="description" content="Explore traditions and paths to awakening" />
       </Head>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -119,7 +119,7 @@ export default function TraditionsPage() {
             className="max-w-3xl mx-auto"
             style={{ color: 'var(--text-secondary)' }}
           >
-            Explore spiritual traditions and paths that offer guidance on the journey to awakening.
+            Explore traditions and paths that offer guidance on the journey to awakening.
           </Text>
         </header>
 

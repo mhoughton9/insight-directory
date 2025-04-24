@@ -23,19 +23,27 @@ export default function AboutPage() {
 
         <div className="prose prose-lg dark:prose-invert mx-auto">
           <Text size="lg" className="mb-6">
-            The Insight Directory is a collection of resources focused on spiritual awakening, non-duality, and self-inquiry. I created this directory because these topics have been the most fascinating and life-changing I've ever come across.
+            The Insight Directory is a curated collection of resources focused on awakening, non-duality, and self-inquiry. My only goal in creating this site is to help more people recognize their true nature.
           </Text>
 
           <Text size="lg" className="mb-6">
-            After several years of deep interest in these subjects, I continue to discover valuable resources I wish I'd known about earlier. I've often thought it would be helpful to have a single site that brings together the best materials in one place.
+            The internet has made these teachings more accessible than ever, but finding the best resources can be challenging since they're spread across many sites and often mixed with confusing or bad information. I saw a chance to address this problem by gathering the most directly helpful and effective materials, teachers, and traditions together in one site.
           </Text>
 
           <Text size="lg" className="mb-6">
-            While there are countless spiritual books and resources available, this directory specifically focuses on those related to awakening, non-duality, self-inquiry, and practices that point toward these experiences.
+            Each resource is chosen because it points directly toward awakening and self-recognition. Some are designed to spark curiosity and open the door to what's possible. Others go deeper, offering philosophical or spiritual context. And some provide clear, practical, step-by-step guidance for those ready to engage directly.
           </Text>
 
           <Text size="lg" className="mb-6">
-            Each individual resonates with different teaching styles and approaches. What speaks deeply to one person might not connect with another. This directory aims to help you explore various approaches to find what works best for you, whether you're new to these concepts or have been exploring them for years.
+            I’ve tried to be thoughtful about designing the site in a way that avoids influencing users with my own biases. For example, I chose not to include any "featured resources" sections highlighting my personal favorites. Instead, users can sort resources by community favorites, leveraging collective insights. While the site will evolve—and no single person can perfectly judge what's best—I remain committed to the original purpose: helping as many people as possible awaken to their true nature.
+          </Text>
+
+          <Text size="lg" className="mb-6">
+            In the future, limited commenting features will be introduced to gather useful crowd-sourced perspectives. My intention isn't to build a sprawling review platform, but simply to offer a thoughtfully designed tool that makes it easier to find effective resources.
+          </Text>
+
+          <Text size="lg" className="mb-6">
+            Everyone approaches this journey in their own way—what resonates for one person might not for another. Whether you're new to these concepts or have spent years exploring, I hope The Insight Directory helps you find exactly what you need.
           </Text>
 
           <div className="rounded-xl shadow-sm p-6 mt-8 mb-6 transition-all duration-200 hover:shadow-md" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-color)', borderWidth: '1px', borderStyle: 'solid' }}>

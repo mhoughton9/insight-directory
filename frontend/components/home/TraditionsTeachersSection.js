@@ -25,7 +25,7 @@ const TraditionsTeachersSection = ({ traditions, teachers, brandColors }) => {
               Traditions
             </Heading>
             <Text size="lg" className="text-[var(--theme-text-secondary)] mb-8">
-              Explore spiritual traditions from around the world
+              Explore traditions from around the world
             </Text>
             
             {Array.isArray(traditions) && traditions.length > 0 ? (

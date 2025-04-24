@@ -44,7 +44,7 @@ const HeroSection = () => {
             {/* Description Text - larger with improved line spacing */}
             <div className="w-full text-center md:text-left">
               <p className="text-lg md:text-xl mb-2 max-w-xl font-nunito">
-                A comprehensive collection of resources for those interested in spiritual awakening, non-duality, and self-inquiry.
+                A comprehensive collection of resources for those interested in awakening, non-duality, and self-inquiry.
               </p>
             </div>
             
@@ -67,7 +67,7 @@ const HeroSection = () => {
                 size="md" 
                 className="opacity-80 max-w-xl font-nunito"
               >
-                Create an account to save your favorite resources and help others on their spiritual journey.
+                Create an account to save your favorite resources and help others on their journey.
               </Text>
             </div>
           </div>

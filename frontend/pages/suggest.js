@@ -194,7 +194,7 @@ export default function SuggestResourcePage() {
         </Heading>
         
         <Text size="lg" className="mb-8 text-center text-text-primary">
-          Know of a valuable resource for spiritual awakening, non-duality, or self-inquiry? 
+          Know of a valuable resource for awakening, non-duality, or self-inquiry? 
           Please share it with us, and we'll consider adding it to the directory.
         </Text>
 

@@ -20,7 +20,7 @@ const resourceTypes = [
         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
       </svg>
     ),
-    description: 'Books on non-duality, spirituality, and awakening'
+    description: 'Books on non-duality, awakening, and self-inquiry'
   },
   {
     type: 'Video Channel',
@@ -51,7 +51,7 @@ const resourceTypes = [
         <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
       </svg>
     ),
-    description: 'Websites dedicated to spiritual teachings'
+    description: 'Websites dedicated to teachings and practices'
   },
   {
     type: 'Blog',
@@ -64,7 +64,7 @@ const resourceTypes = [
         <polyline points="10 9 9 9 8 9"></polyline>
       </svg>
     ),
-    description: 'Essays and writings on spiritual topics'
+    description: 'Essays and writings on related topics'
   },
   {
     type: 'Practice',
@@ -85,7 +85,7 @@ const resourceTypes = [
         <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
       </svg>
     ),
-    description: 'Mobile and desktop applications for spiritual growth'
+    description: 'Mobile and desktop applications for growth and practice'
   },
   {
     type: 'Retreat Center',
