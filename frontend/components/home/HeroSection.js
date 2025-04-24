@@ -67,7 +67,7 @@ const HeroSection = () => {
                 size="md" 
                 className="opacity-80 max-w-xl font-nunito"
               >
-                Create an account to save your favorite resources and help others on their journey.
+                Create an account to save your favorites and help expand the directory by suggesting resources.
               </Text>
             </div>
           </div>
