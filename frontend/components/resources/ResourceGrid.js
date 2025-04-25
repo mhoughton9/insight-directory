@@ -13,7 +13,7 @@ const ResourceGrid = React.memo(function ResourceGrid({ resources = [], isLoadin
   
   if (isLoading && resources.length === 0) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(8)].map((_, index) => (
           <ResourceCardSkeleton key={index} />
         ))}
@@ -35,7 +35,7 @@ const ResourceGrid = React.memo(function ResourceGrid({ resources = [], isLoadin
   }
   
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-20">
       {resources.map(resource => (
         <ResourceCard 
           key={resource._id || resource.slug} 

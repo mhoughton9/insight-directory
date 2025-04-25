@@ -59,7 +59,7 @@ export default function ResourceCard({ resource, searchTerm = '' }) {
   const subtitle = getResourceSubtitle(resource);
   
   // Get truncated description
-  const truncatedDescription = truncateText(description, 120);
+  const truncatedDescription = truncateText(description, 200);
   
   // Get optimal image container styles based on resource type
   const imageContainerStyles = getImageContainerStyles(type);
@@ -67,7 +67,7 @@ export default function ResourceCard({ resource, searchTerm = '' }) {
   return (
     <Link href={`/resources/${slug}`} className="block h-full">
       <div 
-        className="resource-card-item border rounded-lg overflow-hidden h-full transition-colors duration-200" 
+        className="resource-card-item border rounded-lg overflow-hidden h-full transition-colors duration-200 max-w-sm mx-auto" 
         style={{ 
           backgroundColor: 'var(--surface)', 
           borderColor: 'var(--border-color)'  
@@ -121,7 +121,7 @@ export default function ResourceCard({ resource, searchTerm = '' }) {
           {description && (
             <Text 
               size="sm"
-              className="text-text-muted line-clamp-3"
+              className="text-text-muted line-clamp-4"
             >
               {searchTerm ? highlightSearchTerms(truncatedDescription, searchTerm) : truncatedDescription}
             </Text>
